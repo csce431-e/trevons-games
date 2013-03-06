@@ -18,9 +18,7 @@ public class Gomoku
     public void initGomoku()
     {
         
-        //initSetup()
-            //pvp or ai
-            //AI ONLY: choose color
+        initSetup();
         
         do
         { 
@@ -33,6 +31,8 @@ public class Gomoku
             
             //needs to check for option buttons
                  //ie: undo, restart, quit
+            
+            display();
             
             if(turnCounter % 2 != 0)
             {
@@ -57,6 +57,33 @@ public class Gomoku
             
         } while (!gameOver);
            
+    }
+    
+    void display()
+    {//y u no work?
+        
+        //System.out.println("X 0 1 2 3 4 5 6 7 8 9 A B C D E F G");
+        char state;
+        
+        
+        for(int i=0;i<16;i++)
+        {
+            for(int i2=0;i2<16;++i2)
+            {
+                state = UBoard.getSquareState(i, i2);
+                System.out.print(state + " ");
+            }
+            System.out.println("");
+        }
+    }
+    
+    void initSetup()
+    {
+        System.out.println("Welcome to Gomoku, you're gonna play pvp and you're gonna like it");
+        
+        //more to come
+            //pvp or ai
+            //AI ONLY: choose color
     }
     
     boolean checkMove(int row, int col, char clr)
@@ -257,9 +284,5 @@ public class Gomoku
         UBoard.empty();
         turnCounter = 1;
             //needs to be set to 1; checked for after turnCounter increment
-    }
-    
-    
-    
-    
+    }    
 }
