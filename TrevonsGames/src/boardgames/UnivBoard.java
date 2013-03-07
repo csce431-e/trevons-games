@@ -19,12 +19,13 @@ public class UnivBoard
 	{
 		rows.setSize(16);
 	}
+        
+        
 
 	public void play(int row, int col, char s)
         {
             rows.elementAt(row).squares.elementAt(col).setState(s);
         }
-        
 	public void unplay (int row, int col)
         {
             play(row,col,'+');
