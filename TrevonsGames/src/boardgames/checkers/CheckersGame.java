@@ -19,7 +19,7 @@ public class CheckersGame {
         b = new CheckersBoard();
         turn = Owner.PLAYER1;
         
-        b.printBoard();
+        //b.printBoard();
         sendMove();
     }
     
@@ -48,9 +48,11 @@ public class CheckersGame {
                 x2 = sc.nextInt();
                 y2 = sc.nextInt();
 
-                //CheckersMove m = new CheckersMove(b.board.get(y1).get(x1), b.board.get(y2).get(x2));
+                CheckersMove m;
+                m = new CheckersMove(CheckersBoard.board.get(x1).get(y1),
+           CheckersBoard.board.get(x2).get(y2));
                 
-                b.makeMove(b.board.get(y1).get(x1),  b.board.get(y2).get(x2));
+                b.makeMove(m);
             } 
             else if (choice.equals("j")) 
             {
@@ -71,15 +73,12 @@ public class CheckersGame {
                 x3 = sc.nextInt();
                 y3 = sc.nextInt();
 
-                CheckersMove m = new CheckersMove(b.board.get(y1).get(x1), b.board.get(y2).get(x2), b.board.get(y3).get(x3));
+                CheckersJump m = new CheckersJump(CheckersBoard.board.get(x1).get(y1), 
+                        CheckersBoard.board.get(x2).get(y2), CheckersBoard.board.get(x3).get(y3));
+               
                 b.makeMove(m);
             }
         }
-        
-        
-        
-        
-        
     }
 
     public static void main(String args[])

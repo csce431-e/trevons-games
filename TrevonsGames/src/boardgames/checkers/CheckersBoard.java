@@ -28,7 +28,7 @@ public class CheckersBoard {
             ArrayList<CheckersCell> currentRow = new ArrayList<>();
             for(int j =0; j< BOARDSIZE; j++) 
             {
-                currentRow.add(new CheckersCell(Owner.EMPTY,j,i));
+                currentRow.add(new CheckersCell(Owner.EMPTY,i,j));
             }
             
             board.add(currentRow);
@@ -107,7 +107,7 @@ public class CheckersBoard {
         System.out.println("\n");
     }
     
-    public boolean jump(CheckersMove move)
+    /*public boolean jump(CheckersMove move)
     {
         CheckersCell s = board.get(move.source.y).get(move.source.x);
         CheckersCell m = board.get(move.middle.y).get(move.middle.x);
@@ -119,11 +119,20 @@ public class CheckersBoard {
         d.setOwner(opp);
         
         return false;
-    }
+    }*/
     
     public boolean makeMove(CheckersMove m)
     {
-        if(CheckersCell.isValidMove(m))
+        if(m.updateBoard(this))
+        {
+            printBoard();
+            return true;
+        }
+        
+        System.out.println("Invalid Move");
+        return false;
+        
+        /*if(CheckersCell.isValidMove(m))
         {
             int xDest = m.dest.x;
             int yDest = m.dest.y;
@@ -141,11 +150,11 @@ public class CheckersBoard {
         }
         
         System.out.println("Invalid Move: " + m.toString());
-        return false;
+        return false;*/
     }
     
     
-    public boolean makeMove(CheckersCell source, CheckersCell dest)
+    /*public boolean makeMove(CheckersCell source, CheckersCell dest)
     {
         
         CheckersMove m = new CheckersMove(source, dest);
@@ -163,7 +172,7 @@ public class CheckersBoard {
         }
         System.out.println("Invalid Move: " + m.toString());
         return false;
-    }
+    }*/
     
     public boolean jump(CheckersCell source, CheckersCell dest)
     {

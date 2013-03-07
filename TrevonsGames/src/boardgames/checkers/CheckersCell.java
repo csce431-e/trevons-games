@@ -87,7 +87,7 @@ public class CheckersCell {
         newLocation1.x = newX;
         newLocation1.y = newY;
         CheckersMove m1 = new CheckersMove(this, newLocation1);
-        if (isValidMove(m1)) {
+        if (m1.isValidMove()) {
             moves.add(m1);
         }
 
@@ -97,7 +97,7 @@ public class CheckersCell {
         newLocation2.x = newX;
         newLocation2.y = newY;
         CheckersMove m2 = new CheckersMove(this, newLocation2);
-        if (isValidMove(m2)) {
+        if (m2.isValidMove()) {
             moves.add(m2);
         }
 
@@ -130,7 +130,7 @@ public class CheckersCell {
         jumpDest.add(new CheckersCell(this.x + 2, this.y - 2));
         jumpDest.add(new CheckersCell(this.x - 2, this.y - 2));
 
-        //delete adjacent cells that are off the board
+        //delete destination cells that are off the board
         Iterator<CheckersCell> it = jumpDest.iterator();
         while (it.hasNext()) {
             if (!isValidCell(it.next())) {
@@ -146,7 +146,7 @@ public class CheckersCell {
             CheckersCell mid = getMid(this, j);
             if(mid.owner == opponent)
             {
-                CheckersMove m = new CheckersMove(this,mid,j);
+                CheckersMove m = new CheckersJump(this,mid,j);
                 jumps.add(m);
             }
         }
@@ -165,42 +165,7 @@ public class CheckersCell {
     }
     //Checks if moving between two cells is valid
 
-    public static boolean isValidMove(CheckersMove m) {
-        boolean isValid = true;
-        
-        if(m.dest.x > m.source.x + 2)
-        {
-            isValid = false;
-        }
-        
-        if(m.dest.x < m.source.x - 2)
-        {
-            isValid = false;
-        }
-        
-        if(m.dest.y == m.source.y)
-        {
-            isValid = false;
-        }
-        
-        if (m.source.owner == Owner.EMPTY) {
-            isValid = false;
-        }
-
-        if (m.source.x < 0 || m.source.x > 8) {
-            isValid = false;
-        }
-
-        if (m.dest.x < 0 || m.dest.x > 8) {
-            isValid = false;
-        }
-
-        if (m.dest.owner != Owner.EMPTY) {
-            isValid = false;
-        }
-
-        return isValid;
-    }
+    
 
     //makes the calling cell equal to the parameter c
     public void updateCell(CheckersCell c) {
