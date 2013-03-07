@@ -71,36 +71,43 @@ public class CheckersCell {
     //Returns an array of the moves available from a given cell
     public ArrayList<CheckersMove> getMoves() {
         ArrayList<CheckersMove> moves = new ArrayList<>();
-
+        ArrayList< ArrayList< CheckersCell>> b = CheckersBoard.board;
+        
         int newX = 0;
         int newY = 0;
 
         if (this.owner == Owner.PLAYER2) {
-            newY = this.y + 1;
+            newX = this.x + 1;
         } else {
-            newY = this.y - 1;
+            newX = this.x - 1;
         }
 
         //Add left move
-        newX = this.x - 1;
+        newY = this.y - 1;
         CheckersCell newLocation1 = new CheckersCell();
         newLocation1.x = newX;
         newLocation1.y = newY;
-        CheckersMove m1 = new CheckersMove(this, newLocation1);
-        if (m1.isValidMove()) {
-            moves.add(m1);
+        if(isValidCell(newLocation1))
+        {
+            newLocation1 = b.get(newLocation1.x).get(newLocation1.y);
+            CheckersMove m1 = new CheckersMove(this, newLocation1);
+            if (m1.isValidMove()) {
+                moves.add(m1);
+            }
         }
-
         //Add right move
-        newX = this.x + 1;
+        newY = this.y + 1;
         CheckersCell newLocation2 = new CheckersCell();
         newLocation2.x = newX;
         newLocation2.y = newY;
-        CheckersMove m2 = new CheckersMove(this, newLocation2);
-        if (m2.isValidMove()) {
-            moves.add(m2);
+        if(isValidCell(newLocation2))
+        {
+            newLocation2 = b.get(newLocation2.x).get(newLocation2.y);
+            CheckersMove m2 = new CheckersMove(this, newLocation2);
+            if (m2.isValidMove()) {
+                moves.add(m2);
+            }
         }
-
         return moves;
     }
 
@@ -155,13 +162,15 @@ public class CheckersCell {
     }
 
     public static boolean isValidCell(CheckersCell c) {
-        boolean isValid = true;
 
-        if (c.x < 0 || c.x > 8) {
-            isValid = false;
+        if (c.x < 0 || c.x >= 8) {
+            return false;
+        }
+        if (c.y < 0 || c.y >= 8) {
+            return false;
         }
 
-        return isValid;
+        return true;
     }
     //Checks if moving between two cells is valid
 

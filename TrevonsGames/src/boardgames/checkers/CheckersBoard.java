@@ -122,6 +122,19 @@ public class CheckersBoard {
         return false;
     }*/
     
+    public ArrayList<CheckersMove> getAllMoves()
+    {
+        Owner o = currentGame.turn;
+        ArrayList<CheckersMove> moves = new ArrayList();
+        
+        for(CheckersCell c: o.pieces)
+        {
+            moves.addAll(c.getMoves());
+        }
+        
+        return moves;
+    }
+    
     public boolean makeMove(CheckersMove m)
     {
         Owner currentOwner = m.source.getOwner();
@@ -186,6 +199,20 @@ public class CheckersBoard {
         System.out.println("Invalid Move: " + m.toString());
         return false;
     }*/
+    
+    //returns the winner of the game. if the game is not over, returns empty
+    public Owner isGameOver()
+    {
+        if(Owner.PLAYER1.pieces.isEmpty() == true)
+        {
+            return Owner.PLAYER2;
+        }
+        else if(Owner.PLAYER2.pieces.isEmpty() == true)
+        {
+            return Owner.PLAYER1;
+        }
+        return Owner.EMPTY;
+    }
     
     public boolean jump(CheckersCell source, CheckersCell dest)
     {
