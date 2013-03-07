@@ -11,12 +11,13 @@ import java.util.*;
  */
 public class CheckersGame {
     
-    CheckersBoard b;
-    Owner turn;
+    public CheckersBoard b;
+    public Owner turn;
+    public boolean turnCompleted;
     
     public void initCheckers()
     {
-        b = new CheckersBoard();
+        b = new CheckersBoard(this);
         turn = Owner.PLAYER1;
         
         //b.printBoard();
@@ -28,12 +29,16 @@ public class CheckersGame {
         
         for(;;)
         {
+            turnCompleted = false;
             System.out.println("Current Turn: " + turn.toString());
 
             Scanner sc = new Scanner(System.in);
 
             System.out.println("Enter m or j to move or jump");
             String choice = sc.next();
+            
+            CheckersMove m = new CheckersMove();
+            
             if (choice.equals("m")) 
             {
                 System.out.println("Enter coordinates of piece that will be moved: ");
@@ -48,11 +53,10 @@ public class CheckersGame {
                 x2 = sc.nextInt();
                 y2 = sc.nextInt();
 
-                CheckersMove m;
-                m = new CheckersMove(CheckersBoard.board.get(x1).get(y1),
-           CheckersBoard.board.get(x2).get(y2));
                 
-                b.makeMove(m);
+                m = new CheckersMove(CheckersBoard.board.get(x1).get(y1),
+                    CheckersBoard.board.get(x2).get(y2));
+                
             } 
             else if (choice.equals("j")) 
             {
@@ -72,11 +76,22 @@ public class CheckersGame {
 
                 x3 = sc.nextInt();
                 y3 = sc.nextInt();
-
-                CheckersJump m = new CheckersJump(CheckersBoard.board.get(x1).get(y1), 
+                
+                //CheckersJump j;
+                m = new CheckersJump(CheckersBoard.board.get(x1).get(y1), 
                         CheckersBoard.board.get(x2).get(y2), CheckersBoard.board.get(x3).get(y3));
-               
-                b.makeMove(m);
+                
+                //m = (CheckersMove)j;
+                
+            }
+            
+            if (b.makeMove(m)) 
+            {
+                turnCompleted = true;
+            }
+            if(turnCompleted == true)
+            {
+                turn = turn.opposite();
             }
         }
     }

@@ -18,10 +18,11 @@ public class CheckersBoard {
      */
     public static int BOARDSIZE = 8;
     public static ArrayList< ArrayList<CheckersCell> > board = new ArrayList<>();
+    public CheckersGame currentGame;
     
-    
-    public CheckersBoard()
+    public CheckersBoard(CheckersGame g)
     {
+        currentGame = g;
         //Create nxn board
         for(int i = 0; i < BOARDSIZE; i++)
         {
@@ -123,6 +124,18 @@ public class CheckersBoard {
     
     public boolean makeMove(CheckersMove m)
     {
+        Owner currentOwner = m.source.getOwner();
+        if(currentOwner == Owner.EMPTY)
+        {
+            System.out.println("There is no piece there!");
+            return false;
+        }
+        else if(currentOwner != currentGame.turn)
+        {
+            System.out.println("It is not your turn!");
+            return false;
+        }
+        
         if(m.updateBoard(this))
         {
             printBoard();

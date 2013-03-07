@@ -82,7 +82,7 @@ public class CheckersMove {
             {
                 return false;
             }
-            
+           
         }
         else
         {

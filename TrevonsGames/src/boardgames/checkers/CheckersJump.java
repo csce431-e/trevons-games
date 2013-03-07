@@ -34,7 +34,7 @@ public class CheckersJump extends CheckersMove {
         CheckersCell mid = b.board.get(middle.x).get(middle.y);
         CheckersCell d = b.board.get(dest.x).get(dest.y);
         
-        if(isValidMove())
+        if(isValidMove() && isValidJump())
         {
             Owner o = src.getOwner();
             src.setOwner(Owner.EMPTY);
@@ -51,12 +51,24 @@ public class CheckersJump extends CheckersMove {
         return false;
     }
     
+    public boolean isValidJump()
+    {
+        Owner opponent = source.getOwner().opposite();
+        
+        if(middle.getOwner() != opponent)
+        {
+            return false;
+        }
+       
+        return true;
+    }
+    
     @Override
     public String toString()
     {
         String s = source.x + "," + source.y;
         String m = middle.x + "," + middle.y;
         String d = dest.x + "," + dest.y;
-        return s + " over " + m + "to" + d;
+        return s + " over " + m + " to " + d;
     }
 }
