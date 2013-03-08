@@ -29,6 +29,7 @@ public class ClientPanel extends javax.swing.JPanel {
     JButton middleButton;
     ArrayList<ArrayList<JButton>> buts;
     ArrayList<Thread> threads;
+    byte [] serverIP;
     
     ArrayList<JButton> column1;
     ArrayList<JButton> column2;
@@ -46,7 +47,7 @@ public class ClientPanel extends javax.swing.JPanel {
     
     boolean myTurn;
     
-    public ClientPanel() {
+    public ClientPanel(int[] ip) {
         initComponents();
         
         b = new SolitaireBoard();
@@ -63,7 +64,8 @@ public class ClientPanel extends javax.swing.JPanel {
         x2 = 0;
         y1 = 0;
         y2 = 0;
-        
+        //serverIP = new byte[] {(byte)ip[0],(byte)ip[1],(byte)ip[2],(byte)ip[3]};
+        serverIP = new byte[] {(byte)172,(byte)17,(byte)105,(byte)105};
         init_buttons();
         run();
         waitForMove();
@@ -157,9 +159,9 @@ public class ClientPanel extends javax.swing.JPanel {
         {
             //Scanner scan = new Scanner(System.in);
             //1. creating a socket to connect to the server
-            byte [] b = new byte[] {(byte)172,(byte)17,(byte)105,(byte)105};
+            
             InetAddress addr = null;
-            addr = InetAddress.getByAddress(b);
+            addr = InetAddress.getByAddress(serverIP);
             requestSocket = new Socket(addr, 2004);
             System.out.println("Connected to localhost in port 2004");
             //2. get Input and Output streams
