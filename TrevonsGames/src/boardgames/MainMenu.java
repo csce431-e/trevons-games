@@ -56,8 +56,8 @@ public class MainMenu extends javax.swing.JPanel {
         jButton7 = new javax.swing.JButton();
         jButton8 = new javax.swing.JButton();
         ip_input_box = new javax.swing.JTextField();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
+        locally_radiob = new javax.swing.JRadioButton();
+        online_radiob = new javax.swing.JRadioButton();
 
         jButton1.setText("Peg Solitaire");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -122,15 +122,15 @@ public class MainMenu extends javax.swing.JPanel {
             }
         });
 
-        buttonGroup1.add(jRadioButton1);
-        jRadioButton1.setSelected(true);
-        jRadioButton1.setText("Play Locally");
+        buttonGroup1.add(locally_radiob);
+        locally_radiob.setSelected(true);
+        locally_radiob.setText("Play Locally");
 
-        buttonGroup1.add(jRadioButton2);
-        jRadioButton2.setText("Play Online");
-        jRadioButton2.addActionListener(new java.awt.event.ActionListener() {
+        buttonGroup1.add(online_radiob);
+        online_radiob.setText("Play Online");
+        online_radiob.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton2ActionPerformed(evt);
+                online_radiobActionPerformed(evt);
             }
         });
 
@@ -154,25 +154,24 @@ public class MainMenu extends javax.swing.JPanel {
                             .addComponent(jButton8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(locally_radiob)
+                        .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(jRadioButton1)
-                                .addContainerGap())
-                            .addGroup(layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(0, 0, Short.MAX_VALUE))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(57, 57, 57)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(57, 57, 57)
+                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 57, Short.MAX_VALUE))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jRadioButton2)
+                .addComponent(online_radiob)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -189,9 +188,9 @@ public class MainMenu extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(ip_input_box, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jRadioButton1))
+                    .addComponent(locally_radiob))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jRadioButton2)
+                .addComponent(online_radiob)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -225,7 +224,14 @@ public class MainMenu extends javax.swing.JPanel {
         textLabel.setPreferredSize(new Dimension(300,100));
         gameFrame.getContentPane().add(textLabel,BorderLayout.CENTER);
         
-        gameFrame.add((pegGui));
+        if(locally_radiob.isSelected())
+        {
+            gameFrame.add((pegGui));
+        }
+        else
+        {
+            //trigger another panel to ask if client or server and if client what the ip of the server is
+        }
         
         gameFrame.setLocationRelativeTo(null);
         gameFrame.pack();
@@ -284,7 +290,7 @@ public class MainMenu extends javax.swing.JPanel {
         oldindex = index+1;
         index = str.indexOf('.',index);
         d = Integer.parseInt(str.substring(oldindex, index)); //from 0 to index of first period
-        int[] ip = new int[]{1,2,3};
+        int[] ip = new int[]{a,b,c,d};
         client = new ClientPanel(ip);
         gameFrame.add((client));
         
@@ -294,6 +300,7 @@ public class MainMenu extends javax.swing.JPanel {
         
         SolitaireGame g = new SolitaireGame();
         g.initGame();
+        client.waitForMove();
     }//GEN-LAST:event_clientClicked
 
     private void serverClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_serverClicked
@@ -319,9 +326,9 @@ public class MainMenu extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_ip_input_boxActionPerformed
 
-    private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton2ActionPerformed
+    private void online_radiobActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_online_radiobActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jRadioButton2ActionPerformed
+    }//GEN-LAST:event_online_radiobActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
@@ -334,7 +341,7 @@ public class MainMenu extends javax.swing.JPanel {
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
+    private javax.swing.JRadioButton locally_radiob;
+    private javax.swing.JRadioButton online_radiob;
     // End of variables declaration//GEN-END:variables
 }
