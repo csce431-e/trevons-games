@@ -8,6 +8,7 @@ import boardgames.Gomoku.*;
 import boardgames.BattleShip.*;
 import boardgames.checkers.*;
 
+import java.util.ArrayList;
 import java.awt.*;
 import javax.swing.*;
 
@@ -276,21 +277,25 @@ public class MainMenu extends javax.swing.JPanel {
         textLabel.setPreferredSize(new Dimension(300,100));
         gameFrame.getContentPane().add(textLabel,BorderLayout.CENTER);
         
-        int a,b,c,d,index,oldindex;
         String str = ip_input_box.getText();
-        oldindex = 0;
-        index = str.indexOf('.', 0);
-        a = Integer.parseInt(str.substring(oldindex, index)); //from 0 to index of first period
-        oldindex = index+1;
-        index = str.indexOf('.',index);
-        b = Integer.parseInt(str.substring(oldindex, index)); //from 0 to index of first period
-        oldindex = index+1;
-        index = str.indexOf('.',index);
-        c = Integer.parseInt(str.substring(oldindex, index)); //from 0 to index of first period
-        oldindex = index+1;
-        index = str.indexOf('.',index);
-        d = Integer.parseInt(str.substring(oldindex, index)); //from 0 to index of first period
-        int[] ip = new int[]{a,b,c,d};
+        //declare arraylist
+        //pull chars one at a time appending to a temp string until char == '.', then convert to int and add to array list
+        ArrayList<Integer> ip = new ArrayList<>();
+        String temp_s = "";
+        for(int i = 0; i<str.length(); i++)
+        {
+            if(str.charAt(i) == '.')
+            {
+                ip.add(Integer.parseInt(temp_s));
+                temp_s = "";
+            }
+            else
+            {
+                temp_s += str.charAt(i);
+            }
+        }
+        ip.add(Integer.parseInt(temp_s));
+        System.out.println(ip.toString());
         client = new ClientPanel(ip);
         gameFrame.add((client));
         
