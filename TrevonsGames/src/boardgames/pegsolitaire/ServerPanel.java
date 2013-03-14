@@ -906,6 +906,7 @@ public class ServerPanel extends javax.swing.JPanel {
         destination.setBackground(Color.BLUE);  //set dest to filled
         firstChoice.setBackground(Color.WHITE);  //set source to empty
         middleButton.setBackground(Color.WHITE);  //set middel to empty
+        this.paintImmediately(0, 0, 441, 348);
     }
     
     boolean game_over()

@@ -53,7 +53,7 @@ public class ClientPanel extends javax.swing.JPanel {
     String message;
     
     
-    public ClientPanel(int[] ip) {
+    public ClientPanel(ArrayList<Integer> ip) {
         initComponents();
         
         b = new SolitaireBoard();
@@ -71,8 +71,8 @@ public class ClientPanel extends javax.swing.JPanel {
         y1 = 0;
         y2 = 0;
         //have something to test if that ip is reachable (maybe force a call to ping or something
-        //serverIP = new byte[] {(byte)ip[0],(byte)ip[1],(byte)ip[2],(byte)ip[3]};
-        serverIP = new byte[] {(byte)172,(byte)17,(byte)105,(byte)105};
+        serverIP = new byte[] {(byte)ip.get(0).intValue(),(byte)ip.get(1).intValue(),(byte)ip.get(2).intValue(),(byte)ip.get(3).intValue()};
+        //serverIP = new byte[] {(byte)172,(byte)17,(byte)105,(byte)105};
         init_buttons();
         run();
         //waitForMove(); //moved this into the call from mainMenu
@@ -881,10 +881,12 @@ public class ClientPanel extends javax.swing.JPanel {
     {
         //firstChoice is the source
         //middleButton is the middle
-        
+        System.out.print("graphic started");
         destination.setBackground(Color.BLUE);  //set dest to filled
         firstChoice.setBackground(Color.WHITE);  //set source to empty
         middleButton.setBackground(Color.WHITE);  //set middel to empty
+        this.paintImmediately(0, 0, 441, 348);
+        System.out.print("graphic finished");
     }
     
     boolean game_over()
