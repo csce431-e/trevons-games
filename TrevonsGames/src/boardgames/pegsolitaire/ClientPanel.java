@@ -1,6 +1,7 @@
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
+ * pb4190@cjpeg.com
  */
 package boardgames.pegSolitaire;
 import java.util.*;
@@ -29,6 +30,7 @@ public class ClientPanel extends javax.swing.JPanel {
     JButton middleButton;
     ArrayList<ArrayList<JButton>> buts;
     ArrayList<Thread> threads;
+    byte [] serverIP;
     
     ArrayList<JButton> column1;
     ArrayList<JButton> column2;
@@ -44,9 +46,15 @@ public class ClientPanel extends javax.swing.JPanel {
     int y1;
     int y2;
     
+    //online veriables
     boolean myTurn;
+    Socket requestSocket;
+    ObjectOutputStream out;
+    ObjectInputStream in;
+    String message;
     
-    public ClientPanel() {
+    
+    public ClientPanel(ArrayList<Integer> ip) {
         initComponents();
         
         b = new SolitaireBoard();
@@ -63,11 +71,14 @@ public class ClientPanel extends javax.swing.JPanel {
         x2 = 0;
         y1 = 0;
         y2 = 0;
-        
+        //have something to test if that ip is reachable (maybe force a call to ping or something
+        serverIP = new byte[] {(byte)ip.get(0).intValue(),(byte)ip.get(1).intValue(),(byte)ip.get(2).intValue(),(byte)ip.get(3).intValue()};
+        //serverIP = new byte[] {(byte)172,(byte)17,(byte)105,(byte)105};
         init_buttons();
         run();
-        waitForMove();
+        //waitForMove(); //moved this into the call from mainMenu
     }
+    
     
     private void init_buttons()
     {
@@ -145,21 +156,15 @@ public class ClientPanel extends javax.swing.JPanel {
         buts.add(column7);
     }
     
-    Socket requestSocket;
-    ObjectOutputStream out;
-    ObjectInputStream in;
-    String message;
-
     
+
+    //make no change
     private void run()
     {
         try
         {
-            //Scanner scan = new Scanner(System.in);
-            //1. creating a socket to connect to the server
-            byte [] b = new byte[] {(byte)172,(byte)17,(byte)105,(byte)105};
             InetAddress addr = null;
-            addr = InetAddress.getByAddress(b);
+            addr = InetAddress.getByAddress(serverIP);
             requestSocket = new Socket(addr, 2004);
             System.out.println("Connected to localhost in port 2004");
             //2. get Input and Output streams
@@ -168,31 +173,6 @@ public class ClientPanel extends javax.swing.JPanel {
             in = new ObjectInputStream(requestSocket.getInputStream());
             //3: Communicating with the server
             try { message = (String)in.readObject(); } catch(ClassNotFoundException classNot){ System.err.println("data received in unknown format"); }
-            //System.out.println("server>" + message);
-            
-            
-            
-            /*do
-            {
-                try
-                {
-                                //System.out.println("f1");
-                    message = (String)in.readObject();
-                                //out.flush();
-                                //System.out.println("f2");
-                    System.out.println("server>" + message); //print what server said
-                                //out.flush();
-                                //System.out.println("f3");
-                    message = scan.next();
-                                //System.out.println("f4");
-                    sendMessage(message);
-                                //System.out.println("f5");
-                }
-                catch(ClassNotFoundException classNot)
-                {
-                    System.err.println("data received in unknown format");
-                }
-            } while(!message.equals("bye"));*/
         }
         catch(UnknownHostException unknownHost)
         {
@@ -202,21 +182,9 @@ public class ClientPanel extends javax.swing.JPanel {
         {
             ioException.printStackTrace();
         }
-        /*finally
-        {
-            //4: Closing connection
-            try
-            {
-                in.close();
-                out.close();
-                requestSocket.close();
-            }
-            catch(IOException ioException)
-            {
-                ioException.printStackTrace();
-            }
-        }*/
     }
+    
+    //copy directly
     void sendMessage(String msg)
     {
         try
@@ -230,12 +198,66 @@ public class ClientPanel extends javax.swing.JPanel {
             ioException.printStackTrace();
         }
     }
-    /*public static void main(String[] args)
+    
+    //only difference is how to actually make the move received and apply to graphics
+    public void waitForMove()
     {
-        ClientPanel client = new ClientPanel();
-        client.run();
-    }*/
-
+        //wait for your turn, continuously ask for msg from in till you get it
+        try
+        {
+            System.out.println("Waiting for move");
+            message = "nothing";
+            //while(message.equals("nothing"))
+            //{
+                //System.out.println("Message still nothing");
+                message = (String)in.readObject();
+                System.out.println("Message received: "+message);
+                SolitaireMove otherPlayerMove = getMoveFromString(message);
+                b.make_move(otherPlayerMove);
+                
+                firstChoice = buts.get((-otherPlayerMove.src.y)+3).get((otherPlayerMove.src.x)+3);
+                middleButton = buts.get((-otherPlayerMove.middle.y)+3).get((otherPlayerMove.middle.x)+3);
+                JButton clicked = buts.get((-otherPlayerMove.dest.y)+3).get((otherPlayerMove.dest.x)+3);
+                apply_move_to_graphics(clicked);
+                myTurn = true;
+            //}
+            System.out.println(message);
+        }
+        catch(ClassNotFoundException classNot)
+        {
+            System.err.println("data received in unknown format");
+        } 
+        catch (IOException ex) 
+        {
+            Logger.getLogger(ClientPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }   
+    }
+    
+    //theirs will have to be completely different: some way to parse a string into any possible move
+    SolitaireMove getMoveFromString(String s)
+    {
+        int srcx = Integer.parseInt(s.substring(0, 2));
+        int srcy = Integer.parseInt(s.substring(2, 4));
+        int destx = Integer.parseInt(s.substring(4, 6));
+        int desty = Integer.parseInt(s.substring(6, 8));
+        int midx = Integer.parseInt(s.substring(8, 10));
+        int midy = Integer.parseInt(s.substring(10, 12));
+        //handle negative numbers
+        srcx-=20;
+        srcy-=20;
+        destx-=20;
+        desty-=20;
+        midx-=20;
+        midy-=20;
+        
+        //break the string into the 3 coordinates
+        SolitaireCoordinate src = new SolitaireCoordinate(srcx,srcy,true,true);
+        SolitaireCoordinate dest = new SolitaireCoordinate(destx,desty,true,true);
+        SolitaireCoordinate mid = new SolitaireCoordinate(midx,midy,true,true);
+        //set the parts of a local move to the 3 coordinates
+        SolitaireMove otherPlayerMove = new SolitaireMove(src,dest,mid);
+        return otherPlayerMove;
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -245,6 +267,7 @@ public class ClientPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel();
         jButton16 = new javax.swing.JButton();
         jButton32 = new javax.swing.JButton();
         jButton14 = new javax.swing.JButton();
@@ -279,6 +302,17 @@ public class ClientPanel extends javax.swing.JPanel {
         jButton1 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
 
         jButton16.setBackground(new java.awt.Color(0, 0, 255));
         jButton16.addActionListener(new java.awt.event.ActionListener() {
@@ -812,63 +846,7 @@ public class ClientPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_jButtonActionPerformed
 
-    void waitForMove()
-    {
-        //wait for your turn, continuously ask for msg from in till you get it
-        try
-        {
-            System.out.println("Waiting for move");
-            message = "nothing";
-            while(message.equals("nothing"))
-            {
-                System.out.println("Message still nothing");
-                message = (String)in.readObject();
-                System.out.println("Message now: "+message);
-                SolitaireMove otherPlayerMove = getMoveFromString(message);
-                b.make_move(otherPlayerMove);
-                
-                firstChoice = buts.get((-otherPlayerMove.src.y)+3).get((otherPlayerMove.src.x)+3);
-                middleButton = buts.get((-otherPlayerMove.middle.y)+3).get((otherPlayerMove.middle.x)+3);
-                JButton clicked = buts.get((-otherPlayerMove.dest.y)+3).get((otherPlayerMove.dest.x)+3);
-                apply_move_to_graphics(clicked);
-                myTurn = true;
-            }
-            System.out.println(message);
-        }
-        catch(ClassNotFoundException classNot)
-        {
-            System.err.println("data received in unknown format");
-        } 
-        catch (IOException ex) 
-        {
-            Logger.getLogger(ClientPanel.class.getName()).log(Level.SEVERE, null, ex);
-        }   
-    }
     
-    SolitaireMove getMoveFromString(String s)
-    {
-        int srcx = Integer.parseInt(s.substring(0, 2));
-        int srcy = Integer.parseInt(s.substring(2, 4));
-        int destx = Integer.parseInt(s.substring(4, 6));
-        int desty = Integer.parseInt(s.substring(6, 8));
-        int midx = Integer.parseInt(s.substring(8, 10));
-        int midy = Integer.parseInt(s.substring(10, 12));
-        //handle negative numbers
-        srcx-=20;
-        srcy-=20;
-        destx-=20;
-        desty-=20;
-        midx-=20;
-        midy-=20;
-        
-        //break the string into the 3 coordinates
-        SolitaireCoordinate src = new SolitaireCoordinate(srcx,srcy,true,true);
-        SolitaireCoordinate dest = new SolitaireCoordinate(destx,desty,true,true);
-        SolitaireCoordinate mid = new SolitaireCoordinate(midx,midy,true,true);
-        //set the parts of a local move to the 3 coordinates
-        SolitaireMove otherPlayerMove = new SolitaireMove(src,dest,mid);
-        return otherPlayerMove;
-    }
     
      private int getX(JButton r)
     {
@@ -904,10 +882,12 @@ public class ClientPanel extends javax.swing.JPanel {
     {
         //firstChoice is the source
         //middleButton is the middle
-        
+        System.out.print("graphic started");
         destination.setBackground(Color.BLUE);  //set dest to filled
         firstChoice.setBackground(Color.WHITE);  //set source to empty
         middleButton.setBackground(Color.WHITE);  //set middel to empty
+        this.paintImmediately(0, 0, 441, 348);
+        System.out.print("graphic finished");
     }
     
     boolean game_over()
@@ -964,5 +944,6 @@ public class ClientPanel extends javax.swing.JPanel {
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
+    private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }
