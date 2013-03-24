@@ -46,10 +46,10 @@ public class BattleShip {
     }
         
         //add all the ships from largest to smallest
-        //ships.add( new Ship(5,"Battleship"));
-       // ships.add( new Ship(4,"Cruiser"));
-       // ships.add( new Ship(3,"Submarine"));
-       // ships.add( new Ship(3,"Destroyer"));
+        ships.add( new Ship(5,"Battleship"));
+        ships.add( new Ship(4,"Cruiser"));
+        ships.add( new Ship(3,"Submarine"));
+        ships.add( new Ship(3,"Destroyer"));
         ships.add( new Ship(2,"PT Boat"));
         
         //create a method to place ships so when we move to GUI we only have to rewrite the method
@@ -58,21 +58,22 @@ public class BattleShip {
         
     }
     
-    public int placeShips(){
+    public int placeShips(Ship.point p, int shipNo, String orientation){
         //this method will be remade for GUI version
-        int x=0, y=0;
-        String orientation = "N";
-        for(int i=0; i<ships.size();i++){
+        int x=p.x, y=p.y;
+        //String orientation = "NORTH";
+        int i = shipNo;
+        //for(int i=0; i<ships.size();i++){
             System.out.println(i + " " + ships.size());
             System.out.println("Ship: " + ships.get(i).name() + 
                                ". Size: " + ships.get(i).size());
             
-            System.out.println("X coordinate: ");
-            x=in.nextInt();
-            System.out.println("Y coordinate: ");
-            y=in.nextInt();
-            System.out.println("Orientation: ");
-            orientation=in.next();
+            System.out.println("X coordinate: \n" + x);
+            //x=in.nextInt();
+            System.out.println("Y coordinate: \n" + y);
+            //y=in.nextInt();
+            System.out.println("Orientation: \n" + orientation);
+            //orientation=in.next();
             
             //System.out.println(orientation);
             
@@ -80,7 +81,7 @@ public class BattleShip {
             String locationOK = checkShipInBounds(i, x, y, orientation);
             if(locationOK != "OK"){
                 System.out.println("Cannot place ship at that location because " + locationOK + '.');
-                i--;
+                return -1;
             }
             else{
                 switch(orientation.charAt(0)){
@@ -88,9 +89,9 @@ public class BattleShip {
                         System.out.println("i = " + i);
                         for(int o=0;o<ships.get(i).size();o++){
                             if(!gameBoard[x][y+o].equals("o")){
-                                System.out.println("Collision!  A boat is already in one of the locations");i--;
+                                System.out.println("Collision!  A boat is already in one of the locations");return -1;
 
-                                break;
+                                //break;
                             }
                         }
                         ships.get(i).placeShip(new Ship.point(x,y), orientation);
@@ -106,9 +107,9 @@ public class BattleShip {
                     case 'E':
                         for(int o=0;o<ships.get(i).size();o++){
                             if(!gameBoard[x+o][y].equals("o")){
-                                System.out.println("Collision! " + gameBoard[x+o][y] +  " A boat is already in one of the locations " + x + " " + y);i--;
+                                System.out.println("Collision! " + gameBoard[x+o][y] +  " A boat is already in one of the locations " + x + " " + y); return -1;
 
-                                break;
+                                //break;
                             }
                         }
                         ships.get(i).placeShip(new Ship.point(x,y), orientation);
@@ -125,9 +126,9 @@ public class BattleShip {
                     case 'S':
                         for(int o=0;o<ships.get(i).size();o++){
                             if(!gameBoard[x][y-o].equals("o")){
-                                System.out.println("Collision!  A boat is already in one of the locations");i--;
+                                System.out.println("Collision!  A boat is already in one of the locations"); return -1;
 
-                                break;
+                                //break;
                             }
                         }
                         ships.get(i).placeShip(new Ship.point(x,y), orientation);
@@ -143,9 +144,9 @@ public class BattleShip {
                     case 'W':
                         for(int o=0;o<ships.get(i).size();o++){
                             if(!gameBoard[x-o][y].equals("o")){
-                                System.out.println("Collision!  A boat is already in one of the locations");i--;
+                                System.out.println("Collision!  A boat is already in one of the locations"); return -1;
 
-                                break;
+                                //break;
                             }
                         }
                         ships.get(i).placeShip(new Ship.point(x,y), orientation);
@@ -159,13 +160,13 @@ public class BattleShip {
                         break;
                     default:
                         System.out.println("Error");
-                        i--;
-                        break;
+                        return -1;
+                        //break;
 
                 }
             }
             
-        }
+        //}
         return 0;
     }
     
@@ -199,6 +200,10 @@ public class BattleShip {
             System.out.println();
         }
         
+    }
+    
+    public String[][] getBoard(){
+        return gameBoard;
     }
     
     public String attackSpot(int x, int y){
@@ -249,7 +254,7 @@ public class BattleShip {
     
     public void PlayGame(){
         init();
-        placeShips();
+        //placeShips();
         showBoard();
         int game =1;
         int x, y;
