@@ -5,7 +5,7 @@
 
 package boardgames;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  *
@@ -13,18 +13,19 @@ import java.util.Vector;
  */
 public class UnivBoard 
 {
-    Vector<Row> rows;
+    ArrayList<Row> rows = new ArrayList();
 
-	UnivBoard()
+	public UnivBoard()
 	{
-		rows.setSize(16);
+		for(int i=0;i<16;++i)
+                {
+                    rows.add(i,new Row());
+                }
 	}
         
-        
-
 	public void play(int row, int col, char s)
         {
-            rows.elementAt(row).squares.elementAt(col).setState(s);
+            rows.get(row).squares.get(col).setState(s);
         }
 	public void unplay (int row, int col)
         {
@@ -33,18 +34,19 @@ public class UnivBoard
         }
 	public char getSquareState(int row, int col)
         {
-            return rows.elementAt(row).squares.elementAt(col).getState();
+            return rows.get(row).squares.get(col).getState();
         }
 	public void empty()
         {
-            for(int i=0;i<16;i++)
+            for(int i=0;i<rows.size();i++)
             {
-                 for(int i2=0;i2<16;i2++)
+                 for(int j=0;j<rows.size();j++)
                     {
-			rows.elementAt(i).squares.elementAt(i2).setState('+');
+			rows.get(i).squares.get(j).setState('+');
                     }
             }
         }
+        /* Made for Vectors, alter if you need to use
         public void changeSize(int row, int col)
         {
             rows.setSize(row);
@@ -53,5 +55,6 @@ public class UnivBoard
                 rows.elementAt(i).squares.setSize(col);
             }
             
-        }
+        }    
+        */
 }
