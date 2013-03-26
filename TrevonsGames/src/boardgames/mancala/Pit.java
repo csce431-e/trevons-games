@@ -17,6 +17,13 @@ public class Pit {
         pebbles = new ArrayList<>();
     }
     
+    Pit(int n) {
+        pebbles = new ArrayList<>();
+        for(int i =0; i<n; i++) {
+            add(new Pebble());
+        }
+    }
+    
     public void add(Pebble p){
         pebbles.add(p);
     }
