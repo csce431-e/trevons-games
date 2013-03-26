@@ -8,26 +8,13 @@ public class Square
 {
     char state;
     
-    Square()
+    public Square()
     {
 	state = '+';
             //plus acts as empty character
     }
 
-    char getState() {return state;}
-    boolean isEmpty() 
-    {
-        if(state == '+')
-        {			
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-    void setState(char s)
-    {
-        state = s;
-    }
+    public char getState() {return state;}
+    public boolean isEmpty() {return (state == '+');}
+    public void setState(char s) {state = s;}
 }
