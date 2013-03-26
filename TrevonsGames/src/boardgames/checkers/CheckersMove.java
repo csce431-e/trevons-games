@@ -130,6 +130,20 @@ public class CheckersMove {
 
         return true;
     }
+ 
+    public boolean equals(CheckersMove m)
+    {
+        if(!(m.source.equals(this.source)))
+        {
+            return false;
+        }
+        if(!(m.dest.equals(this.dest)))
+        {
+            return false;
+        }         
+        
+        return true;
+    }
     
     @Override
     public String toString()
