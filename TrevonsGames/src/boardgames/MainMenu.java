@@ -7,6 +7,7 @@ import boardgames.pegSolitaire.*;
 import boardgames.Gomoku.*;
 import boardgames.BattleShip.*;
 import boardgames.checkers.*;
+import boardgames.Mancala.*;
 
 import java.util.ArrayList;
 import java.awt.*;
@@ -260,7 +261,9 @@ public class MainMenu extends javax.swing.JPanel {
     }//GEN-LAST:event_GomokuClicked
 
     private void MancalaClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MancalaClicked
-        // TODO add your handling code here:
+        MancalaGame g = new MancalaGame();
+        
+        g.initMancala();
     }//GEN-LAST:event_MancalaClicked
 
     private void BattleshipClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BattleshipClicked
