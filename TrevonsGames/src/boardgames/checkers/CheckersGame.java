@@ -64,7 +64,6 @@ public class CheckersGame {
                     x2 = sc.nextInt();
                     y2 = sc.nextInt();
 
-
                     m = new CheckersMove(CheckersBoard.board.get(x1).get(y1),
                             CheckersBoard.board.get(x2).get(y2));
 
@@ -112,14 +111,14 @@ public class CheckersGame {
         Iterator<CheckersMove> il = l.iterator();
         CheckersMove m = il.next();
         
-        while(il.hasNext() && !b.makeMove(m))
+        boolean moveMade = b.makeMove(m);
+        
+        while(!moveMade && il.hasNext())
         {
             m = il.next();
         }
     }
     
-        
-
     public static void main(String args[])
     {
         CheckersGame g = new CheckersGame();

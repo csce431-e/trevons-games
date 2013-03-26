@@ -27,10 +27,13 @@ public enum Owner {
         {
             return PLAYER2;
         }
-        else
+        else if(this==PLAYER2)
         {
             return PLAYER1;
         }
+        else {
+            return EMPTY;
+        }   
     }
    
     @Override
