@@ -14,51 +14,7 @@ public class Gomoku
     //to keep track of recent past moves for undo
     ArrayList<Integer> recentX;
     ArrayList<Integer> recentY;
-    
-    public void initGomoku()
-    {
-        
-        initSetup();
-        
-        do
-        { 
-            ++turnCounter;
-        
-            int row=0;
-            int col=0;
-            char clr='+'; //to relay which color is playing currently
-                                //default '+' implies blank
-            
-            //needs to check for option buttons
-                 //ie: undo, restart, quit
-            
-            display();
-            
-            if(turnCounter % 2 != 0)
-            {
-                clr = 'b'; //black always goes first, affirmative action ;)
-            }
-            else {clr = 'w';}
-        
-            //getMove()
-                //take in user (or AI) input
-                //push values to row, col
-                
-            do
-            {
-                wrongMove = checkMove(row,col,clr);
-            } while (wrongMove);
-            
-            UBoard.play(row,col,clr);
-                    recentX.add(col); //col value determines x location
-                    recentY.add(row); // row value determines y location
-                
-                gameOver = checkWin(row,col,clr);
-            
-        } while (!gameOver);
-           
-    }
-    
+     
     void display()
     {//y u no work?
         
@@ -70,7 +26,8 @@ public class Gomoku
         {
             for(int i2=0;i2<16;++i2)
             {
-                state = UBoard.getSquareState(i, i2);
+                //state = '+';
+                state = UBoard.getSquareState(i, i2); //null pointer exception on this line. 
                 System.out.print(state + " ");
             }
             System.out.println("");
@@ -103,13 +60,13 @@ public class Gomoku
 	int currCol = col;
 
 	int UpperLeft	=0;
-	int Left		=0;
+	int Left	=0;
 	int LowerLeft	=0;
-	int Down		=0;
+	int Down	=0;
 	int LowerRight	=0;
-	int Right		=0;
-	int	UpperRight	=0;
-	int Up			=0;
+	int Right	=0;
+	int UpperRight	=0;
+	int Up		=0;
 
 	//read in last played location via col,row
 	//increment and decrement to check all 8 values around it
@@ -285,4 +242,52 @@ public class Gomoku
         turnCounter = 1;
             //needs to be set to 1; checked for after turnCounter increment
     }    
+    
+    public void initGomoku()
+    {
+        
+        initSetup();
+        
+        
+        
+        do
+        { 
+            ++turnCounter;
+        
+            int row=0;
+            int col=0;
+            char clr='+'; //to relay which color is playing currently
+                                //default '+' implies blank
+            
+            //needs to check for option buttons
+                 //ie: undo, restart, quit
+            
+            display();
+            
+            if(turnCounter % 2 != 0)
+            {
+                clr = 'b'; //black always goes first, affirmative action ;)
+            }
+            else {clr = 'w';}
+        
+            //getMove()
+                //take in user (or AI) input
+                //push values to row, col
+                
+            do
+            {
+                wrongMove = checkMove(row,col,clr);
+            } while (wrongMove);
+            
+            UBoard.play(row,col,clr);
+                    recentX.add(col); //col value determines x location
+                    recentY.add(row); // row value determines y location
+                
+                gameOver = checkWin(row,col,clr);
+            
+        } while (!gameOver);
+        
+        System.out.println("GAME OVER!");
+           
+    }
 }
