@@ -18,7 +18,8 @@ public class CheckersCell {
     private RowType rowType;
     int x; //x position
     int y; //y position
-
+    ArrayList< ArrayList< CheckersCell>> b = CheckersBoard.board;
+    
     //Constructors
     public CheckersCell() {
         owner = Owner.EMPTY;
@@ -70,8 +71,8 @@ public class CheckersCell {
 
     //Returns an array of the moves available from a given cell
     public ArrayList<CheckersMove> getMoves() {
+        
         ArrayList<CheckersMove> moves = new ArrayList<>();
-        ArrayList< ArrayList< CheckersCell>> b = CheckersBoard.board;
         
         int newX = 0;
         int newY = 0;
@@ -108,13 +109,18 @@ public class CheckersCell {
                 moves.add(m2);
             }
         }
+        
+        //Player must make a jump if one is available
+       
+        
         return moves;
+        
     }
 
     public CheckersCell getMid(CheckersCell src, CheckersCell dest) {
         int xPos = (src.x + dest.x) / 2;
         int yPos = (src.y + dest.y) / 2;
-        CheckersCell mid = CheckersBoard.board.get(yPos).get(xPos);
+        CheckersCell mid = b.get(xPos).get(yPos);
         return mid;
     }
 
@@ -122,21 +128,19 @@ public class CheckersCell {
         
         ArrayList<CheckersMove> jumps = new ArrayList();
         
-        Owner opponent;
-        if (owner == Owner.PLAYER1) {
-            opponent = Owner.PLAYER2;
-        } else if (owner == Owner.PLAYER2) {
-            opponent = Owner.PLAYER1;
-        } else {
-            return new ArrayList<CheckersMove>();
+        Owner opponent = owner.opposite();
+        if(opponent== Owner.EMPTY)
+        {
+            return new ArrayList();
         }
-
+        
         ArrayList<CheckersCell> jumpDest = new ArrayList();
         jumpDest.add(new CheckersCell(this.x + 2, this.y + 2));
         jumpDest.add(new CheckersCell(this.x - 2, this.y + 2));
         jumpDest.add(new CheckersCell(this.x + 2, this.y - 2));
         jumpDest.add(new CheckersCell(this.x - 2, this.y - 2));
 
+       
         //delete destination cells that are off the board
         Iterator<CheckersCell> it = jumpDest.iterator();
         while (it.hasNext()) {
@@ -149,15 +153,15 @@ public class CheckersCell {
         it = jumpDest.iterator();
         while (it.hasNext())
         {
-            CheckersCell j = it.next();
-            CheckersCell mid = getMid(this, j);
+            CheckersCell temp = it.next();
+            CheckersCell jump = b.get(temp.x).get(temp.y);
+            CheckersCell mid = getMid(this, jump);
             if(mid.owner == opponent)
             {
-                CheckersMove m = new CheckersJump(this,mid,j);
+                CheckersMove m = new CheckersJump(this,mid,jump);
                 jumps.add(m);
             }
         }
-        
         return jumps;
     }
 
@@ -182,6 +186,19 @@ public class CheckersCell {
         this.rowType = c.rowType;
         this.x = c.x;
         this.y = c.y;
+    }
+    
+    public boolean equals(CheckersCell c)
+    {
+        if(!this.owner.equals(c.owner))
+        {
+            return false;
+        }
+        if(this.x != c.x || this.y != c.y)
+        {
+            return false;
+        }
+        return true;
     }
 
     //Convert to string for console play

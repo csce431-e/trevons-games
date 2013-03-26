@@ -125,6 +125,18 @@ public class CheckersBoard {
     public ArrayList<CheckersMove> getAllMoves()
     {
         Owner o = currentGame.turn;
+        
+        ArrayList<CheckersMove> jumps = new ArrayList();
+        for(CheckersCell c: o.pieces)
+        {
+            jumps.addAll(c.getJumps());
+        }
+        
+        if(jumps.size() > 0)
+        {
+            return jumps;
+        }
+        
         ArrayList<CheckersMove> moves = new ArrayList();
         
         for(CheckersCell c: o.pieces)
@@ -146,6 +158,24 @@ public class CheckersBoard {
         else if(currentOwner != currentGame.turn)
         {
             System.out.println("It is not your turn!");
+            return false;
+        }
+        
+        ArrayList<CheckersMove> moves = getAllMoves();
+        boolean moveFound = false;
+        
+        for(CheckersMove currentMove: moves)
+        {
+            if(m.equals(currentMove))
+            {
+                moveFound = true;
+                break;
+            }
+        }
+        
+        if(!moveFound)
+        {
+            System.out.println("You must jump if one is available!");
             return false;
         }
         
