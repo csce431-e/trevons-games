@@ -59,6 +59,10 @@ public class CheckersJump extends CheckersMove {
         {
             return false;
         }
+        if(dest.getOwner() != Owner.EMPTY)
+        {
+            return false;
+        }
         
         return true;
     }
