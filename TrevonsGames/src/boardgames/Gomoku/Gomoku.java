@@ -1,19 +1,28 @@
 package boardgames.Gomoku;
 
 import boardgames.UnivBoard;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 //Crabb
 public class Gomoku 
 {
-    UnivBoard UBoard;
+    UnivBoard UBoard = new UnivBoard();
     
     int turnCounter = 0;
     boolean gameOver = false;
     boolean wrongMove = false;
     
+    int playX = 0;
+    int playY = 0;
+    
     //to keep track of recent past moves for undo
-    ArrayList<Integer> recentX;
-    ArrayList<Integer> recentY;
+    ArrayList<Integer> recentX = new ArrayList();
+    ArrayList<Integer> recentY = new ArrayList();
      
     void display()
     {//y u no work?
@@ -27,7 +36,7 @@ public class Gomoku
             for(int i2=0;i2<16;++i2)
             {
                 //state = '+';
-                state = UBoard.getSquareState(i, i2); //null pointer exception on this line. 
+                state = UBoard.getSquareState(i, i2);  
                 System.out.print(state + " ");
             }
             System.out.println("");
@@ -37,6 +46,9 @@ public class Gomoku
     void initSetup()
     {
         System.out.println("Welcome to Gomoku, you're gonna play pvp and you're gonna like it");
+        
+        recentX.ensureCapacity(10);
+        recentY.ensureCapacity(10);
         
         //more to come
             //pvp or ai
@@ -243,7 +255,18 @@ public class Gomoku
             //needs to be set to 1; checked for after turnCounter increment
     }    
     
-    public void initGomoku()
+    void getMove()
+    {
+        //will change to graphical interface function
+        
+        System.out.println("Enter your move like so: 4 5\n>");
+        
+        Scanner sc = new Scanner(System.in);
+            playX = sc.nextInt();
+            playY = sc.nextInt();
+    }
+    
+    public boolean initGomoku()
     {
         
         initSetup();
@@ -270,10 +293,10 @@ public class Gomoku
             }
             else {clr = 'w';}
         
-            //getMove()
-                //take in user (or AI) input
-                //push values to row, col
-                
+            getMove();
+                col = --playX;
+                row = --playY;
+            
             do
             {
                 wrongMove = checkMove(row,col,clr);
@@ -283,11 +306,13 @@ public class Gomoku
                     recentX.add(col); //col value determines x location
                     recentY.add(row); // row value determines y location
                 
+                
                 gameOver = checkWin(row,col,clr);
             
         } while (!gameOver);
         
         System.out.println("GAME OVER!");
-           
+         
+        return false;
     }
 }
