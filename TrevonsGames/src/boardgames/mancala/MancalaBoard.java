@@ -15,10 +15,21 @@ public class MancalaBoard {
     private int cols;
     private int rows;
     
-    public void MancalaBoard() {
+    public MancalaBoard() {
         cols = 2;
         rows = 7;
         board = new Pit[cols][rows];
+        for(int i =0; i< cols; i++) {
+            board[i][0] = new Pit();
+            for(int j = 1; j<rows; j++) {
+                board[i][j] = new Pit(3);
+            }
+        }
+    }
+    
+    public boolean checkForGameOver() {
+        boolean gameOver = false;
+        return gameOver;
     }
     
     public void moveAllPieces(int c1, int r1, int c2, int r2) {
@@ -37,7 +48,6 @@ public class MancalaBoard {
             int i=r+1;
             int j = c;
             while(board[c][r].size() > 0) {
-                //if(i>)
                 moveOnePiece(c,r,i,j);
             }
         }
@@ -45,5 +55,18 @@ public class MancalaBoard {
             validMove = false;
         }
         return validMove;
+    }
+    
+    public void prettyPrint() {
+        String edge = "------";
+        System.out.println(edge);
+        System.out.println("|   "+board[0][0].size()+"   |");
+        System.out.println(edge);
+        for(int i = 1; i<rows; i++) {
+            System.out.println("| "+board[0][i].size()+" | "+board[1][rows-i].size()+" |");
+            System.out.println(edge);
+        }
+        System.out.println("|   "+board[1][0].size()+"   |");
+        System.out.println(edge);
     }
 }
