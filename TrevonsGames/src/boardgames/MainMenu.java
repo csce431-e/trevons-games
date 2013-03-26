@@ -201,7 +201,7 @@ public class MainMenu extends javax.swing.JPanel {
     private void GomokuClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GomokuClicked
         Gomoku g = new Gomoku();
         
-        g.initGomoku();
+        if(g.initGomoku()); //if statement "unclicks" gomoku when game is over
     }//GEN-LAST:event_GomokuClicked
 
     private void MancalaClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MancalaClicked
