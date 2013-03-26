@@ -4,8 +4,8 @@
  */
 package boardgames;
 
-import java.util.Vector;
 import boardgames.Square;   
+import java.util.ArrayList;
 
 /**
  *
@@ -13,15 +13,15 @@ import boardgames.Square;
  */
 public class Row 
 {
-    Vector<Square> squares;
+    ArrayList<Square> squares = new ArrayList();
 
-	Row()
+	public Row()
         {
-		squares.setSize(16);
-                for(int i=-0;i<squares.size();i++)
-                {   
-                    squares.elementAt(i).setState('+');
-                        //plus acts as empty character
+		for(int i=0;i<16;++i)
+                {
+                    squares.add(i,new Square());
                 }
 	}
+        
+        
 }
