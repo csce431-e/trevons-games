@@ -7,6 +7,8 @@ import boardgames.pegSolitaire.*;
 import boardgames.Gomoku.*;
 import boardgames.BattleShip.*;
 import boardgames.checkers.*;
+import boardgames.Mancala.*;
+import boardgames.connectfour.*;
 
 import java.util.ArrayList;
 import java.awt.*;
@@ -245,6 +247,8 @@ public class MainMenu extends javax.swing.JPanel {
 
     private void ConnectFourClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConnectFourClicked
         // TODO add your handling code here:
+        ConnectFourGame g = new ConnectFourGame();
+        g.cfGameStart();
     }//GEN-LAST:event_ConnectFourClicked
 
     private void CheckersClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckersClicked
@@ -256,11 +260,13 @@ public class MainMenu extends javax.swing.JPanel {
     private void GomokuClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GomokuClicked
         Gomoku g = new Gomoku();
         
-        g.initGomoku();
+        if(g.initGomoku()); //if statement "unclicks" gomoku when game is over
     }//GEN-LAST:event_GomokuClicked
 
     private void MancalaClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MancalaClicked
-        // TODO add your handling code here:
+        MancalaGame g = new MancalaGame();
+        
+        g.initMancala();
     }//GEN-LAST:event_MancalaClicked
 
     private void BattleshipClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BattleshipClicked
