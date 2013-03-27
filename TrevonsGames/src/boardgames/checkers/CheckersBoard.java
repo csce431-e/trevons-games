@@ -224,14 +224,17 @@ public class CheckersBoard {
                 jumps = getJumpMoves();
                 if(jumps.size() > 0)
                 {
-                    makeMove(currentGame.requestMove());
+                    if(!makeMove(currentGame.requestMove()))
+                    {
+                        return false;
+                    }
                 }
                 else
                 {
                     return true;
                 }
             }    
-            return true;
+            //return true;
         }
         
         if(m.updateBoard(this))
