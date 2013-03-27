@@ -18,7 +18,8 @@ public class CheckersCell {
     private RowType rowType;
     int x; //x position
     int y; //y position
-
+    ArrayList< ArrayList< CheckersCell>> b = CheckersBoard.board;
+    
     //Constructors
     public CheckersCell() {
         owner = Owner.EMPTY;
@@ -70,67 +71,77 @@ public class CheckersCell {
 
     //Returns an array of the moves available from a given cell
     public ArrayList<CheckersMove> getMoves() {
+        
         ArrayList<CheckersMove> moves = new ArrayList<>();
-
+        
         int newX = 0;
         int newY = 0;
 
         if (this.owner == Owner.PLAYER2) {
-            newY = this.y + 1;
+            newX = this.x + 1;
         } else {
-            newY = this.y - 1;
+            newX = this.x - 1;
         }
 
         //Add left move
-        newX = this.x - 1;
+        newY = this.y - 1;
         CheckersCell newLocation1 = new CheckersCell();
         newLocation1.x = newX;
         newLocation1.y = newY;
-        CheckersMove m1 = new CheckersMove(this, newLocation1);
-        if (isValidMove(m1)) {
-            moves.add(m1);
+        if(isValidCell(newLocation1))
+        {
+            newLocation1 = b.get(newLocation1.x).get(newLocation1.y);
+            CheckersMove m1 = new CheckersMove(this, newLocation1);
+            if (m1.isValidMove()) {
+                moves.add(m1);
+            }
         }
-
         //Add right move
-        newX = this.x + 1;
+        newY = this.y + 1;
         CheckersCell newLocation2 = new CheckersCell();
         newLocation2.x = newX;
         newLocation2.y = newY;
-        CheckersMove m2 = new CheckersMove(this, newLocation2);
-        if (isValidMove(m2)) {
-            moves.add(m2);
+        if(isValidCell(newLocation2))
+        {
+            newLocation2 = b.get(newLocation2.x).get(newLocation2.y);
+            CheckersMove m2 = new CheckersMove(this, newLocation2);
+            if (m2.isValidMove()) {
+                moves.add(m2);
+            }
         }
-
+        
+        //Player must make a jump if one is available
+       
+        
         return moves;
+        
     }
 
     public CheckersCell getMid(CheckersCell src, CheckersCell dest) {
         int xPos = (src.x + dest.x) / 2;
         int yPos = (src.y + dest.y) / 2;
-        CheckersCell mid = CheckersBoard.board.get(yPos).get(xPos);
+        CheckersCell mid = b.get(xPos).get(yPos);
         return mid;
     }
 
-    public ArrayList<CheckersMove> getJumps() {
+    public ArrayList<CheckersJump> getJumps() {
         
-        ArrayList<CheckersMove> jumps = new ArrayList();
+        ArrayList<CheckersJump> jumps = new ArrayList();
         
-        Owner opponent;
-        if (owner == Owner.PLAYER1) {
-            opponent = Owner.PLAYER2;
-        } else if (owner == Owner.PLAYER2) {
-            opponent = Owner.PLAYER1;
-        } else {
-            return new ArrayList<CheckersMove>();
+        Owner opponent = owner.opposite();
+        if(opponent== Owner.EMPTY)
+        {
+            return new ArrayList();
         }
-
+        
         ArrayList<CheckersCell> jumpDest = new ArrayList();
         jumpDest.add(new CheckersCell(this.x + 2, this.y + 2));
         jumpDest.add(new CheckersCell(this.x - 2, this.y + 2));
         jumpDest.add(new CheckersCell(this.x + 2, this.y - 2));
         jumpDest.add(new CheckersCell(this.x - 2, this.y - 2));
 
-        //delete adjacent cells that are off the board
+       
+        //delete destination cells that are off the board
         Iterator<CheckersCell> it = jumpDest.iterator();
         while (it.hasNext()) {
             if (!isValidCell(it.next())) {
@@ -142,65 +153,35 @@ public class CheckersCell {
         it = jumpDest.iterator();
         while (it.hasNext())
         {
-            CheckersCell j = it.next();
-            CheckersCell mid = getMid(this, j);
+            CheckersCell temp = it.next();
+            CheckersCell jump = b.get(temp.x).get(temp.y);
+            CheckersCell mid = getMid(this, jump);
             if(mid.owner == opponent)
             {
-                CheckersMove m = new CheckersMove(this,mid,j);
-                jumps.add(m);
+                CheckersJump j = new CheckersJump(this,mid,jump);
+                if(j.isValidJump())
+                {
+                    jumps.add(j);
+                }
             }
         }
-        
         return jumps;
     }
 
     public static boolean isValidCell(CheckersCell c) {
-        boolean isValid = true;
 
-        if (c.x < 0 || c.x > 8) {
-            isValid = false;
+        if (c.x < 0 || c.x >= 8) {
+            return false;
+        }
+        if (c.y < 0 || c.y >= 8) {
+            return false;
         }
 
-        return isValid;
+        return true;
     }
     //Checks if moving between two cells is valid
 
-    public static boolean isValidMove(CheckersMove m) {
-        boolean isValid = true;
-        
-        if(m.dest.x > m.source.x + 2)
-        {
-            isValid = false;
-        }
-        
-        if(m.dest.x < m.source.x - 2)
-        {
-            isValid = false;
-        }
-        
-        if(m.dest.y == m.source.y)
-        {
-            isValid = false;
-        }
-        
-        if (m.source.owner == Owner.EMPTY) {
-            isValid = false;
-        }
-
-        if (m.source.x < 0 || m.source.x > 8) {
-            isValid = false;
-        }
-
-        if (m.dest.x < 0 || m.dest.x > 8) {
-            isValid = false;
-        }
-
-        if (m.dest.owner != Owner.EMPTY) {
-            isValid = false;
-        }
-
-        return isValid;
-    }
+    
 
     //makes the calling cell equal to the parameter c
     public void updateCell(CheckersCell c) {
@@ -208,6 +189,19 @@ public class CheckersCell {
         this.rowType = c.rowType;
         this.x = c.x;
         this.y = c.y;
+    }
+    
+    public boolean equals(CheckersCell c)
+    {
+        if(!this.owner.equals(c.owner))
+        {
+            return false;
+        }
+        if(this.x != c.x || this.y != c.y)
+        {
+            return false;
+        }
+        return true;
     }
 
     //Convert to string for console play

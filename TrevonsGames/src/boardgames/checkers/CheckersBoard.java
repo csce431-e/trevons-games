@@ -18,17 +18,18 @@ public class CheckersBoard {
      */
     public static int BOARDSIZE = 8;
     public static ArrayList< ArrayList<CheckersCell> > board = new ArrayList<>();
+    public CheckersGame currentGame;
     
-    
-    public CheckersBoard()
+    public CheckersBoard(CheckersGame g)
     {
+        currentGame = g;
         //Create nxn board
         for(int i = 0; i < BOARDSIZE; i++)
         {
             ArrayList<CheckersCell> currentRow = new ArrayList<>();
             for(int j =0; j< BOARDSIZE; j++) 
             {
-                currentRow.add(new CheckersCell(Owner.EMPTY,j,i));
+                currentRow.add(new CheckersCell(Owner.EMPTY,i,j));
             }
             
             board.add(currentRow);
@@ -107,7 +108,7 @@ public class CheckersBoard {
         System.out.println("\n");
     }
     
-    public boolean jump(CheckersMove move)
+    /*public boolean jump(CheckersMove move)
     {
         CheckersCell s = board.get(move.source.y).get(move.source.x);
         CheckersCell m = board.get(move.middle.y).get(move.middle.x);
@@ -119,33 +120,135 @@ public class CheckersBoard {
         d.setOwner(opp);
         
         return false;
+    }*/
+    public ArrayList<CheckersMove> getAllMoves()
+    {
+        ArrayList<CheckersJump> j = getJumpMoves();
+        if(j.size() > 0)
+        {
+            ArrayList<CheckersMove> jumpMoves = new ArrayList();
+            for(CheckersJump currentJump: j)
+            {
+                jumpMoves.add((CheckersMove)currentJump);
+            }
+            return jumpMoves;
+        }
+        else
+        {
+            return getNormalMoves();
+        }
+    }
+    
+    public ArrayList<CheckersJump> getJumpMoves()
+    {
+        Owner o = currentGame.turn;
+        
+        ArrayList<CheckersJump> jumps = new ArrayList();
+        for(CheckersCell c: o.pieces)
+        {
+            jumps.addAll(c.getJumps());
+        }
+        
+        return jumps;   
+    }
+    
+    public ArrayList<CheckersMove> getNormalMoves()
+    {
+        Owner o = currentGame.turn;
+        
+        /*ArrayList<CheckersMove> jumps = new ArrayList();
+        for(CheckersCell c: o.pieces)
+        {
+            jumps.addAll(c.getJumps());
+        }
+        
+        if(jumps.size() > 0)
+        {
+            return jumps;
+        }*/
+        
+        ArrayList<CheckersMove> moves = new ArrayList();
+        
+        for(CheckersCell c: o.pieces)
+        {
+            moves.addAll(c.getMoves());
+        }
+        
+        return moves;
     }
     
     public boolean makeMove(CheckersMove m)
     {
-        if(CheckersCell.isValidMove(m))
+        Owner currentOwner = m.source.getOwner();
+        if(currentOwner == Owner.EMPTY)
         {
-            int xDest = m.dest.x;
-            int yDest = m.dest.y;
-            CheckersCell d = board.get(yDest).get(xDest);
-            
-            Owner o = m.source.getOwner();
-            m.source.setOwner(Owner.EMPTY);
-            d.setOwner(o);
-            o.pieces.remove(m.source);
-            o.pieces.add(d);
-            
-            System.out.println("Move: " + m.toString());
+            System.out.println("There is no piece there!");
+            return false;
+        }
+        else if(currentOwner != currentGame.turn)
+        {
+            System.out.println("It is not your turn!");
+            return false;
+        }
+        if(!m.isValidMove())
+        {
+            System.out.println("Invalid Move");
+            return false;
+        }
+        
+        
+        ArrayList<CheckersJump> jumps = getJumpMoves();
+        //@TODO double jump logic is off. check recursion conditions
+        while(jumps.size() > 0)
+        {
+            boolean moveFound = false;
+
+            for(CheckersJump currentJump: jumps)
+            {
+                if(m.equals(currentJump))
+                {
+                    moveFound = true;
+                    break;
+                }
+            }
+
+            if(!moveFound)
+            {
+                System.out.println("You must jump if one is available!");
+                return false;
+            }
+
+            if(m.updateBoard(this))
+            {
+                printBoard();
+                jumps = getJumpMoves();
+                if(jumps.size() > 0)
+                {
+                    if(!makeMove(currentGame.requestMove()))
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return true;
+                }
+            }    
+            //return true;
+        }
+        
+        if(m.updateBoard(this))
+        {
             printBoard();
             return true;
         }
         
-        System.out.println("Invalid Move: " + m.toString());
+        System.out.println("Error: Please try again!");
         return false;
     }
     
     
-    public boolean makeMove(CheckersCell source, CheckersCell dest)
+    /*public boolean makeMove(CheckersCell source, CheckersCell dest)
     {
         
         CheckersMove m = new CheckersMove(source, dest);
@@ -163,6 +266,20 @@ public class CheckersBoard {
         }
         System.out.println("Invalid Move: " + m.toString());
         return false;
+    }*/
+    
+    //returns the winner of the game. if the game is not over, returns empty
+    public Owner isGameOver()
+    {
+        if(Owner.PLAYER1.pieces.isEmpty() == true)
+        {
+            return Owner.PLAYER2;
+        }
+        else if(Owner.PLAYER2.pieces.isEmpty() == true)
+        {
+            return Owner.PLAYER1;
+        }
+        return Owner.EMPTY;
     }
     
     public boolean jump(CheckersCell source, CheckersCell dest)

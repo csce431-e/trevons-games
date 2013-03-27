@@ -4,6 +4,7 @@
  */
 package boardgames.BattleShip;
 
+import java.awt.Color;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -17,8 +18,12 @@ import javax.swing.JButton;
 public class BattleShipGUI extends javax.swing.JFrame {
     
     private boolean p1Turn=true;
+    private boolean p1PlacedShips=false;
+    private boolean p2PlacedShips=false;
     private boolean placeShips=true;
+    private boolean game = true;
     static int currentShip=0;
+    BattleShip p1, p2;
     
     ArrayList<ArrayList<JButton>> p1button;
     ArrayList<ArrayList<JButton>> p2button;
@@ -31,6 +36,9 @@ public class BattleShipGUI extends javax.swing.JFrame {
         p1button = new ArrayList<ArrayList<JButton>>();
         p2button = new ArrayList<ArrayList<JButton>>();
         
+        p1 = new BattleShip();
+        p2 = new BattleShip();
+        
         for(int x=0;x<10;x++){
             p1button.add(new ArrayList<JButton>());
             p2button.add(new ArrayList<JButton>());
@@ -41,6 +49,13 @@ public class BattleShipGUI extends javax.swing.JFrame {
     
     //don't question this, just hope it works
     public void init(){
+        
+        p1.init();
+        p2.init();
+        
+        jLabel1.setText("Player 1 place ship 1");
+        jLabel2.setText(" ");
+        
         p1button.get(9).add(jButton1);
         p1button.get(9).add(jButton2);
         p1button.get(9).add(jButton3);
@@ -262,7 +277,7 @@ public class BattleShipGUI extends javax.swing.JFrame {
         p2button.get(0).add(jButton200);
         
         
-        
+        disableP2();
         
         
         
@@ -294,8 +309,110 @@ public class BattleShipGUI extends javax.swing.JFrame {
         return new Ship.point(-1,-1);
     }
     
+    void updateP1Board(){
+        p1.showBoard();
+        p2.showBoard();
+        String[][] gameBoardp1 = p1.getBoard();
+        String[][] gameBoardp2 = p2.getBoard();
+        for(int y=0;y<p1.BOARD_H;y++){
+            for(int x=0; x<p1.BOARD_W;x++){
+                //player 1 will see all of player 1's ships
+                p1button.get(y).get(x).setBackground(Color.blue);
+                if(gameBoardp1[x][y].equals("M")){
+                    p1button.get(y).get(x).setBackground(Color.CYAN);
+                }
+                else if(gameBoardp1[x][y].equals("X")){
+                    p1button.get(y).get(x).setBackground(Color.red);
+                }
+                else if(Character.isDigit(gameBoardp1[x][y].charAt(0))){
+                    p1button.get(y).get(x).setBackground(Color.DARK_GRAY);
+                }
+                
+                //player 1 will only see hits made to player 2's ships
+                p2button.get(y).get(x).setBackground(Color.blue);
+                if(gameBoardp2[x][y].equals("M")){
+                    p2button.get(y).get(x).setBackground(Color.CYAN);
+                }
+                else if(gameBoardp2[x][y].equals("X")){
+                    p2button.get(y).get(x).setBackground(Color.red);
+                }
+            }
+        }
+    }
     
+    void updateP2Board(){
+        p1.showBoard();
+        p2.showBoard();
+        String[][] gameBoardp1 = p1.getBoard();
+        String[][] gameBoardp2 = p2.getBoard();
+        for(int y=0;y<p1.BOARD_H;y++){
+            for(int x=0; x<p1.BOARD_W;x++){
+                //player 2 will only see hits made to player 1's ships
+                p1button.get(y).get(x).setBackground(Color.blue);
+                if(gameBoardp1[x][y].equals("M")){
+                    p1button.get(y).get(x).setBackground(Color.CYAN);
+                }
+                else if(gameBoardp1[x][y].equals("X")){
+                    p1button.get(y).get(x).setBackground(Color.red);
+                }
+                
+                //player 2 will see all of player 2's ships
+                p2button.get(y).get(x).setBackground(Color.blue);
+                if(gameBoardp2[x][y].equals("M")){
+                    p2button.get(y).get(x).setBackground(Color.CYAN);
+                }
+                else if(gameBoardp2[x][y].equals("X")){
+                    p2button.get(y).get(x).setBackground(Color.red);
+                }
+                else if(Character.isDigit(gameBoardp2[x][y].charAt(0))){
+                    p2button.get(y).get(x).setBackground(Color.DARK_GRAY);
+                }
+            
+            }
+        }
+    }
 
+    void disableP1(){
+         for(int y=0;y<p1.BOARD_H;y++){
+            for(int x=0; x<p1.BOARD_W;x++){
+                p1button.get(y).get(x).removeActionListener(p1button.get(y).get(x).getActionListeners()[0]);
+            }
+        }
+    }
+    
+    void disableP2(){
+         for(int y=0;y<p1.BOARD_H;y++){
+            for(int x=0; x<p1.BOARD_W;x++){
+                p2button.get(y).get(x).removeActionListener(p2button.get(y).get(x).getActionListeners()[0]);
+            }
+        }
+    }
+    
+    void enableP1(){
+         for(int y=0;y<p1.BOARD_H;y++){
+            for(int x=0; x<p1.BOARD_W;x++){
+                p1button.get(y).get(x).addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        p2ActionHandler(evt);
+                    }
+                });
+            }
+        }
+    }
+    
+    void enableP2(){
+         for(int y=0;y<p1.BOARD_H;y++){
+            for(int x=0; x<p1.BOARD_W;x++){
+                p2button.get(y).get(x).addActionListener(new java.awt.event.ActionListener() {
+                    public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        p2ActionHandler(evt);
+                    }
+                });
+            }
+        }
+    }
+         
+         
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -427,8 +544,8 @@ public class BattleShipGUI extends javax.swing.JFrame {
         jButton117 = new javax.swing.JButton();
         jButton118 = new javax.swing.JButton();
         jButton119 = new javax.swing.JButton();
-        jButton121 = new javax.swing.JButton();
         jButton120 = new javax.swing.JButton();
+        jButton121 = new javax.swing.JButton();
         jButton122 = new javax.swing.JButton();
         jButton123 = new javax.swing.JButton();
         jButton124 = new javax.swing.JButton();
@@ -437,8 +554,8 @@ public class BattleShipGUI extends javax.swing.JFrame {
         jButton127 = new javax.swing.JButton();
         jButton128 = new javax.swing.JButton();
         jButton129 = new javax.swing.JButton();
-        jButton131 = new javax.swing.JButton();
         jButton130 = new javax.swing.JButton();
+        jButton131 = new javax.swing.JButton();
         jButton132 = new javax.swing.JButton();
         jButton133 = new javax.swing.JButton();
         jButton134 = new javax.swing.JButton();
@@ -446,9 +563,9 @@ public class BattleShipGUI extends javax.swing.JFrame {
         jButton136 = new javax.swing.JButton();
         jButton137 = new javax.swing.JButton();
         jButton138 = new javax.swing.JButton();
-        jButton141 = new javax.swing.JButton();
-        jButton140 = new javax.swing.JButton();
         jButton139 = new javax.swing.JButton();
+        jButton140 = new javax.swing.JButton();
+        jButton141 = new javax.swing.JButton();
         jButton142 = new javax.swing.JButton();
         jButton143 = new javax.swing.JButton();
         jButton144 = new javax.swing.JButton();
@@ -456,9 +573,9 @@ public class BattleShipGUI extends javax.swing.JFrame {
         jButton146 = new javax.swing.JButton();
         jButton147 = new javax.swing.JButton();
         jButton148 = new javax.swing.JButton();
-        jButton151 = new javax.swing.JButton();
-        jButton150 = new javax.swing.JButton();
         jButton149 = new javax.swing.JButton();
+        jButton150 = new javax.swing.JButton();
+        jButton151 = new javax.swing.JButton();
         jButton152 = new javax.swing.JButton();
         jButton153 = new javax.swing.JButton();
         jButton154 = new javax.swing.JButton();
@@ -508,6 +625,12 @@ public class BattleShipGUI extends javax.swing.JFrame {
         jButton198 = new javax.swing.JButton();
         jButton199 = new javax.swing.JButton();
         jButton200 = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jCheckBox1 = new javax.swing.JCheckBox();
+        jCheckBox2 = new javax.swing.JCheckBox();
+        jCheckBox3 = new javax.swing.JCheckBox();
+        jCheckBox4 = new javax.swing.JCheckBox();
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -1439,399 +1562,907 @@ public class BattleShipGUI extends javax.swing.JFrame {
 
         jButton102.setText(" ");
         jButton102.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton102.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton102ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton102);
 
         jButton103.setText(" ");
         jButton103.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton103.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton103ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton103);
 
         jButton104.setText(" ");
         jButton104.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton104.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton104ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton104);
 
         jButton105.setText(" ");
         jButton105.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton105.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton105ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton105);
 
         jButton106.setText(" ");
         jButton106.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton106.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton106ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton106);
 
         jButton107.setText(" ");
         jButton107.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton107.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton107ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton107);
 
         jButton108.setText(" ");
         jButton108.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton108.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton108ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton108);
 
         jButton109.setText(" ");
         jButton109.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton109.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton109ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton109);
 
         jButton110.setText(" ");
         jButton110.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton110.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton110ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton110);
 
         jButton111.setText(" ");
         jButton111.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton111.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton111ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton111);
 
         jButton112.setText(" ");
         jButton112.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton112.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton112ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton112);
 
         jButton113.setText(" ");
         jButton113.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton113.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton113ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton113);
 
         jButton114.setText(" ");
         jButton114.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton114.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton114ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton114);
 
         jButton115.setText(" ");
         jButton115.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton115.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton115ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton115);
 
         jButton116.setText(" ");
         jButton116.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton116.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton116ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton116);
 
         jButton117.setText(" ");
         jButton117.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton117.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton117ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton117);
 
         jButton118.setText(" ");
         jButton118.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton118.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton118ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton118);
 
         jButton119.setText(" ");
         jButton119.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton119.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton119ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton119);
-
-        jButton121.setText(" ");
-        jButton121.setPreferredSize(new java.awt.Dimension(35, 35));
-        p2Panel.add(jButton121);
 
         jButton120.setText(" ");
         jButton120.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton120.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton120ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton120);
+
+        jButton121.setText(" ");
+        jButton121.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton121.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton121ActionPerformed(evt);
+            }
+        });
+        p2Panel.add(jButton121);
 
         jButton122.setText(" ");
         jButton122.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton122.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton122ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton122);
 
         jButton123.setText(" ");
         jButton123.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton123.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton123ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton123);
 
         jButton124.setText(" ");
         jButton124.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton124.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton124ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton124);
 
         jButton125.setText(" ");
         jButton125.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton125.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton125ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton125);
 
         jButton126.setText(" ");
         jButton126.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton126.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton126ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton126);
 
         jButton127.setText(" ");
         jButton127.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton127.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton127ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton127);
 
         jButton128.setText(" ");
         jButton128.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton128.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton128ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton128);
 
         jButton129.setText(" ");
         jButton129.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton129.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton129ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton129);
-
-        jButton131.setText(" ");
-        jButton131.setPreferredSize(new java.awt.Dimension(35, 35));
-        p2Panel.add(jButton131);
 
         jButton130.setText(" ");
         jButton130.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton130.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton130ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton130);
+
+        jButton131.setText(" ");
+        jButton131.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton131.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton131ActionPerformed(evt);
+            }
+        });
+        p2Panel.add(jButton131);
 
         jButton132.setText(" ");
         jButton132.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton132.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton132ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton132);
 
         jButton133.setText(" ");
         jButton133.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton133.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton133ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton133);
 
         jButton134.setText(" ");
         jButton134.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton134.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton134ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton134);
 
         jButton135.setText(" ");
         jButton135.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton135.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton135ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton135);
 
         jButton136.setText(" ");
         jButton136.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton136.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton136ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton136);
 
         jButton137.setText(" ");
         jButton137.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton137.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton137ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton137);
 
         jButton138.setText(" ");
         jButton138.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton138.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton138ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton138);
-
-        jButton141.setText(" ");
-        jButton141.setPreferredSize(new java.awt.Dimension(35, 35));
-        p2Panel.add(jButton141);
-
-        jButton140.setText(" ");
-        jButton140.setPreferredSize(new java.awt.Dimension(35, 35));
-        p2Panel.add(jButton140);
 
         jButton139.setText(" ");
         jButton139.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton139.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton139ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton139);
+
+        jButton140.setText(" ");
+        jButton140.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton140.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton140ActionPerformed(evt);
+            }
+        });
+        p2Panel.add(jButton140);
+
+        jButton141.setText(" ");
+        jButton141.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton141.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton141ActionPerformed(evt);
+            }
+        });
+        p2Panel.add(jButton141);
 
         jButton142.setText(" ");
         jButton142.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton142.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton142ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton142);
 
         jButton143.setText(" ");
         jButton143.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton143.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton143ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton143);
 
         jButton144.setText(" ");
         jButton144.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton144.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton144ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton144);
 
         jButton145.setText(" ");
         jButton145.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton145.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton145ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton145);
 
         jButton146.setText(" ");
         jButton146.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton146.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton146ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton146);
 
         jButton147.setText(" ");
         jButton147.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton147.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton147ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton147);
 
         jButton148.setText(" ");
         jButton148.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton148.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton148ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton148);
-
-        jButton151.setText(" ");
-        jButton151.setPreferredSize(new java.awt.Dimension(35, 35));
-        p2Panel.add(jButton151);
-
-        jButton150.setText(" ");
-        jButton150.setPreferredSize(new java.awt.Dimension(35, 35));
-        p2Panel.add(jButton150);
 
         jButton149.setText(" ");
         jButton149.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton149.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton149ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton149);
+
+        jButton150.setText(" ");
+        jButton150.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton150.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton150ActionPerformed(evt);
+            }
+        });
+        p2Panel.add(jButton150);
+
+        jButton151.setText(" ");
+        jButton151.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton151.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton151ActionPerformed(evt);
+            }
+        });
+        p2Panel.add(jButton151);
 
         jButton152.setText(" ");
         jButton152.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton152.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton152ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton152);
 
         jButton153.setText(" ");
         jButton153.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton153.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton153ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton153);
 
         jButton154.setText(" ");
         jButton154.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton154.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton154ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton154);
 
         jButton155.setText(" ");
         jButton155.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton155.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton155ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton155);
 
         jButton156.setText(" ");
         jButton156.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton156.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton156ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton156);
 
         jButton157.setText(" ");
         jButton157.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton157.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton157ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton157);
 
         jButton158.setText(" ");
         jButton158.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton158.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton158ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton158);
 
         jButton159.setText(" ");
         jButton159.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton159.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton159ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton159);
 
         jButton160.setText(" ");
         jButton160.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton160.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton160ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton160);
 
         jButton161.setText(" ");
         jButton161.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton161.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton161ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton161);
 
         jButton162.setText(" ");
         jButton162.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton162.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton162ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton162);
 
         jButton163.setText(" ");
         jButton163.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton163.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton163ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton163);
 
         jButton164.setText(" ");
         jButton164.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton164.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton164ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton164);
 
         jButton165.setText(" ");
         jButton165.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton165.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton165ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton165);
 
         jButton166.setText(" ");
         jButton166.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton166.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton166ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton166);
 
         jButton167.setText(" ");
         jButton167.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton167.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton167ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton167);
 
         jButton168.setText(" ");
         jButton168.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton168.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton168ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton168);
 
         jButton169.setText(" ");
         jButton169.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton169.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton169ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton169);
 
         jButton170.setText(" ");
         jButton170.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton170.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton170ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton170);
 
         jButton171.setText(" ");
         jButton171.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton171.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton171ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton171);
 
         jButton172.setText(" ");
         jButton172.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton172.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton172ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton172);
 
         jButton173.setText(" ");
         jButton173.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton173.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton173ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton173);
 
         jButton174.setText(" ");
         jButton174.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton174.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton174ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton174);
 
         jButton175.setText(" ");
         jButton175.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton175.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton175ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton175);
 
         jButton176.setText(" ");
         jButton176.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton176.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton176ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton176);
 
         jButton177.setText(" ");
         jButton177.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton177.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton177ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton177);
 
         jButton178.setText(" ");
         jButton178.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton178.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton178ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton178);
 
         jButton179.setText(" ");
         jButton179.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton179.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton179ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton179);
 
         jButton180.setText(" ");
         jButton180.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton180.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton180ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton180);
 
         jButton181.setText(" ");
         jButton181.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton181.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton181ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton181);
 
         jButton182.setText(" ");
         jButton182.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton182.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton182ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton182);
 
         jButton183.setText(" ");
         jButton183.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton183.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton183ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton183);
 
         jButton184.setText(" ");
         jButton184.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton184.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton184ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton184);
 
         jButton185.setText(" ");
         jButton185.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton185.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton185ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton185);
 
         jButton186.setText(" ");
         jButton186.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton186.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton186ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton186);
 
         jButton187.setText(" ");
         jButton187.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton187.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton187ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton187);
 
         jButton188.setText(" ");
         jButton188.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton188.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton188ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton188);
 
         jButton189.setText(" ");
         jButton189.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton189.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton189ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton189);
 
         jButton190.setText(" ");
         jButton190.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton190.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton190ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton190);
 
         jButton191.setText(" ");
         jButton191.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton191.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton191ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton191);
 
         jButton192.setText(" ");
         jButton192.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton192.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton192ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton192);
 
         jButton193.setText(" ");
         jButton193.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton193.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton193ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton193);
 
         jButton194.setText(" ");
         jButton194.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton194.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton194ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton194);
 
         jButton195.setText(" ");
         jButton195.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton195.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton195ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton195);
 
         jButton196.setText(" ");
         jButton196.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton196.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton196ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton196);
 
         jButton197.setText(" ");
         jButton197.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton197.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton197ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton197);
 
         jButton198.setText(" ");
         jButton198.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton198.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton198ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton198);
 
         jButton199.setText(" ");
         jButton199.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton199.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton199ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton199);
 
         jButton200.setText(" ");
         jButton200.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton200.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton200ActionPerformed(evt);
+            }
+        });
         p2Panel.add(jButton200);
+
+        jLabel1.setText("jLabel1");
+
+        jLabel2.setText("jLabel2");
+
+        jCheckBox1.setSelected(true);
+        jCheckBox1.setText("NORTH");
+
+        jCheckBox2.setText("EAST");
+
+        jCheckBox3.setText("WEST");
+
+        jCheckBox4.setText("SOUTH");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -1840,18 +2471,45 @@ public class BattleShipGUI extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(p1Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(p2Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(150, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(p1Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jCheckBox3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jCheckBox2))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(30, 30, 30)
+                                .addComponent(jCheckBox1))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(p2Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(30, 30, 30)
+                        .addComponent(jCheckBox4))
+                    .addComponent(jLabel1))
+                .addContainerGap(66, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(25, 25, 25)
-                .addComponent(p1Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
-                .addComponent(p2Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(25, 25, 25))
+                .addGap(5, 5, 5)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(p1Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jCheckBox1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 6, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(jCheckBox3)
+                    .addComponent(jCheckBox2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(p2Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jCheckBox4))
+                .addGap(22, 22, 22))
         );
 
         pack();
@@ -1860,25 +2518,126 @@ public class BattleShipGUI extends javax.swing.JFrame {
     private void p2ActionHandler(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_p2ActionHandler
         // TODO add your handling code here:
         //HANDLE ACTIONS
+        if(!game){return;}
+        
         JButton b = (JButton)evt.getSource();
+        String orientation="NORTH";
+        if(jCheckBox1.isSelected()){
+            orientation="NORTH";
+        }
+        if(jCheckBox2.isSelected()){
+            orientation="EAST";
+        }
+        if(jCheckBox3.isSelected()){
+            orientation="WEST";
+        }
+        if(jCheckBox4.isSelected()){
+            orientation="SOUTH";
+        }
+        
         Ship.point p;
-        if(p1Turn){
+        if((p1Turn && placeShips) || (!p1Turn && !placeShips)){
             p = getCoordsp1(b);
             System.out.println(p.x + " " + p.y);
         }
-        else{
+        else if((!p1Turn && placeShips) || (p1Turn && !placeShips)){
             p=getCoordsp2(b);
             System.out.println(p.x + " " + p.y);
+        }else{
+            p=getCoordsp1(b);
         }
          
-        if(placeShips){
+        if(placeShips && game){
             if(p1Turn){
+                if(currentShip +2 < 6){
+                    jLabel1.setText("Player 1 place ship " + (currentShip+2));
+                    jLabel2.setText("");
+                }
+                else{
+                    jLabel1.setText("Player 1 finished placing ships");
+                    jLabel2.setText("Player 2 place Ship 1");
+                }
                 
+                if(p1.placeShips(p, currentShip, orientation) != -1){
+                    updateP1Board();
+                    currentShip++;
+                    System.out.println("player 1 placed ship " + currentShip + " at location " + p.x + ' ' + p.y);
+                    if(currentShip==5){
+                        p1Turn=false;
+                        currentShip=0;
+                        p1PlacedShips=true;
+                        updateP2Board();
+                        enableP2();
+                        disableP1();
+                    }
+                }
+                else{
+                    System.out.print("Error placing ship");
+                }
+            }
+            else{
+                jLabel1.setText("");
+                if(currentShip+2<6){
+                    jLabel2.setText("Player 2 place ship " + (currentShip+2));
+                    jLabel1.setText("");
+                }
+                else{
+                    jLabel2.setText("Player 2 finished placing ships");
+                    jLabel1.setText("Player 1 make move");
+                }
+                if(p2.placeShips(p, currentShip,orientation)!=-1){ 
+                    currentShip++;
+                    System.out.println("player 2 placed ship " + currentShip + " at location " + p.x + ' ' + p.y);
+                    updateP2Board();
+
+                    if(currentShip==5){
+                        p1Turn=true;
+                        currentShip=0;
+                        p2PlacedShips=true;
+                        updateP1Board();
+                    }
+                }
+                else{
+                    System.out.println("Error placing ship");
+                }
+            }
+            if(p1PlacedShips && p2PlacedShips){
+                placeShips=false;
             }
         }
         else{
             if(p1Turn){
-
+                jLabel1.setText("Player 1 attacked spot " + p.x + ' ' + p.y);
+                jLabel2.setText("Player 2 make move");
+                System.out.print(p2.attackSpot(p.x,p.y));
+                enableP1();
+                if(p2.checkWin()){
+                    System.out.println("Player 1 wins!");
+                    jLabel1.setText("Player 1 wins!");
+                    jLabel2.setText("Player 1 wins!");
+                    game=false;
+                    disableP1();
+                }
+                p1Turn=false;
+                updateP2Board();
+                disableP2();
+                
+            }
+            else{
+                jLabel2.setText("Player 2 attacked spot " + p.x + ' ' + p.y);
+                jLabel1.setText("Player 1 make move");
+                System.out.print(p1.attackSpot(p.x,p.y));
+                enableP2();
+                if(p1.checkWin()){
+                    System.out.println("Player 2 wins!");
+                    jLabel1.setText("Player 2 wins!");
+                    jLabel2.setText("Player 2 wins!");
+                    game=false;
+                    disableP2();
+                }
+                p1Turn=true;
+                updateP1Board();
+                disableP1();
             }
         }
     }//GEN-LAST:event_p2ActionHandler
@@ -2283,6 +3042,402 @@ public class BattleShipGUI extends javax.swing.JFrame {
         p2ActionHandler(evt);// TODO add your handling code here:
     }//GEN-LAST:event_p1ActionHandler
 
+    private void jButton102ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton102ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton102ActionPerformed
+
+    private void jButton103ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton103ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton103ActionPerformed
+
+    private void jButton104ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton104ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton104ActionPerformed
+
+    private void jButton105ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton105ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton105ActionPerformed
+
+    private void jButton106ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton106ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton106ActionPerformed
+
+    private void jButton107ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton107ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton107ActionPerformed
+
+    private void jButton108ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton108ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton108ActionPerformed
+
+    private void jButton109ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton109ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton109ActionPerformed
+
+    private void jButton110ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton110ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton110ActionPerformed
+
+    private void jButton111ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton111ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton111ActionPerformed
+
+    private void jButton112ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton112ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton112ActionPerformed
+
+    private void jButton113ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton113ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton113ActionPerformed
+
+    private void jButton114ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton114ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton114ActionPerformed
+
+    private void jButton115ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton115ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton115ActionPerformed
+
+    private void jButton116ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton116ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton116ActionPerformed
+
+    private void jButton117ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton117ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton117ActionPerformed
+
+    private void jButton118ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton118ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton118ActionPerformed
+
+    private void jButton119ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton119ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton119ActionPerformed
+
+    private void jButton121ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton121ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton121ActionPerformed
+
+    private void jButton120ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton120ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton120ActionPerformed
+
+    private void jButton122ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton122ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton122ActionPerformed
+
+    private void jButton123ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton123ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton123ActionPerformed
+
+    private void jButton124ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton124ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton124ActionPerformed
+
+    private void jButton125ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton125ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton125ActionPerformed
+
+    private void jButton126ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton126ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton126ActionPerformed
+
+    private void jButton127ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton127ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton127ActionPerformed
+
+    private void jButton128ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton128ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton128ActionPerformed
+
+    private void jButton129ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton129ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton129ActionPerformed
+
+    private void jButton131ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton131ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton131ActionPerformed
+
+    private void jButton130ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton130ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton130ActionPerformed
+
+    private void jButton132ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton132ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton132ActionPerformed
+
+    private void jButton133ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton133ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton133ActionPerformed
+
+    private void jButton134ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton134ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton134ActionPerformed
+
+    private void jButton135ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton135ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton135ActionPerformed
+
+    private void jButton136ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton136ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton136ActionPerformed
+
+    private void jButton137ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton137ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton137ActionPerformed
+
+    private void jButton138ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton138ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton138ActionPerformed
+
+    private void jButton141ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton141ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton141ActionPerformed
+
+    private void jButton140ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton140ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton140ActionPerformed
+
+    private void jButton139ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton139ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton139ActionPerformed
+
+    private void jButton142ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton142ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton142ActionPerformed
+
+    private void jButton143ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton143ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton143ActionPerformed
+
+    private void jButton144ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton144ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton144ActionPerformed
+
+    private void jButton145ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton145ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton145ActionPerformed
+
+    private void jButton146ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton146ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton146ActionPerformed
+
+    private void jButton147ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton147ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton147ActionPerformed
+
+    private void jButton148ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton148ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton148ActionPerformed
+
+    private void jButton151ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton151ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton151ActionPerformed
+
+    private void jButton150ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton150ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton150ActionPerformed
+
+    private void jButton149ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton149ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton149ActionPerformed
+
+    private void jButton152ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton152ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton152ActionPerformed
+
+    private void jButton153ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton153ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton153ActionPerformed
+
+    private void jButton154ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton154ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton154ActionPerformed
+
+    private void jButton155ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton155ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton155ActionPerformed
+
+    private void jButton156ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton156ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton156ActionPerformed
+
+    private void jButton157ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton157ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton157ActionPerformed
+
+    private void jButton158ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton158ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton158ActionPerformed
+
+    private void jButton159ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton159ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton159ActionPerformed
+
+    private void jButton160ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton160ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton160ActionPerformed
+
+    private void jButton161ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton161ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton161ActionPerformed
+
+    private void jButton162ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton162ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton162ActionPerformed
+
+    private void jButton163ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton163ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton163ActionPerformed
+
+    private void jButton164ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton164ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton164ActionPerformed
+
+    private void jButton165ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton165ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton165ActionPerformed
+
+    private void jButton166ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton166ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton166ActionPerformed
+
+    private void jButton167ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton167ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton167ActionPerformed
+
+    private void jButton168ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton168ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton168ActionPerformed
+
+    private void jButton169ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton169ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton169ActionPerformed
+
+    private void jButton170ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton170ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton170ActionPerformed
+
+    private void jButton171ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton171ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton171ActionPerformed
+
+    private void jButton172ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton172ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton172ActionPerformed
+
+    private void jButton173ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton173ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton173ActionPerformed
+
+    private void jButton174ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton174ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton174ActionPerformed
+
+    private void jButton175ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton175ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton175ActionPerformed
+
+    private void jButton176ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton176ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton176ActionPerformed
+
+    private void jButton177ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton177ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton177ActionPerformed
+
+    private void jButton178ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton178ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton178ActionPerformed
+
+    private void jButton179ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton179ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton179ActionPerformed
+
+    private void jButton180ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton180ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton180ActionPerformed
+
+    private void jButton181ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton181ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton181ActionPerformed
+
+    private void jButton182ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton182ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton182ActionPerformed
+
+    private void jButton183ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton183ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton183ActionPerformed
+
+    private void jButton184ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton184ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton184ActionPerformed
+
+    private void jButton185ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton185ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton185ActionPerformed
+
+    private void jButton186ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton186ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton186ActionPerformed
+
+    private void jButton187ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton187ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton187ActionPerformed
+
+    private void jButton188ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton188ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton188ActionPerformed
+
+    private void jButton189ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton189ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton189ActionPerformed
+
+    private void jButton190ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton190ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton190ActionPerformed
+
+    private void jButton191ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton191ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton191ActionPerformed
+
+    private void jButton192ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton192ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton192ActionPerformed
+
+    private void jButton193ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton193ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton193ActionPerformed
+
+    private void jButton194ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton194ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton194ActionPerformed
+
+    private void jButton195ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton195ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton195ActionPerformed
+
+    private void jButton196ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton196ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton196ActionPerformed
+
+    private void jButton197ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton197ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton197ActionPerformed
+
+    private void jButton198ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton198ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton198ActionPerformed
+
+    private void jButton199ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton199ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton199ActionPerformed
+
+    private void jButton200ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton200ActionPerformed
+        p2ActionHandler(evt);        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton200ActionPerformed
+  
     /**
      * @param args the command line arguments
      */
@@ -2497,6 +3652,12 @@ public class BattleShipGUI extends javax.swing.JFrame {
     private javax.swing.JButton jButton97;
     private javax.swing.JButton jButton98;
     private javax.swing.JButton jButton99;
+    private javax.swing.JCheckBox jCheckBox1;
+    private javax.swing.JCheckBox jCheckBox2;
+    private javax.swing.JCheckBox jCheckBox3;
+    private javax.swing.JCheckBox jCheckBox4;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel p1Panel;
     private javax.swing.JPanel p2Panel;

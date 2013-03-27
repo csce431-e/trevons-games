@@ -20,6 +20,21 @@ public enum Owner {
     {
         pieces = new ArrayList();
     }
+    
+    public Owner opposite()
+    {
+        if(this==PLAYER1)
+        {
+            return PLAYER2;
+        }
+        else if(this==PLAYER2)
+        {
+            return PLAYER1;
+        }
+        else {
+            return EMPTY;
+        }   
+    }
    
     @Override
     public String toString()
@@ -34,7 +49,7 @@ public enum Owner {
         }
         else
         {
-            return "";
+            return "EMPTY";
         }
     }
 }
