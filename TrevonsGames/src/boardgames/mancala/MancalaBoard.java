@@ -27,9 +27,13 @@ public class MancalaBoard {
         }
     }
     
-    public boolean checkForGameOver() {
-        boolean gameOver = false;
-        return gameOver;
+    public boolean checkForGameOver(int playerTurn) {
+        boolean gameOver;
+        int sumOfPlayablePebbles = 0;
+        for(int i=1; i<rows; i++) {
+            sumOfPlayablePebbles += board[playerTurn-1][i].size();
+        }
+        return sumOfPlayablePebbles == 0;
     }
     
     public void moveAllPieces(int c1, int r1, int c2, int r2) {
@@ -39,26 +43,64 @@ public class MancalaBoard {
     }
     
     public void moveOnePiece(int c1, int r1, int c2, int r2) {
+        if(board[c1][r1].size() > 0) {
             board[c2][r2].add(board[c1][r1].remove(0));
+        }
     }
     
-    public boolean play(int p, int c, int r) {
-        boolean validMove = true;
-        if(p == c) {
-            int i=r+1;
-            int j = c;
+    public int play(int p, int c, int r) {
+        int validMove = 0;
+        int i=c;
+        int j = r+1;
+        if(p-1 == c && r < rows && r > 0 && board[c][r].size() > 0) {
             while(board[c][r].size() > 0) {
+                if ( j == rows && i == p-1) {
+                    i = (i == 0) ? 1 : 0;
+                    j = 0;
+                }
+                else if ( j == rows && ((i == p) || (i == p-2))) {
+                    i = (i == 0) ? 1 : 0;
+                    j = 1;
+                }
                 moveOnePiece(c,r,i,j);
+                if((board[c][r].size() == 0) && (board[i][j].size() == 1) && (i == p-1)) {
+                    int opp = (i == 0) ? 1 : 0;
+                    if(board[opp][rows-j].size()>0) {
+                        moveAllPieces(opp,rows-j,opp,0);  //stopped here!!!
+                        moveOnePiece(i,j,opp,0);
+                    }
+                }
+                j++;
+            }
+            if ( j == 1 && ((p==1 && i == 1) || (p==2 && i == 0))) {
+                validMove = 0;
+            }
+            //else if ((j-1>0) && (i==p-1 && (board[i][j-1].size() == 1))) {
+            //    validMove = 0;
+            //}
+            else {
+                validMove = 1;
             }
         }
         else {
-            validMove = false;
+            validMove = -1;
         }
         return validMove;
     }
     
+    public int getWinner() {
+        int winner = 0;
+        if(board[0][0].size()>board[1][0].size()) {
+            winner = 2;
+        }
+        else if(board[0][0].size()<board[1][0].size()) {
+            winner = 1;
+        }
+        return winner;
+    }
+    
     public void prettyPrint() {
-        String edge = "------";
+        String edge = "---------";
         System.out.println(edge);
         System.out.println("|   "+board[0][0].size()+"   |");
         System.out.println(edge);
