@@ -27,22 +27,40 @@ public class MancalaGame {
     public void initMancala() {
         Scanner oScan = new Scanner(System.in);
         playerTurn = 1;
-        boolean turnOver = false;
-        int column_num=3;
+        int turnOver = 0;
+        int row_num=3;
+        int winner_num=0;
         board.prettyPrint();
         while(!gameOver) {
             System.out.println("Player "+playerTurn+"'s turn: ");
             //board.play(playerTurn-1, column_num, playerTurn-1);
-            while(!turnOver) {
-                column_num = oScan.nextInt();
-                turnOver = board.play(playerTurn, column_num, playerTurn);
+            while(turnOver != 1) {
+                row_num = oScan.nextInt();
+                //System.out.println(board.play(playerTurn, playerTurn-1, row_num));
+                turnOver = board.play(playerTurn, playerTurn-1, row_num);
+                board.prettyPrint();
+                if(turnOver == -1) {
+                    System.out.println("That is not a valid move! Pick another row: ");
+                }
+                else if (turnOver == 0) {
+                    System.out.println("You have another turn! Pick another row: ");
+                }
+                
             }
             board.prettyPrint();
-            turnOver = false;
+            turnOver = 0;
             
             playerTurn = changePlayer(playerTurn);
-            gameOver = board.checkForGameOver();
+            gameOver = board.checkForGameOver(playerTurn);
         }
+        winner_num = board.getWinner();
+        if(winner_num == 0) {
+            System.out.println("It's a tie!");
+        }
+        else {
+            System.out.print("Game Over! Player "+board.getWinner()+" is the winner!");
+        }
+        
     };
     
     public static void main(String args[]) {
