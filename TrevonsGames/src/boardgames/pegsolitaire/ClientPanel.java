@@ -76,6 +76,7 @@ public class ClientPanel extends javax.swing.JPanel {
         //serverIP = new byte[] {(byte)172,(byte)17,(byte)105,(byte)105};
         init_buttons();
         run();
+        
         //waitForMove(); //moved this into the call from mainMenu
     }
     
