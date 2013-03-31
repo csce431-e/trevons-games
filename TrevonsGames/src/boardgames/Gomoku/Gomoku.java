@@ -1,13 +1,9 @@
 package boardgames.Gomoku;
 
 import boardgames.UnivBoard;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 //Crabb
 public class Gomoku 
 {
@@ -24,7 +20,7 @@ public class Gomoku
     ArrayList<Integer> recentX = new ArrayList();
     ArrayList<Integer> recentY = new ArrayList();
      
-    void display()
+    void consoleDisplay()
     {//y u no work?
         
         //System.out.println("X 0 1 2 3 4 5 6 7 8 9 A B C D E F G");
@@ -43,7 +39,7 @@ public class Gomoku
         }
     }
     
-    void initSetup()
+    public void initSetup()
     {
         System.out.println("Welcome to Gomoku, you're gonna play pvp and you're gonna like it");
         
@@ -255,7 +251,7 @@ public class Gomoku
             //needs to be set to 1; checked for after turnCounter increment
     }    
     
-    void getMove()
+    void getMove() //for console
     {
         //will change to graphical interface function
         
@@ -266,13 +262,19 @@ public class Gomoku
             playY = sc.nextInt();
     }
     
-    public boolean initGomoku()
+    public void incTC()
     {
-        
-        initSetup();
-        
-        
-        
+        ++turnCounter;
+    }
+    
+    public void setTC(int x) //set to zero for reset
+    {
+        turnCounter = x;
+    } 
+    
+    /*
+    public void initGomoku()
+    {
         do
         { 
             ++turnCounter;
@@ -314,5 +316,7 @@ public class Gomoku
         System.out.println("GAME OVER!");
          
         return false;
+        
     }
+    */
 }
