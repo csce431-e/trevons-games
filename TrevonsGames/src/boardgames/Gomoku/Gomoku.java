@@ -39,7 +39,7 @@ public class Gomoku
         }
     }
     
-    public void initSetup()
+    public Gomoku()
     {
         //System.out.println("Welcome to Gomoku, you're gonna play pvp and you're gonna like it");
         
@@ -278,7 +278,7 @@ public class Gomoku
         turnCounter = x;
     } 
     
-    /*
+    /* was used for console version
     public void initGomoku()
     {
         do

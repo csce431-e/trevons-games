@@ -4,14 +4,33 @@
  */
 package boardgames.Gomoku;
 
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import javax.swing.JButton;
+
 /**
  *
  * @author jcrabb
  */
 public class GomokuGUI extends javax.swing.JFrame 
 {
-    
     Gomoku g = new Gomoku();
+    ArrayList<ArrayList<JButton>> buttonArray;
+    point coords = new point(-1,-1);
+   
+    static class point{
+        int x, y;
+        
+        public point(int xCoord, int yCoord){
+            x=xCoord;
+            y=yCoord;
+        }
+        
+        int getX(){return x;}
+        
+        int getY(){return y;}
+    }
     
     /**
      * Creates new form GomokuGUI
@@ -19,50 +38,393 @@ public class GomokuGUI extends javax.swing.JFrame
     public GomokuGUI() 
     {
         initComponents();
-        g.initSetup();
+     
+        buttonArray = new ArrayList<ArrayList<JButton>>();
+             buttonArray.ensureCapacity(16);
+             
+             for(int i=0;i<16;++i)
+             {
+                buttonArray.add(new ArrayList<JButton>());
+             }
+        
+        buttonArray.get(0).add(jButton1);
+        buttonArray.get(0).add(jButton2);
+        buttonArray.get(0).add(jButton3);
+        buttonArray.get(0).add(jButton4);
+        buttonArray.get(0).add(jButton5);
+        buttonArray.get(0).add(jButton6);
+        buttonArray.get(0).add(jButton7);
+        buttonArray.get(0).add(jButton8);
+        buttonArray.get(0).add(jButton9);
+        buttonArray.get(0).add(jButton10);
+        buttonArray.get(0).add(jButton11);
+        buttonArray.get(0).add(jButton12);
+        buttonArray.get(0).add(jButton13);
+        buttonArray.get(0).add(jButton14);
+        buttonArray.get(0).add(jButton15);
+        buttonArray.get(0).add(jButton16);
+        
+        buttonArray.get(1).add(jButton17);
+        buttonArray.get(1).add(jButton18);
+        buttonArray.get(1).add(jButton19);
+        buttonArray.get(1).add(jButton20);
+        buttonArray.get(1).add(jButton21);
+        buttonArray.get(1).add(jButton22);
+        buttonArray.get(1).add(jButton23);
+        buttonArray.get(1).add(jButton24);
+        buttonArray.get(1).add(jButton25);
+        buttonArray.get(1).add(jButton26);
+        buttonArray.get(1).add(jButton27);
+        buttonArray.get(1).add(jButton28);
+        buttonArray.get(1).add(jButton29);
+        buttonArray.get(1).add(jButton30);
+        buttonArray.get(1).add(jButton31);
+        buttonArray.get(1).add(jButton32);
+        
+        buttonArray.get(2).add(jButton33);
+        buttonArray.get(2).add(jButton34);
+        buttonArray.get(2).add(jButton35);
+        buttonArray.get(2).add(jButton36);
+        buttonArray.get(2).add(jButton37);
+        buttonArray.get(2).add(jButton38);
+        buttonArray.get(2).add(jButton39);
+        buttonArray.get(2).add(jButton40);
+        
+        buttonArray.get(2).add(jButton41);
+        buttonArray.get(2).add(jButton42);
+        buttonArray.get(2).add(jButton43);
+        buttonArray.get(2).add(jButton44);
+        buttonArray.get(2).add(jButton45);
+        buttonArray.get(2).add(jButton46);
+        buttonArray.get(2).add(jButton47);
+        buttonArray.get(2).add(jButton48);
+        
+        buttonArray.get(3).add(jButton49);
+        buttonArray.get(3).add(jButton50);
+        buttonArray.get(3).add(jButton51);
+        buttonArray.get(3).add(jButton52);
+        buttonArray.get(3).add(jButton53);
+        buttonArray.get(3).add(jButton54);
+        buttonArray.get(3).add(jButton55);
+        buttonArray.get(3).add(jButton56);
+        buttonArray.get(3).add(jButton57);
+        buttonArray.get(3).add(jButton58);
+        buttonArray.get(3).add(jButton59);
+        buttonArray.get(3).add(jButton60);
+        buttonArray.get(3).add(jButton61);
+        buttonArray.get(3).add(jButton62);
+        buttonArray.get(3).add(jButton63);
+        buttonArray.get(3).add(jButton64);
+        
+        buttonArray.get(4).add(jButton65);
+        buttonArray.get(4).add(jButton66);
+        buttonArray.get(4).add(jButton67);
+        buttonArray.get(4).add(jButton68);
+        buttonArray.get(4).add(jButton69);
+        buttonArray.get(4).add(jButton70);
+        buttonArray.get(4).add(jButton71);
+        buttonArray.get(4).add(jButton72);
+        buttonArray.get(4).add(jButton73);
+        buttonArray.get(4).add(jButton74);
+        buttonArray.get(4).add(jButton75);
+        buttonArray.get(4).add(jButton76);
+        buttonArray.get(4).add(jButton77);
+        buttonArray.get(4).add(jButton78);
+        buttonArray.get(4).add(jButton79);
+        buttonArray.get(4).add(jButton80);
+        
+        buttonArray.get(5).add(jButton81);
+        buttonArray.get(5).add(jButton82);
+        buttonArray.get(5).add(jButton83);
+        buttonArray.get(5).add(jButton84);
+        buttonArray.get(5).add(jButton85);
+        buttonArray.get(5).add(jButton86);
+        buttonArray.get(5).add(jButton87);
+        buttonArray.get(5).add(jButton88);
+        buttonArray.get(5).add(jButton89);
+        buttonArray.get(5).add(jButton90);
+        buttonArray.get(5).add(jButton91);
+        buttonArray.get(5).add(jButton92);
+        buttonArray.get(5).add(jButton93);
+        buttonArray.get(5).add(jButton94);
+        buttonArray.get(5).add(jButton95);
+        buttonArray.get(5).add(jButton96);
+        
+        buttonArray.get(6).add(jButton97);
+        buttonArray.get(6).add(jButton98);
+        buttonArray.get(6).add(jButton99);
+        buttonArray.get(6).add(jButton100);
+        buttonArray.get(6).add(jButton101);
+        buttonArray.get(6).add(jButton102);
+        buttonArray.get(6).add(jButton103);
+        buttonArray.get(6).add(jButton104);
+        buttonArray.get(6).add(jButton105);
+        buttonArray.get(6).add(jButton106);
+        buttonArray.get(6).add(jButton107);
+        buttonArray.get(6).add(jButton108);
+        buttonArray.get(6).add(jButton109);
+        buttonArray.get(6).add(jButton110);
+        buttonArray.get(6).add(jButton111);
+        buttonArray.get(6).add(jButton112);
+        
+        buttonArray.get(7).add(jButton113);
+        buttonArray.get(7).add(jButton114);
+        buttonArray.get(7).add(jButton115);
+        buttonArray.get(7).add(jButton116);
+        buttonArray.get(7).add(jButton117);
+        buttonArray.get(7).add(jButton118);
+        buttonArray.get(7).add(jButton119);
+        buttonArray.get(7).add(jButton120);
+        buttonArray.get(7).add(jButton121);
+        buttonArray.get(7).add(jButton122);
+        buttonArray.get(7).add(jButton123);
+        buttonArray.get(7).add(jButton124);
+        buttonArray.get(7).add(jButton125);
+        buttonArray.get(7).add(jButton126);
+        buttonArray.get(7).add(jButton127);
+        buttonArray.get(7).add(jButton128);
+        
+        buttonArray.get(8).add(jButton129);
+        buttonArray.get(8).add(jButton130);
+        buttonArray.get(8).add(jButton131);
+        buttonArray.get(8).add(jButton132);
+        buttonArray.get(8).add(jButton133);
+        buttonArray.get(8).add(jButton134);
+        buttonArray.get(8).add(jButton135);
+        buttonArray.get(8).add(jButton136);
+        buttonArray.get(8).add(jButton137);
+        buttonArray.get(8).add(jButton138);
+        buttonArray.get(8).add(jButton139);
+        buttonArray.get(8).add(jButton140);
+        buttonArray.get(8).add(jButton141);
+        buttonArray.get(8).add(jButton142);
+        buttonArray.get(8).add(jButton143);
+        buttonArray.get(8).add(jButton144);
+        
+        buttonArray.get(9).add(jButton145);
+        buttonArray.get(9).add(jButton146);
+        buttonArray.get(9).add(jButton147);
+        buttonArray.get(9).add(jButton148);
+        buttonArray.get(9).add(jButton149);
+        buttonArray.get(9).add(jButton150);
+        buttonArray.get(9).add(jButton151);
+        buttonArray.get(9).add(jButton152);
+        buttonArray.get(9).add(jButton153);
+        buttonArray.get(9).add(jButton154);
+        buttonArray.get(9).add(jButton155);
+        buttonArray.get(9).add(jButton156);
+        buttonArray.get(9).add(jButton157);
+        buttonArray.get(9).add(jButton158);
+        buttonArray.get(9).add(jButton159);
+        buttonArray.get(9).add(jButton160);
+        
+        buttonArray.get(10).add(jButton161);
+        buttonArray.get(10).add(jButton162);
+        buttonArray.get(10).add(jButton163);
+        buttonArray.get(10).add(jButton164);
+        buttonArray.get(10).add(jButton165);
+        buttonArray.get(10).add(jButton166);
+        buttonArray.get(10).add(jButton167);
+        buttonArray.get(10).add(jButton168);
+        buttonArray.get(10).add(jButton169);
+        buttonArray.get(10).add(jButton170);
+        buttonArray.get(10).add(jButton171);
+        buttonArray.get(10).add(jButton172);
+        buttonArray.get(10).add(jButton173);
+        buttonArray.get(10).add(jButton174);
+        buttonArray.get(10).add(jButton175);
+        buttonArray.get(10).add(jButton176);
+        
+        buttonArray.get(11).add(jButton177);
+        buttonArray.get(11).add(jButton178);
+        buttonArray.get(11).add(jButton179);
+        buttonArray.get(11).add(jButton180);
+        buttonArray.get(11).add(jButton181);
+        buttonArray.get(11).add(jButton182);
+        buttonArray.get(11).add(jButton183);
+        buttonArray.get(11).add(jButton184);
+        buttonArray.get(11).add(jButton185);
+        buttonArray.get(11).add(jButton186);
+        buttonArray.get(11).add(jButton187);
+        buttonArray.get(11).add(jButton188);
+        buttonArray.get(11).add(jButton189);
+        buttonArray.get(11).add(jButton190);
+        buttonArray.get(11).add(jButton191);
+        buttonArray.get(11).add(jButton192);
+        
+        buttonArray.get(12).add(jButton193);
+        buttonArray.get(12).add(jButton194);
+        buttonArray.get(12).add(jButton195);
+        buttonArray.get(12).add(jButton196);
+        buttonArray.get(12).add(jButton197);
+        buttonArray.get(12).add(jButton198);
+        buttonArray.get(12).add(jButton199);
+        buttonArray.get(12).add(jButton200);
+        buttonArray.get(12).add(jButton201);
+        buttonArray.get(12).add(jButton202);
+        buttonArray.get(12).add(jButton203);
+        buttonArray.get(12).add(jButton204);
+        buttonArray.get(12).add(jButton205);
+        buttonArray.get(12).add(jButton206);
+        buttonArray.get(12).add(jButton207);
+        buttonArray.get(12).add(jButton208);
+        
+        buttonArray.get(13).add(jButton209);
+        buttonArray.get(13).add(jButton210);
+        buttonArray.get(13).add(jButton211);
+        buttonArray.get(13).add(jButton212);
+        buttonArray.get(13).add(jButton213);
+        buttonArray.get(13).add(jButton214);
+        buttonArray.get(13).add(jButton215);
+        buttonArray.get(13).add(jButton216);
+        buttonArray.get(13).add(jButton217);
+        buttonArray.get(13).add(jButton218);
+        buttonArray.get(13).add(jButton219);
+        buttonArray.get(13).add(jButton220);
+        buttonArray.get(13).add(jButton221);
+        buttonArray.get(13).add(jButton222);
+        buttonArray.get(13).add(jButton223);
+        buttonArray.get(13).add(jButton224);
+        
+        buttonArray.get(14).add(jButton225);
+        buttonArray.get(14).add(jButton226);
+        buttonArray.get(14).add(jButton227);
+        buttonArray.get(14).add(jButton228);
+        buttonArray.get(14).add(jButton229);
+        buttonArray.get(14).add(jButton230);
+        buttonArray.get(14).add(jButton231);
+        buttonArray.get(14).add(jButton232);
+        buttonArray.get(14).add(jButton233);
+        buttonArray.get(14).add(jButton234);
+        buttonArray.get(14).add(jButton235);
+        buttonArray.get(14).add(jButton236);
+        buttonArray.get(14).add(jButton237);
+        buttonArray.get(14).add(jButton238);
+        buttonArray.get(14).add(jButton239);
+        buttonArray.get(14).add(jButton240);
+        
+        buttonArray.get(15).add(jButton241);
+        buttonArray.get(15).add(jButton242);
+        buttonArray.get(15).add(jButton243);
+        buttonArray.get(15).add(jButton244);
+        buttonArray.get(15).add(jButton245);
+        buttonArray.get(15).add(jButton246);
+        buttonArray.get(15).add(jButton247);
+        buttonArray.get(15).add(jButton248);
+        buttonArray.get(15).add(jButton249);
+        buttonArray.get(15).add(jButton250);
+        buttonArray.get(15).add(jButton251);
+        buttonArray.get(15).add(jButton252);
+        buttonArray.get(15).add(jButton253);
+        buttonArray.get(15).add(jButton254);
+        buttonArray.get(15).add(jButton255);
+        buttonArray.get(15).add(jButton256);
+        
+        //add ActionListener to buttons
+        for(int y=0;y<16;++y)
+        {
+            for(int x=0;x<16;++x)
+            {
+                buttonArray.get(y).get(x).addActionListener(new java.awt.event.ActionListener() 
+                {
+                    @Override
+                    public void actionPerformed(ActionEvent e) 
+                    { 
+                        int row, col;
+                        char clr;
+                        
+                        JButton b = (JButton)e.getSource();
+                            coords = getMove(b);
+                                row = coords.getY();
+                                col = coords.getX();
+                            
+                            g.incTC();
+                            
+                            if(g.turnCounter % 2 != 0)
+                            {
+                               clr = 'b'; //black always goes first, affirmative action ;)
+                            }
+                            else {clr = 'w';}
+                            
+                            do
+                            {
+                                g.wrongMove = g.checkMove(row,col,clr);
+                                
+                                if(g.wrongMove)
+                                {
+                                    System.out.println("invalid move, click a different location");
+                                    return;
+                                }
+                            } while (g.wrongMove);
+                            
+                            g.UBoard.play(row,col,clr);
+                                g.recentX.add(col); //col value determines x location
+                                g.recentY.add(row);
+                                
+                            updateBoard();
+                                
+                            g.gameOver = g.checkWin(row,col,clr);
+                            
+                            if(g.gameOver) quitGame();
+                    }
+                });
+            }
+        }
     }
     
-    public void playGomoku()
+    public void updateBoard()
     {
-        do
-        { 
-            g.incTC();
-        
-            int row=0;
-            int col=0;
-            char clr='+'; //to relay which color is playing currently
-                                //default '+' implies blank
-            
-            //needs to check for option buttons
-                 //ie: undo, restart, quit
-            
-            //g.consoleDisplay(); //for testing purposes
-            
-            if(g.turnCounter % 2 != 0)
+        for(int i=0;i<16;++i)
+        {
+            for(int j=0;j<16;++j)
             {
-                clr = 'b'; //black always goes first, affirmative action ;)
+                if(g.UBoard.getSquareState(i,j) == 'b') //not working
+                {
+                    System.out.println("trying to change to black: ("+i+","+j+")");
+                    buttonArray.get(i).get(j).setBackground(Color.black);
+                    System.out.println("done");
+                }
+                else if(g.UBoard.getSquareState(i,j) == 'w')
+                {
+                    System.out.println("trying to change to white: ("+i+","+j+")");
+                    buttonArray.get(i).get(j).setBackground(Color.white);
+                    System.out.println("done");
+                }
+                else if(g.UBoard.getSquareState(i,j) == '+')
+                {
+                    //do nothing
+                }
+                else {System.out.println("something went wrong in update");}
             }
-            else {clr = 'w';}
+        }
         
-            //getMove();
-                //col = --playX;
-                //row = --playY;
-            
-            do
+    }
+    
+    public point getMove(JButton b)
+    {
+        point location;
+        
+        for(int x=0;x<16;++x)
+        {
+            for(int y=0;y<16;++y)
             {
-                g.wrongMove = g.checkMove(row,col,clr);
-            } while (g.wrongMove);
-            
-            g.UBoard.play(row,col,clr);
-                    g.recentX.add(col); //col value determines x location
-                    g.recentY.add(row); // row value determines y location
-                
-                
-                g.gameOver = g.checkWin(row,col,clr);
-            
-        } while (!g.gameOver);
+                if(buttonArray.get(y).get(x).equals(b))
+                {
+                    location = new point(x,y);
+                    return location;
+                }
+            }
+        }
         
-        System.out.println("GAME OVER!");
+        //should never happen
+        return location = new point(-1,-1);
+    }
+    
+    public void quitGame()
+    {
+        //show celebratory message on right hand bar with reset option
+        
+        //g.restart();
     }
 
     /**
@@ -331,6 +693,14 @@ public class GomokuGUI extends javax.swing.JFrame
         jButton254 = new javax.swing.JButton();
         jButton255 = new javax.swing.JButton();
         jButton256 = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextPane1 = new javax.swing.JTextPane();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTextPane2 = new javax.swing.JTextPane();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTextPane3 = new javax.swing.JTextPane();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        jTextPane4 = new javax.swing.JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -2128,17 +2498,57 @@ public class GomokuGUI extends javax.swing.JFrame
         });
         jPanel1.add(jButton256);
 
+        jTextPane1.setFont(new java.awt.Font("Helvetica", 0, 36)); // NOI18N
+        jTextPane1.setText("Gomoku!");
+        jTextPane1.setAlignmentX(0.0F);
+        jTextPane1.setAlignmentY(0.0F);
+        jScrollPane1.setViewportView(jTextPane1);
+
+        jTextPane2.setText("It is black's turn");
+        jTextPane2.setToolTipText("");
+        jScrollPane2.setViewportView(jTextPane2);
+
+        jTextPane3.setText("Turn #: ");
+        jTextPane3.setToolTipText("");
+        jScrollPane3.setViewportView(jTextPane3);
+
+        jTextPane4.setText("0");
+        jTextPane4.setToolTipText("");
+        jScrollPane4.setViewportView(jTextPane4);
+
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(layout.createSequentialGroup()
                 .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 650, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(0, 233, Short.MAX_VALUE))
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(layout.createSequentialGroup()
+                        .add(41, 41, 41)
+                        .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                    .add(layout.createSequentialGroup()
+                        .add(62, 62, 62)
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
+                            .add(layout.createSequentialGroup()
+                                .add(jScrollPane3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .add(jScrollPane4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 21, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                            .add(jScrollPane2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
+                .add(0, 68, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(jPanel1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 592, Short.MAX_VALUE)
+            .add(layout.createSequentialGroup()
+                .addContainerGap()
+                .add(jScrollPane1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 51, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(47, 47, 47)
+                .add(jScrollPane2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                .add(37, 37, 37)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                    .add(jScrollPane3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(jScrollPane4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
         pack();
@@ -2212,9 +2622,7 @@ public class GomokuGUI extends javax.swing.JFrame
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
+    
     public void playGame()
     {
         /* Create and display the form */
@@ -2483,5 +2891,13 @@ public class GomokuGUI extends javax.swing.JFrame
     private javax.swing.JButton jButton98;
     private javax.swing.JButton jButton99;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JTextPane jTextPane1;
+    private javax.swing.JTextPane jTextPane2;
+    private javax.swing.JTextPane jTextPane3;
+    private javax.swing.JTextPane jTextPane4;
     // End of variables declaration//GEN-END:variables
 }
