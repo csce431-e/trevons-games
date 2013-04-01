@@ -121,12 +121,42 @@ public class CheckersBoard {
         
         return false;
     }*/
-    
     public ArrayList<CheckersMove> getAllMoves()
+    {
+        ArrayList<CheckersJump> j = getJumpMoves();
+        if(j.size() > 0)
+        {
+            ArrayList<CheckersMove> jumpMoves = new ArrayList();
+            for(CheckersJump currentJump: j)
+            {
+                jumpMoves.add((CheckersMove)currentJump);
+            }
+            return jumpMoves;
+        }
+        else
+        {
+            return getNormalMoves();
+        }
+    }
+    
+    public ArrayList<CheckersJump> getJumpMoves()
     {
         Owner o = currentGame.turn;
         
-        ArrayList<CheckersMove> jumps = new ArrayList();
+        ArrayList<CheckersJump> jumps = new ArrayList();
+        for(CheckersCell c: o.pieces)
+        {
+            jumps.addAll(c.getJumps());
+        }
+        
+        return jumps;   
+    }
+    
+    public ArrayList<CheckersMove> getNormalMoves()
+    {
+        Owner o = currentGame.turn;
+        
+        /*ArrayList<CheckersMove> jumps = new ArrayList();
         for(CheckersCell c: o.pieces)
         {
             jumps.addAll(c.getJumps());
@@ -135,7 +165,7 @@ public class CheckersBoard {
         if(jumps.size() > 0)
         {
             return jumps;
-        }
+        }*/
         
         ArrayList<CheckersMove> moves = new ArrayList();
         
@@ -160,23 +190,51 @@ public class CheckersBoard {
             System.out.println("It is not your turn!");
             return false;
         }
-        
-        ArrayList<CheckersMove> moves = getAllMoves();
-        boolean moveFound = false;
-        
-        for(CheckersMove currentMove: moves)
+        if(!m.isValidMove())
         {
-            if(m.equals(currentMove))
-            {
-                moveFound = true;
-                break;
-            }
+            System.out.println("Invalid Move");
+            return false;
         }
         
-        if(!moveFound)
+        
+        ArrayList<CheckersJump> jumps = getJumpMoves();
+        //@TODO double jump logic is off. check recursion conditions
+        while(jumps.size() > 0)
         {
-            System.out.println("You must jump if one is available!");
-            return false;
+            boolean moveFound = false;
+
+            for(CheckersJump currentJump: jumps)
+            {
+                if(m.equals(currentJump))
+                {
+                    moveFound = true;
+                    break;
+                }
+            }
+
+            if(!moveFound)
+            {
+                System.out.println("You must jump if one is available!");
+                return false;
+            }
+
+            if(m.updateBoard(this))
+            {
+                printBoard();
+                jumps = getJumpMoves();
+                if(jumps.size() > 0)
+                {
+                    if(!makeMove(currentGame.requestMove()))
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return true;
+                }
+            }    
+            //return true;
         }
         
         if(m.updateBoard(this))
@@ -185,28 +243,8 @@ public class CheckersBoard {
             return true;
         }
         
-        System.out.println("Invalid Move");
+        System.out.println("Error: Please try again!");
         return false;
-        
-        /*if(CheckersCell.isValidMove(m))
-        {
-            int xDest = m.dest.x;
-            int yDest = m.dest.y;
-            CheckersCell d = board.get(yDest).get(xDest);
-            
-            Owner o = m.source.getOwner();
-            m.source.setOwner(Owner.EMPTY);
-            d.setOwner(o);
-            o.pieces.remove(m.source);
-            o.pieces.add(d);
-            
-            System.out.println("Move: " + m.toString());
-            printBoard();
-            return true;
-        }
-        
-        System.out.println("Invalid Move: " + m.toString());
-        return false;*/
     }
     
     

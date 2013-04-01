@@ -124,9 +124,9 @@ public class CheckersCell {
         return mid;
     }
 
-    public ArrayList<CheckersMove> getJumps() {
+    public ArrayList<CheckersJump> getJumps() {
         
-        ArrayList<CheckersMove> jumps = new ArrayList();
+        ArrayList<CheckersJump> jumps = new ArrayList();
         
         Owner opponent = owner.opposite();
         if(opponent== Owner.EMPTY)
@@ -158,8 +158,11 @@ public class CheckersCell {
             CheckersCell mid = getMid(this, jump);
             if(mid.owner == opponent)
             {
-                CheckersMove m = new CheckersJump(this,mid,jump);
-                jumps.add(m);
+                CheckersJump j = new CheckersJump(this,mid,jump);
+                if(j.isValidJump())
+                {
+                    jumps.add(j);
+                }
             }
         }
         return jumps;
