@@ -247,8 +247,8 @@ public class MainMenu extends javax.swing.JPanel {
 
     private void ConnectFourClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConnectFourClicked
         // TODO add your handling code here:
-        ConnectFourGame g = new ConnectFourGame();
-        g.cfGameStart();
+        ConnectFourGUIPanel g = new ConnectFourGUIPanel();
+        g.playConnect();
     }//GEN-LAST:event_ConnectFourClicked
 
     private void CheckersClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckersClicked

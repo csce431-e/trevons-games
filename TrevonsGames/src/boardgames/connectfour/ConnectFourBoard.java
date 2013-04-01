@@ -14,6 +14,11 @@ public class ConnectFourBoard {
     int numColumn;
     int numRow;
     
+    int playerColor = 1, opponentColor =2;
+    int colOne, colTwo, colThr, colFor, colFiv, colSix, colSev;
+    boolean moveComplete = false, gameOver = false;
+    int gameTurn = 0;
+    
     ArrayList< ArrayList< Piece> > board;
     //Piece board[][];
     
@@ -33,7 +38,6 @@ public class ConnectFourBoard {
             board.add(rows);
         }
     }
-    
     
     public int win() {
         
@@ -103,6 +107,156 @@ public class ConnectFourBoard {
         }
         
         System.out.println(" 1  2  3  4  5  6  7 ");
+    }
+    
+    void setTurn(int turn){
+        gameTurn = turn;
+    }
+    
+    public int getTurn() {
+        return gameTurn;
+    }
+    
+    public int getColor(int row, int column) {
+        return board.get(row).get(column).pieceColor();
+    }
+    
+    public int rowHeight(int column) {
+        int height = 0;
+        switch(column) {
+            case 1:
+                height = colOne;
+                break;
+            case 2:
+                height = colTwo;
+                break;
+            case 3:
+                height = colThr;
+                break;
+            case 4:
+                height = colFor;
+                break;
+            case 5:
+                height = colFiv;
+                break;
+            case 6:
+                height = colSix;
+                break;
+            case 7:
+                height = colSev;
+                break;
+        }
+        
+        return height;
+    }
+    
+    // Select column to place piece, and make the move
+    public boolean move(int turn, int column) {
+        int colMove = column;
+        int turnColor;
+        
+        setTurn(turn);
+        
+        String currentPlayer = "@";
+        
+        moveComplete = false;
+        
+        if((turn%2) == 0){
+            turnColor=opponentColor;
+        } else {
+            turnColor=playerColor;
+        }
+        
+        switch((turn%2)){
+            case 0:
+                currentPlayer = "O";
+                break;
+            case 1:
+                currentPlayer = "@";
+                break;
+        }
+        
+//        Scanner scanner = new Scanner(System.in);
+//        
+        System.out.println("Please select column to place piece player " + currentPlayer + ": ");
+//        colMove = scanner.nextInt();
+        
+        switch(colMove){
+            case 1:
+                if(colOne == 6) {
+                    System.out.println("The column is full. Select another.");
+                } else {
+                    setPiece(colOne, colMove-1, turnColor);
+                    colOne++;
+                    moveComplete = true;
+                }
+                break;
+            case 2:
+                if(colTwo == 6) {
+                    System.out.println("The column is full. Select another.");
+                } else {
+                    setPiece(colTwo, colMove-1, turnColor);
+                    colTwo++;
+                    moveComplete = true;
+                }
+                break;
+            case 3:
+                if(colThr == 6) {
+                    System.out.println("The column is full. Select another.");
+                } else {
+                    setPiece(colThr, colMove-1, turnColor);
+                    colThr++;
+                    moveComplete = true;
+                }
+                break;
+            case 4:
+                if(colFor == 6) {
+                    System.out.println("The column is full. Select another.");
+                } else {
+                    setPiece(colFor, colMove-1, turnColor);
+                    colFor++;
+                    moveComplete = true;
+                }
+                break;
+            case 5:
+                if(colFiv == 6) {
+                    System.out.println("The column is full. Select another.");
+                } else {
+                    setPiece(colFiv, colMove-1, turnColor);
+                    colFiv++;
+                    moveComplete = true;
+                }
+                break;
+            case 6:
+                if(colSix == 6) {
+                    System.out.println("The column is full. Select another.");
+                } else {
+                    setPiece(colSix, colMove-1, turnColor);
+                    colSix++;
+                    moveComplete = true;
+                }
+                break;
+            case 7:
+                if(colSev == 6) {
+                    System.out.println("The column is full. Select another.");
+                } else {
+                    setPiece(colSev, colMove-1, turnColor);
+                    colSev++;
+                    moveComplete = true;
+                }
+                break;
+        }
+        
+        return moveComplete;
+    }
+    
+    public boolean checkFull() {
+        if(colOne == 6 && colTwo == 6 && colThr == 6 && colFor == 6 && colFiv == 6 && colSix == 6 && colSev == 6) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
     
     void setPiece(int row, int col, int color) {
