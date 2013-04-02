@@ -37,6 +37,7 @@ public class CheckersGame {
         {
             if(option == 1 && turn == Owner.PLAYER2)
             {
+                AI = true;
                 sendAIMove();
             }
             else
@@ -44,54 +45,7 @@ public class CheckersGame {
                 turnCompleted = false;
                 System.out.println("Current Turn: " + turn.toString());
 
-
-
-                System.out.println("Enter m or j to move or jump");
-                String choice = sc.next();
-
-                CheckersMove m = new CheckersMove();
-
-                if (choice.equals("m")) {
-                    System.out.println("Enter coordinates of piece that will be moved: ");
-
-                    int x1, y1, x2, y2;
-
-                    x1 = sc.nextInt();
-                    y1 = sc.nextInt();
-
-                    System.out.println("Enter coordinates of destination: ");
-
-                    x2 = sc.nextInt();
-                    y2 = sc.nextInt();
-
-                    m = new CheckersMove(CheckersBoard.board.get(x1).get(y1),
-                            CheckersBoard.board.get(x2).get(y2));
-
-                } else if (choice.equals("j")) {
-                    System.out.println("Enter coordinates of piece that will be moved: ");
-
-                    int x1, y1, x2, y2, x3, y3;
-
-                    x1 = sc.nextInt();
-                    y1 = sc.nextInt();
-
-                    System.out.println("Enter coordinates of jumped piece: ");
-
-                    x2 = sc.nextInt();
-                    y2 = sc.nextInt();
-
-                    System.out.println("Enter coordinates of destination: ");
-
-                    x3 = sc.nextInt();
-                    y3 = sc.nextInt();
-
-                    //CheckersJump j;
-                    m = new CheckersJump(CheckersBoard.board.get(x1).get(y1),
-                            CheckersBoard.board.get(x2).get(y2), CheckersBoard.board.get(x3).get(y3));
-
-                    //m = (CheckersMove)j;
-
-                }
+                CheckersMove m = requestMove();
 
                 if (b.makeMove(m)) {
                     turnCompleted = true;
@@ -104,7 +58,62 @@ public class CheckersGame {
             }
         }
     }
-    
+     
+    public CheckersMove requestMove()
+    {
+        if(AI && turn == Owner.PLAYER2)
+        {
+            sendAIMove();
+        }
+        
+        System.out.println("Enter m or j to move or jump");
+        Scanner sc = new Scanner(System.in);
+        String choice = sc.next();
+
+        CheckersMove m = new CheckersMove();
+
+        if (choice.equals("m")) {
+            System.out.println("Enter coordinates of piece that will be moved: ");
+
+            int x1, y1, x2, y2;
+
+            x1 = sc.nextInt();
+            y1 = sc.nextInt();
+
+            System.out.println("Enter coordinates of destination: ");
+
+            x2 = sc.nextInt();
+            y2 = sc.nextInt();
+
+            m = new CheckersMove(CheckersBoard.board.get(x1).get(y1),
+                    CheckersBoard.board.get(x2).get(y2));
+
+
+        } else if (choice.equals("j")) {
+            System.out.println("Enter coordinates of piece that will be moved: ");
+
+            int x1, y1, x2, y2, x3, y3;
+
+            x1 = sc.nextInt();
+            y1 = sc.nextInt();
+
+            System.out.println("Enter coordinates of jumped piece: ");
+
+            x2 = sc.nextInt();
+            y2 = sc.nextInt();
+
+            System.out.println("Enter coordinates of destination: ");
+
+            x3 = sc.nextInt();
+            y3 = sc.nextInt();
+
+            //CheckersJump j;
+            m = new CheckersJump(CheckersBoard.board.get(x1).get(y1),
+                    CheckersBoard.board.get(x2).get(y2), CheckersBoard.board.get(x3).get(y3));
+        }
+        return m;
+                    //m = (CheckersMove)j;
+    }
     public void sendAIMove()
     {
         ArrayList<CheckersMove> l = b.getAllMoves();
@@ -116,6 +125,7 @@ public class CheckersGame {
         while(!moveMade && il.hasNext())
         {
             m = il.next();
+            moveMade = b.makeMove(m);
         }
     }
     
