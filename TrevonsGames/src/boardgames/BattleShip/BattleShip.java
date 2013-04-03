@@ -182,10 +182,10 @@ public class BattleShip {
             if( ships.get(shipIndex).size()+x > BOARD_W ) return "OOB EAST " + ships.get(shipIndex).size()+x;
         }
         if(orientation.equals("SOUTH")){
-            if( y-ships.get(shipIndex).size() < 0 ) return "OOB SOUTH " + (y-ships.get(shipIndex).size());
+            if( y-ships.get(shipIndex).size()+1 < 0 ) return "OOB SOUTH " + (y-ships.get(shipIndex).size());
         }
         if(orientation.equals("WEST")){
-            if( x-ships.get(shipIndex).size() < 0 ) return "OOB WEST " +  (y-ships.get(shipIndex).size());
+            if( x-ships.get(shipIndex).size()+1 < 0 ) return "OOB WEST " +  (y-ships.get(shipIndex).size());
         }
         
         return "OK";
@@ -239,7 +239,7 @@ public class BattleShip {
             }
             
         }
-        return "";
+        return "X";
     }
     
     public boolean checkWin(){
