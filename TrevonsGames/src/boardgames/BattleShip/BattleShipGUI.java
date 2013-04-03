@@ -18,6 +18,7 @@ import javax.swing.JButton;
 public class BattleShipGUI extends javax.swing.JFrame {
     
     private boolean p1Turn=true;
+    private boolean turnSwap = false;
     private boolean p1PlacedShips=false;
     private boolean p2PlacedShips=false;
     private boolean placeShips=true;
@@ -278,6 +279,7 @@ public class BattleShipGUI extends javax.swing.JFrame {
         
         
         disableP2();
+        updateEmptyBoard();
         
         
         
@@ -310,8 +312,8 @@ public class BattleShipGUI extends javax.swing.JFrame {
     }
     
     void updateP1Board(){
-        p1.showBoard();
-        p2.showBoard();
+        //p1.showBoard();
+        //p2.showBoard();
         String[][] gameBoardp1 = p1.getBoard();
         String[][] gameBoardp2 = p2.getBoard();
         for(int y=0;y<p1.BOARD_H;y++){
@@ -341,8 +343,8 @@ public class BattleShipGUI extends javax.swing.JFrame {
     }
     
     void updateP2Board(){
-        p1.showBoard();
-        p2.showBoard();
+        //p1.showBoard();
+        //p2.showBoard();
         String[][] gameBoardp1 = p1.getBoard();
         String[][] gameBoardp2 = p2.getBoard();
         for(int y=0;y<p1.BOARD_H;y++){
@@ -372,6 +374,16 @@ public class BattleShipGUI extends javax.swing.JFrame {
         }
     }
 
+    void updateEmptyBoard(){
+        for(int y=0;y<p1.BOARD_H;y++){
+            for(int x=0; x<p1.BOARD_W;x++){
+                //make the whole board blue so that people can't cheat between turns
+                p1button.get(y).get(x).setBackground(Color.blue);
+                p2button.get(y).get(x).setBackground(Color.blue);
+            }
+        }
+    }
+    
     void disableP1(){
          for(int y=0;y<p1.BOARD_H;y++){
             for(int x=0; x<p1.BOARD_W;x++){
@@ -412,6 +424,11 @@ public class BattleShipGUI extends javax.swing.JFrame {
         }
     }
          
+    void playerChange(){
+        turnSwap=true;
+        jDialog1.setVisible(true);
+        updateEmptyBoard();
+    }
          
     /**
      * This method is called from within the constructor to initialize the form.
@@ -423,6 +440,10 @@ public class BattleShipGUI extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
+        buttonGroup1 = new javax.swing.ButtonGroup();
+        jDialog1 = new javax.swing.JDialog();
+        jLabel3 = new javax.swing.JLabel();
+        jButton201 = new javax.swing.JButton();
         p1Panel = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
@@ -627,10 +648,10 @@ public class BattleShipGUI extends javax.swing.JFrame {
         jButton200 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jCheckBox1 = new javax.swing.JCheckBox();
-        jCheckBox2 = new javax.swing.JCheckBox();
-        jCheckBox3 = new javax.swing.JCheckBox();
-        jCheckBox4 = new javax.swing.JCheckBox();
+        jRadioButton1 = new javax.swing.JRadioButton();
+        jRadioButton2 = new javax.swing.JRadioButton();
+        jRadioButton3 = new javax.swing.JRadioButton();
+        jRadioButton4 = new javax.swing.JRadioButton();
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -643,7 +664,47 @@ public class BattleShipGUI extends javax.swing.JFrame {
             .addGap(0, 100, Short.MAX_VALUE)
         );
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        jDialog1.setAlwaysOnTop(true);
+        jDialog1.setMinimumSize(new java.awt.Dimension(400, 400));
+        jDialog1.setPreferredSize(new java.awt.Dimension(400, 400));
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel3.setText(" Switching turns");
+        jLabel3.setPreferredSize(new java.awt.Dimension(125, 25));
+
+        jButton201.setLabel("OK");
+        jButton201.setPreferredSize(new java.awt.Dimension(100, 50));
+        jButton201.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton201ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jDialog1Layout = new javax.swing.GroupLayout(jDialog1.getContentPane());
+        jDialog1.getContentPane().setLayout(jDialog1Layout);
+        jDialog1Layout.setHorizontalGroup(
+            jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jDialog1Layout.createSequentialGroup()
+                .addGroup(jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jDialog1Layout.createSequentialGroup()
+                        .addGap(150, 150, 150)
+                        .addComponent(jButton201, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jDialog1Layout.createSequentialGroup()
+                        .addGap(125, 125, 125)
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(135, Short.MAX_VALUE))
+        );
+        jDialog1Layout.setVerticalGroup(
+            jDialog1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jDialog1Layout.createSequentialGroup()
+                .addGap(145, 145, 145)
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20)
+                .addComponent(jButton201, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(140, Short.MAX_VALUE))
+        );
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         p1Panel.setBackground(new java.awt.Color(51, 204, 255));
         p1Panel.setLayout(new java.awt.GridLayout(10, 10, 10, 10));
@@ -730,7 +791,7 @@ public class BattleShipGUI extends javax.swing.JFrame {
         p1Panel.add(jButton9);
 
         jButton10.setText(" ");
-        jButton10.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton10.setPreferredSize(new java.awt.Dimension(50, 50));
         jButton10.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton10ActionPerformed(evt);
@@ -1633,7 +1694,7 @@ public class BattleShipGUI extends javax.swing.JFrame {
         p2Panel.add(jButton109);
 
         jButton110.setText(" ");
-        jButton110.setPreferredSize(new java.awt.Dimension(35, 35));
+        jButton110.setPreferredSize(new java.awt.Dimension(50, 50));
         jButton110.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton110ActionPerformed(evt);
@@ -2455,14 +2516,38 @@ public class BattleShipGUI extends javax.swing.JFrame {
 
         jLabel2.setText("jLabel2");
 
-        jCheckBox1.setSelected(true);
-        jCheckBox1.setText("NORTH");
+        buttonGroup1.add(jRadioButton1);
+        jRadioButton1.setSelected(true);
+        jRadioButton1.setText("North");
+        jRadioButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton1ActionPerformed(evt);
+            }
+        });
 
-        jCheckBox2.setText("EAST");
+        buttonGroup1.add(jRadioButton2);
+        jRadioButton2.setText("East");
+        jRadioButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton2ActionPerformed(evt);
+            }
+        });
 
-        jCheckBox3.setText("WEST");
+        buttonGroup1.add(jRadioButton3);
+        jRadioButton3.setText("West");
+        jRadioButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton3ActionPerformed(evt);
+            }
+        });
 
-        jCheckBox4.setText("SOUTH");
+        buttonGroup1.add(jRadioButton4);
+        jRadioButton4.setText("South");
+        jRadioButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jRadioButton4ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -2471,45 +2556,48 @@ public class BattleShipGUI extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addComponent(p1Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(p1Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jCheckBox3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jCheckBox2))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(30, 30, 30)
-                                .addComponent(jCheckBox1))))
+                        .addGap(69, 69, 69)
+                        .addComponent(jLabel2)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jRadioButton1)
+                            .addComponent(jRadioButton4)
+                            .addComponent(jRadioButton2, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jRadioButton3, javax.swing.GroupLayout.Alignment.LEADING))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
                         .addComponent(p2Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(30, 30, 30)
-                        .addComponent(jCheckBox4))
-                    .addComponent(jLabel1))
-                .addContainerGap(66, Short.MAX_VALUE))
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(5, 5, 5)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(p1Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jCheckBox1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 6, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jCheckBox3)
-                    .addComponent(jCheckBox2))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel2))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(p2Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jCheckBox4))
-                .addGap(22, 22, 22))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(p1Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(p2Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(25, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jRadioButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jRadioButton2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jRadioButton3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jRadioButton4)
+                        .addGap(230, 230, 230))))
         );
 
         pack();
@@ -2518,20 +2606,20 @@ public class BattleShipGUI extends javax.swing.JFrame {
     private void p2ActionHandler(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_p2ActionHandler
         // TODO add your handling code here:
         //HANDLE ACTIONS
-        if(!game){return;}
+        if(!game || turnSwap){return;}
         
         JButton b = (JButton)evt.getSource();
         String orientation="NORTH";
-        if(jCheckBox1.isSelected()){
+        if(jRadioButton1.isSelected()){
             orientation="NORTH";
         }
-        if(jCheckBox2.isSelected()){
+        if(jRadioButton2.isSelected()){
             orientation="EAST";
         }
-        if(jCheckBox3.isSelected()){
+        if(jRadioButton3.isSelected()){
             orientation="WEST";
         }
-        if(jCheckBox4.isSelected()){
+        if(jRadioButton4.isSelected()){
             orientation="SOUTH";
         }
         
@@ -2547,7 +2635,7 @@ public class BattleShipGUI extends javax.swing.JFrame {
             p=getCoordsp1(b);
         }
          
-        if(placeShips && game){
+        if(placeShips && game ){
             if(p1Turn){
                 if(currentShip +2 < 6){
                     jLabel1.setText("Player 1 place ship " + (currentShip+2));
@@ -2566,9 +2654,15 @@ public class BattleShipGUI extends javax.swing.JFrame {
                         p1Turn=false;
                         currentShip=0;
                         p1PlacedShips=true;
-                        updateP2Board();
+                        jRadioButton1.setSelected(true);
+                        jRadioButton2.setSelected(false);
+                        jRadioButton3.setSelected(false);
+                        jRadioButton4.setSelected(false);
+                        
                         enableP2();
                         disableP1();
+                        playerChange();
+                        //updateP2Board();
                     }
                 }
                 else{
@@ -2582,8 +2676,8 @@ public class BattleShipGUI extends javax.swing.JFrame {
                     jLabel1.setText("");
                 }
                 else{
-                    jLabel2.setText("Player 2 finished placing ships");
-                    jLabel1.setText("Player 1 make move");
+                    jLabel1.setText("Player 2 finished placing ships");
+                    jLabel2.setText("Player 1 make move");
                 }
                 if(p2.placeShips(p, currentShip,orientation)!=-1){ 
                     currentShip++;
@@ -2594,7 +2688,9 @@ public class BattleShipGUI extends javax.swing.JFrame {
                         p1Turn=true;
                         currentShip=0;
                         p2PlacedShips=true;
-                        updateP1Board();
+                        
+                        playerChange();
+                        //updateP1Board();
                     }
                 }
                 else{
@@ -2603,41 +2699,56 @@ public class BattleShipGUI extends javax.swing.JFrame {
             }
             if(p1PlacedShips && p2PlacedShips){
                 placeShips=false;
+                jRadioButton1.setVisible(false);
+                jRadioButton2.setVisible(false);
+                jRadioButton3.setVisible(false);
+                jRadioButton4.setVisible(false);
             }
         }
         else{
             if(p1Turn){
-                jLabel1.setText("Player 1 attacked spot " + p.x + ' ' + p.y);
-                jLabel2.setText("Player 2 make move");
-                System.out.print(p2.attackSpot(p.x,p.y));
-                enableP1();
-                if(p2.checkWin()){
-                    System.out.println("Player 1 wins!");
-                    jLabel1.setText("Player 1 wins!");
-                    jLabel2.setText("Player 1 wins!");
-                    game=false;
-                    disableP1();
+                jLabel2.setText("Player 1 attacked spot " + p.x + ' ' + p.y);
+                jLabel1.setText("Player 2 make move");
+                if(!p2.attackSpot(p.x,p.y).equals("X")){
+                    enableP1();
+                    if(p2.checkWin()){
+                        System.out.println("Player 1 wins!");
+                        jLabel1.setText("Player 1 wins!");
+                        jLabel2.setText("Player 1 wins!");
+                        game=false;
+                        disableP1();
+                    }
+                    p1Turn=false;
+                    playerChange();
+                    //updateP2Board();
+                    disableP2();
+                    
                 }
-                p1Turn=false;
-                updateP2Board();
-                disableP2();
+                else{
+                    jLabel2.setText("Spot " + p.x + ' ' + p.y + " has already been attacked.  Pick another.");
+                }
                 
             }
             else{
-                jLabel2.setText("Player 2 attacked spot " + p.x + ' ' + p.y);
-                jLabel1.setText("Player 1 make move");
-                System.out.print(p1.attackSpot(p.x,p.y));
-                enableP2();
-                if(p1.checkWin()){
-                    System.out.println("Player 2 wins!");
-                    jLabel1.setText("Player 2 wins!");
-                    jLabel2.setText("Player 2 wins!");
-                    game=false;
-                    disableP2();
+                jLabel1.setText("Player 2 attacked spot " + p.x + ' ' + p.y);
+                jLabel2.setText("Player 1 make move");
+                if(!p1.attackSpot(p.x,p.y).equals("X")){
+                    enableP2();
+                    if(p1.checkWin()){
+                        System.out.println("Player 2 wins!");
+                        jLabel1.setText("Player 2 wins!");
+                        jLabel2.setText("Player 2 wins!");
+                        game=false;
+                        disableP2();
+                    }
+                    p1Turn=true;
+                    playerChange();
+                    disableP1();
+                    //updateP1Board();
                 }
-                p1Turn=true;
-                updateP1Board();
-                disableP1();
+                else{
+                    jLabel1.setText("Spot " + p.x + ' ' + p.y + " has already been attacked.  Pick another.");
+                }
             }
         }
     }//GEN-LAST:event_p2ActionHandler
@@ -3437,6 +3548,41 @@ public class BattleShipGUI extends javax.swing.JFrame {
     private void jButton200ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton200ActionPerformed
         p2ActionHandler(evt);        // TODO add your handling code here:
     }//GEN-LAST:event_jButton200ActionPerformed
+
+    private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
+    jRadioButton2.setSelected(false);  
+    jRadioButton3.setSelected(false);  
+    jRadioButton4.setSelected(false);  
+    // TODO add your handling code here:
+    }//GEN-LAST:event_jRadioButton1ActionPerformed
+
+    private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton2ActionPerformed
+    jRadioButton1.setSelected(false);  
+    jRadioButton3.setSelected(false);  
+    jRadioButton4.setSelected(false);         // TODO add your handling code here:
+    }//GEN-LAST:event_jRadioButton2ActionPerformed
+
+    private void jRadioButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton3ActionPerformed
+    jRadioButton1.setSelected(false);  
+    jRadioButton2.setSelected(false);  
+    jRadioButton4.setSelected(false);         // TODO add your handling code here:
+    }//GEN-LAST:event_jRadioButton3ActionPerformed
+
+    private void jRadioButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton4ActionPerformed
+    jRadioButton1.setSelected(false);  
+    jRadioButton2.setSelected(false);  
+    jRadioButton3.setSelected(false);         // TODO add your handling code here:
+    }//GEN-LAST:event_jRadioButton4ActionPerformed
+
+    private void jButton201ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton201ActionPerformed
+        turnSwap =false;
+        jDialog1.setVisible(false);
+        if(p1Turn){
+            updateP1Board();
+        }else{
+            updateP2Board();
+        }
+    }//GEN-LAST:event_jButton201ActionPerformed
   
     /**
      * @param args the command line arguments
@@ -3452,6 +3598,7 @@ public class BattleShipGUI extends javax.swing.JFrame {
         
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
     private javax.swing.JButton jButton100;
@@ -3566,6 +3713,7 @@ public class BattleShipGUI extends javax.swing.JFrame {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton20;
     private javax.swing.JButton jButton200;
+    private javax.swing.JButton jButton201;
     private javax.swing.JButton jButton21;
     private javax.swing.JButton jButton22;
     private javax.swing.JButton jButton23;
@@ -3652,13 +3800,15 @@ public class BattleShipGUI extends javax.swing.JFrame {
     private javax.swing.JButton jButton97;
     private javax.swing.JButton jButton98;
     private javax.swing.JButton jButton99;
-    private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JCheckBox jCheckBox2;
-    private javax.swing.JCheckBox jCheckBox3;
-    private javax.swing.JCheckBox jCheckBox4;
+    private javax.swing.JDialog jDialog1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JRadioButton jRadioButton1;
+    private javax.swing.JRadioButton jRadioButton2;
+    private javax.swing.JRadioButton jRadioButton3;
+    private javax.swing.JRadioButton jRadioButton4;
     private javax.swing.JPanel p1Panel;
     private javax.swing.JPanel p2Panel;
     // End of variables declaration//GEN-END:variables

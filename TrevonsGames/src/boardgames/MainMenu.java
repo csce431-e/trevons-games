@@ -311,7 +311,7 @@ public class MainMenu extends javax.swing.JPanel {
         
         SolitaireGame g = new SolitaireGame();
         g.initGame();
-        client.waitForMove();
+        client.turnOrder();
     }//GEN-LAST:event_clientClicked
 
     private void serverClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_serverClicked
