@@ -44,7 +44,30 @@ public class CheckersJump extends CheckersMove {
             o.pieces.remove(src);
             o.pieces.add(d);
             
+            if(o == Owner.PLAYER1)
+            {
+                if(d.x == TOPOFBOARD)
+                {
+                    d.setKing(true);
+                }
+            }
+            else if(o == Owner.PLAYER2)
+            {
+                if(d.x == BOTOFBOARD)
+                {
+                    d.setKing(true);
+                }
+            }
+            
+            if(src.isKing())
+            {
+                d.setKing(true);
+                src.setKing(false);
+            }
+            
             System.out.println("Move: " + this.toString());
+            
+            b.anotherJump = true;
             return true;
         }
         

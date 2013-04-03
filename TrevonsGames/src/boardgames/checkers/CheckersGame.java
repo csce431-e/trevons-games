@@ -15,7 +15,7 @@ public class CheckersGame {
     public Owner turn;
     public boolean turnCompleted;
     public boolean AI;
-    
+    public Owner winner;
     
     public void initCheckers()
     {
@@ -29,28 +29,37 @@ public class CheckersGame {
     
     public void sendMove()//(int x1, int y1, int x2, int y2)
     {
+        winner = b.isGameOver();
+        if(winner != Owner.EMPTY)
+        {
+            endGame();
+        }
         System.out.println("Enter 0 for player vs player. Enter 1 for player vs AI:");
         Scanner sc = new Scanner(System.in);
         int option = sc.nextInt();
         
         for(;;)
         {
+            System.out.println("Current Turn: " + turn.toString());
+            turnCompleted = false;
+            
             if(option == 1 && turn == Owner.PLAYER2)
             {
                 AI = true;
                 sendAIMove();
+                if(!b.anotherJump)
+                {
+                    turnCompleted = true;
+                }
             }
             else
             {
-                turnCompleted = false;
-                System.out.println("Current Turn: " + turn.toString());
-
                 CheckersMove m = requestMove();
 
-                if (b.makeMove(m)) {
+                if (b.makeMove(m) && !b.anotherJump) 
+                {
                     turnCompleted = true;
                 }
-                
             }
             if (turnCompleted == true) 
             {
@@ -133,6 +142,12 @@ public class CheckersGame {
     {
         CheckersGame g = new CheckersGame();
         g.initCheckers();
+    }
+    
+    public void endGame()
+    {
+        System.out.println("Game Over. ");
+        System.out.println("Congratulations " + winner + " wins!");
     }
     
 }
