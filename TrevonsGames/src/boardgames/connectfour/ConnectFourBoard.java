@@ -17,7 +17,7 @@ public class ConnectFourBoard {
     int playerColor = 1, opponentColor =2;
     int colOne, colTwo, colThr, colFor, colFiv, colSix, colSev;
     boolean moveComplete = false, gameOver = false;
-    int gameTurn = 0;
+    int gameTurn = 1;
     
     ArrayList< ArrayList< Piece> > board;
     //Piece board[][];
@@ -109,10 +109,6 @@ public class ConnectFourBoard {
         System.out.println(" 1  2  3  4  5  6  7 ");
     }
     
-    void setTurn(int turn){
-        gameTurn = turn;
-    }
-    
     public int getTurn() {
         return gameTurn;
     }
@@ -155,9 +151,7 @@ public class ConnectFourBoard {
         int colMove = column;
         int turnColor;
         
-        setTurn(turn);
-        
-        String currentPlayer = "@";
+        String nextPlayer = "@";
         
         moveComplete = false;
         
@@ -169,16 +163,16 @@ public class ConnectFourBoard {
         
         switch((turn%2)){
             case 0:
-                currentPlayer = "O";
+                nextPlayer = "@";
                 break;
             case 1:
-                currentPlayer = "@";
+                nextPlayer = "O";
                 break;
         }
         
 //        Scanner scanner = new Scanner(System.in);
 //        
-        System.out.println("Please select column to place piece player " + currentPlayer + ": ");
+        System.out.println("Please select column to place piece player " + nextPlayer + ": ");
 //        colMove = scanner.nextInt();
         
         switch(colMove){
@@ -189,6 +183,7 @@ public class ConnectFourBoard {
                     setPiece(colOne, colMove-1, turnColor);
                     colOne++;
                     moveComplete = true;
+                    gameTurn++;
                 }
                 break;
             case 2:
@@ -198,6 +193,7 @@ public class ConnectFourBoard {
                     setPiece(colTwo, colMove-1, turnColor);
                     colTwo++;
                     moveComplete = true;
+                    gameTurn++;
                 }
                 break;
             case 3:
@@ -207,6 +203,7 @@ public class ConnectFourBoard {
                     setPiece(colThr, colMove-1, turnColor);
                     colThr++;
                     moveComplete = true;
+                    gameTurn++;
                 }
                 break;
             case 4:
@@ -216,6 +213,7 @@ public class ConnectFourBoard {
                     setPiece(colFor, colMove-1, turnColor);
                     colFor++;
                     moveComplete = true;
+                    gameTurn++;
                 }
                 break;
             case 5:
@@ -225,6 +223,7 @@ public class ConnectFourBoard {
                     setPiece(colFiv, colMove-1, turnColor);
                     colFiv++;
                     moveComplete = true;
+                    gameTurn++;
                 }
                 break;
             case 6:
@@ -234,6 +233,7 @@ public class ConnectFourBoard {
                     setPiece(colSix, colMove-1, turnColor);
                     colSix++;
                     moveComplete = true;
+                    gameTurn++;
                 }
                 break;
             case 7:
@@ -243,6 +243,7 @@ public class ConnectFourBoard {
                     setPiece(colSev, colMove-1, turnColor);
                     colSev++;
                     moveComplete = true;
+                    gameTurn++;
                 }
                 break;
         }

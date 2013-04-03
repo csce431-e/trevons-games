@@ -53,18 +53,15 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
     
     private void updateBoard(int column) {
         rowHeight = cfBoard.rowHeight(column);
-        int color = cfBoard.getColor(rowHeight, column);
-        
+        int color = cfBoard.getColor(rowHeight-1, column-1);
         switch(column) {
             case 1:
                 if(rowHeight == 1) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r1c1.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r1c1.setBackground(Color.RED);
                             break;
                     }
@@ -72,11 +69,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 2) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r2c1.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r2c1.setBackground(Color.RED);
                             break;
                     }
@@ -84,11 +79,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 3) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r3c1.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r3c1.setBackground(Color.RED);
                             break;
                     }
@@ -96,11 +89,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 4) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r4c1.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r4c1.setBackground(Color.RED);
                             break;
                     }
@@ -108,11 +99,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 5) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r5c1.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r5c1.setBackground(Color.RED);
                             break;
                     }
@@ -120,11 +109,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 6) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r6c1.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r6c1.setBackground(Color.RED);
                             break;
                     }
@@ -134,11 +121,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 1) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r1c2.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r1c2.setBackground(Color.RED);
                             break;
                     }
@@ -146,11 +131,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 2) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r2c2.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r2c2.setBackground(Color.RED);
                             break;
                     }
@@ -158,11 +141,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 3) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r3c2.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r3c2.setBackground(Color.RED);
                             break;
                     }
@@ -170,11 +151,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 4) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r4c2.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r4c2.setBackground(Color.RED);
                             break;
                     }
@@ -182,11 +161,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 5) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r5c2.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r5c2.setBackground(Color.RED);
                             break;
                     }
@@ -194,11 +171,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 6) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r6c2.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r6c2.setBackground(Color.RED);
                             break;
                     }
@@ -208,11 +183,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 1) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r1c3.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r1c3.setBackground(Color.RED);
                             break;
                     }
@@ -220,11 +193,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 2) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r2c3.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r2c3.setBackground(Color.RED);
                             break;
                     }
@@ -232,11 +203,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 3) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r3c3.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r3c3.setBackground(Color.RED);
                             break;
                     }
@@ -244,11 +213,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 4) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r4c3.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r4c3.setBackground(Color.RED);
                             break;
                     }
@@ -256,11 +223,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 5) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r5c3.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r5c3.setBackground(Color.RED);
                             break;
                     }
@@ -268,11 +233,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 6) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r6c3.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r6c3.setBackground(Color.RED);
                             break;
                     }
@@ -282,11 +245,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 1) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r1c4.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r1c4.setBackground(Color.RED);
                             break;
                     }
@@ -294,11 +255,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 2) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r2c4.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r2c4.setBackground(Color.RED);
                             break;
                     }
@@ -306,11 +265,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 3) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r3c4.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r3c4.setBackground(Color.RED);
                             break;
                     }
@@ -318,11 +275,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 4) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r4c4.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r4c4.setBackground(Color.RED);
                             break;
                     }
@@ -330,11 +285,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 5) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r5c4.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r5c4.setBackground(Color.RED);
                             break;
                     }
@@ -342,11 +295,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 6) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r6c4.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r6c4.setBackground(Color.RED);
                             break;
                     }
@@ -356,11 +307,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 1) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r1c5.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r1c5.setBackground(Color.RED);
                             break;
                     }
@@ -368,11 +317,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 2) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r2c5.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r2c5.setBackground(Color.RED);
                             break;
                     }
@@ -380,11 +327,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 3) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r3c5.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r3c5.setBackground(Color.RED);
                             break;
                     }
@@ -392,11 +337,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 4) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r4c5.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r4c5.setBackground(Color.RED);
                             break;
                     }
@@ -404,11 +347,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 5) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r5c5.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r5c5.setBackground(Color.RED);
                             break;
                     }
@@ -416,11 +357,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 6) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r6c5.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r6c5.setBackground(Color.RED);
                             break;
                     }
@@ -430,11 +369,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 1) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r1c6.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r1c6.setBackground(Color.RED);
                             break;
                     }
@@ -442,11 +379,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 2) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r2c6.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r2c6.setBackground(Color.RED);
                             break;
                     }
@@ -454,11 +389,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 3) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r3c6.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r3c6.setBackground(Color.RED);
                             break;
                     }
@@ -466,11 +399,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 4) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r4c6.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r4c6.setBackground(Color.RED);
                             break;
                     }
@@ -478,11 +409,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 5) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r5c6.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r5c6.setBackground(Color.RED);
                             break;
                     }
@@ -490,11 +419,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 6) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r6c6.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r6c6.setBackground(Color.RED);
                             break;
                     }
@@ -504,11 +431,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
             if(rowHeight == 1) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r1c7.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r1c7.setBackground(Color.RED);
                             break;
                     }
@@ -516,11 +441,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 2) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r2c7.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r2c7.setBackground(Color.RED);
                             break;
                     }
@@ -528,11 +451,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 3) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r3c7.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r3c7.setBackground(Color.RED);
                             break;
                     }
@@ -540,11 +461,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 4) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r4c7.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r4c7.setBackground(Color.RED);
                             break;
                     }
@@ -552,11 +471,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 5) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r5c7.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r5c7.setBackground(Color.RED);
                             break;
                     }
@@ -564,11 +481,9 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 if(rowHeight == 6) {
                     switch(color) {
                         case 1:
-                            break;
-                        case 2:
                             r6c7.setBackground(Color.BLACK);
                             break;
-                        case 3:
+                        case 2:
                             r6c7.setBackground(Color.RED);
                             break;
                     }
@@ -968,24 +883,21 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
             int turn = cfBoard.getTurn();
             cfBoard.move(turn, column);
             updateBoard(column);
-        }
         
-        winner = cfBoard.win();
+            winner = cfBoard.win();
+            if(winner==1) {
+                System.out.println("Game Over! Black won!");
+                gameIsOver = disableButtons = true;
+            }
+            if(winner==2) {
+                System.out.println("Game over! Red won!");
+                gameIsOver = disableButtons = true;
+            }
             
-        System.out.println("Winner value is " + winner);
-            
-        if(winner==1) {
-            System.out.println("Game Over! Black won!");
-            gameIsOver = disableButtons = true;
-        }
-        if(winner==2) {
-            System.out.println("Game over! Red won!");
-            gameIsOver = disableButtons = true;
-        }
-            
-        if(cfBoard.checkFull()) {
-            System.out.println("Game over! No moves left! It's a tie!");
-            gameIsOver = disableButtons = true;
+            if(cfBoard.checkFull()) {
+                System.out.println("Game over! No moves left! It's a tie!");
+                gameIsOver = disableButtons = true;
+            }
         }
     }//GEN-LAST:event_col1ActionPerformed
 
@@ -996,24 +908,22 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
             int turn = cfBoard.getTurn();
             cfBoard.move(turn, column);
             updateBoard(column);
-        }
         
-        winner = cfBoard.win();
+           winner = cfBoard.win();
             
-        System.out.println("Winner value is " + winner);
+           if(winner==1) {
+                System.out.println("Game Over! Black won!");
+                gameIsOver = disableButtons = true;
+            }
+            if(winner==2) {
+                System.out.println("Game over! Red won!");
+                gameIsOver = disableButtons = true;
+            }
             
-        if(winner==1) {
-            System.out.println("Game Over! Black won!");
-            gameIsOver = disableButtons = true;
-        }
-        if(winner==2) {
-            System.out.println("Game over! Red won!");
-            gameIsOver = disableButtons = true;
-        }
-            
-        if(cfBoard.checkFull()) {
-            System.out.println("Game over! No moves left! It's a tie!");
-            gameIsOver = disableButtons = true;
+            if(cfBoard.checkFull()) {
+                System.out.println("Game over! No moves left! It's a tie!");
+                gameIsOver = disableButtons = true;
+            }
         }
     }//GEN-LAST:event_col2ActionPerformed
 
@@ -1024,24 +934,22 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
             int turn = cfBoard.getTurn();
             cfBoard.move(turn, column);
             updateBoard(column);
-        }
         
-        winner = cfBoard.win();
+           winner = cfBoard.win();
+           
+            if(winner==1) {
+                System.out.println("Game Over! Black won!");
+                gameIsOver = disableButtons = true;
+            }
+            if(winner==2) {
+                System.out.println("Game over! Red won!");
+                gameIsOver = disableButtons = true;
+            }
             
-        System.out.println("Winner value is " + winner);
-            
-        if(winner==1) {
-            System.out.println("Game Over! Black won!");
-            gameIsOver = disableButtons = true;
-        }
-        if(winner==2) {
-            System.out.println("Game over! Red won!");
-            gameIsOver = disableButtons = true;
-        }
-            
-        if(cfBoard.checkFull()) {
-            System.out.println("Game over! No moves left! It's a tie!");
-            gameIsOver = disableButtons = true;
+            if(cfBoard.checkFull()) {
+                System.out.println("Game over! No moves left! It's a tie!");
+                gameIsOver = disableButtons = true;
+            }
         }
     }//GEN-LAST:event_col3ActionPerformed
 
@@ -1052,24 +960,22 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
             int turn = cfBoard.getTurn();
             cfBoard.move(turn, column);
             updateBoard(column);
-        }
         
-        winner = cfBoard.win();
+            winner = cfBoard.win();
             
-        System.out.println("Winner value is " + winner);
+            if(winner==1) {
+                System.out.println("Game Over! Black won!");
+                gameIsOver = disableButtons = true;
+            }
+            if(winner==2) {
+                System.out.println("Game over! Red won!");
+                gameIsOver = disableButtons = true;
+            }
             
-        if(winner==1) {
-            System.out.println("Game Over! Black won!");
-            gameIsOver = disableButtons = true;
-        }
-        if(winner==2) {
-            System.out.println("Game over! Red won!");
-            gameIsOver = disableButtons = true;
-        }
-            
-        if(cfBoard.checkFull()) {
-            System.out.println("Game over! No moves left! It's a tie!");
-            gameIsOver = disableButtons = true;
+            if(cfBoard.checkFull()) {
+                System.out.println("Game over! No moves left! It's a tie!");
+                gameIsOver = disableButtons = true;
+            }
         }
     }//GEN-LAST:event_col4ActionPerformed
 
@@ -1080,24 +986,22 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
             int turn = cfBoard.getTurn();
             cfBoard.move(turn, column);
             updateBoard(column);
-        }
         
-        winner = cfBoard.win();
+            winner = cfBoard.win();
             
-        System.out.println("Winner value is " + winner);
+            if(winner==1) {
+                System.out.println("Game Over! Black won!");
+                gameIsOver = disableButtons = true;
+            }
+            if(winner==2) {
+                System.out.println("Game over! Red won!");
+                gameIsOver = disableButtons = true;
+            }
             
-        if(winner==1) {
-            System.out.println("Game Over! Black won!");
-            gameIsOver = disableButtons = true;
-        }
-        if(winner==2) {
-            System.out.println("Game over! Red won!");
-            gameIsOver = disableButtons = true;
-        }
-            
-        if(cfBoard.checkFull()) {
-            System.out.println("Game over! No moves left! It's a tie!");
-            gameIsOver = disableButtons = true;
+            if(cfBoard.checkFull()) {
+                System.out.println("Game over! No moves left! It's a tie!");
+                gameIsOver = disableButtons = true;
+            }
         }
     }//GEN-LAST:event_col5ActionPerformed
 
@@ -1108,24 +1012,24 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
             int turn = cfBoard.getTurn();
             cfBoard.move(turn, column);
             updateBoard(column);
-        }
         
-        winner = cfBoard.win();
+        
+            winner = cfBoard.win();
             
-        System.out.println("Winner value is " + winner);
             
-        if(winner==1) {
-            System.out.println("Game Over! Black won!");
-            gameIsOver = disableButtons = true;
-        }
-        if(winner==2) {
-            System.out.println("Game over! Red won!");
-            gameIsOver = disableButtons = true;
-        }
+            if(winner==1) {
+                System.out.println("Game Over! Black won!");
+                gameIsOver = disableButtons = true;
+            }
+            if(winner==2) {
+                System.out.println("Game over! Red won!");
+                gameIsOver = disableButtons = true;
+            }
             
-        if(cfBoard.checkFull()) {
-            System.out.println("Game over! No moves left! It's a tie!");
-            gameIsOver = disableButtons = true;
+            if(cfBoard.checkFull()) {
+                System.out.println("Game over! No moves left! It's a tie!");
+                gameIsOver = disableButtons = true;
+            }
         }
     }//GEN-LAST:event_col6ActionPerformed
 
@@ -1136,24 +1040,22 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
             int turn = cfBoard.getTurn();
             cfBoard.move(turn, column);
             updateBoard(column);
-        }
         
-        winner = cfBoard.win();
+            winner = cfBoard.win();
             
-        System.out.println("Winner value is " + winner);
+            if(winner==1) {
+                System.out.println("Game Over! Black won!");
+                gameIsOver = disableButtons = true;
+            }
+            if(winner==2) {
+                System.out.println("Game over! Red won!");
+                gameIsOver = disableButtons = true;
+            }
             
-        if(winner==1) {
-            System.out.println("Game Over! Black won!");
-            gameIsOver = disableButtons = true;
-        }
-        if(winner==2) {
-            System.out.println("Game over! Red won!");
-            gameIsOver = disableButtons = true;
-        }
-            
-        if(cfBoard.checkFull()) {
-            System.out.println("Game over! No moves left! It's a tie!");
-            gameIsOver = disableButtons = true;
+            if(cfBoard.checkFull()) {
+                System.out.println("Game over! No moves left! It's a tie!");
+                gameIsOver = disableButtons = true;
+            }
         }
     }//GEN-LAST:event_col7ActionPerformed
     
