@@ -212,7 +212,7 @@ public class ClientPanel extends javax.swing.JPanel {
                 System.out.println("Message received: "+message);
                 
                 
-                if(message == "0")
+                if(message.compareTo("0") == 0)
                 {
                     myTurn = true;
                 }
