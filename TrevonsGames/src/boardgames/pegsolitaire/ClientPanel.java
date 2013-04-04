@@ -199,6 +199,40 @@ public class ClientPanel extends javax.swing.JPanel {
         }
     }
     
+    public void turnOrder()
+    {
+        try
+        {
+            System.out.println("Determining turn order");
+            message = "nothing";
+            //while(message.equals("nothing"))
+            //{
+                //System.out.println("Message still nothing");
+                message = (String)in.readObject();
+                System.out.println("Message received: "+message);
+                
+                
+                if(message.compareTo("0") == 0)
+                {
+                    myTurn = true;
+                }
+                else
+                {
+                    myTurn = false;
+                    waitForMove();
+                }
+            //}
+            System.out.println(message);
+        }
+        catch(ClassNotFoundException classNot)
+        {
+            System.err.println("data received in unknown format");
+        } 
+        catch (IOException ex) 
+        {
+            Logger.getLogger(ClientPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }   
+    }
     //only difference is how to actually make the move received and apply to graphics
     public void waitForMove()
     {

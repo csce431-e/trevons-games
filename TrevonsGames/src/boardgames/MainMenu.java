@@ -220,29 +220,28 @@ public class MainMenu extends javax.swing.JPanel {
         gui.pack();
         gui.setVisible(true);
         */
-        
-        gameFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        
-        JLabel textLabel= new JLabel("Label56",SwingConstants.CENTER);
-        textLabel.setPreferredSize(new Dimension(300,100));
-        gameFrame.getContentPane().add(textLabel,BorderLayout.CENTER);
-        
         if(locally_radiob.isSelected())
         {
+            gameFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        
+            JLabel textLabel= new JLabel("Label56",SwingConstants.CENTER);
+            textLabel.setPreferredSize(new Dimension(300,100));
+            gameFrame.getContentPane().add(textLabel,BorderLayout.CENTER);
+            
             gameFrame.add((pegGui));
+            
+            gameFrame.setLocationRelativeTo(null);
+            gameFrame.pack();
+            gameFrame.setVisible(true);
+
+            SolitaireGame g = new SolitaireGame();
+            g.initGame();
         }
         else
         {
             //trigger another panel to ask if client or server and if client what the ip of the server is
+            clientClicked(evt);
         }
-        
-        gameFrame.setLocationRelativeTo(null);
-        gameFrame.pack();
-        gameFrame.setVisible(true);
-        
-        SolitaireGame g = new SolitaireGame();
-        g.initGame();
-        
     }//GEN-LAST:event_solitaireClicked
 
     private void ConnectFourClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConnectFourClicked
@@ -311,7 +310,7 @@ public class MainMenu extends javax.swing.JPanel {
         
         SolitaireGame g = new SolitaireGame();
         g.initGame();
-        client.waitForMove();
+        client.turnOrder();
     }//GEN-LAST:event_clientClicked
 
     private void serverClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_serverClicked
