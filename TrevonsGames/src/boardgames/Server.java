@@ -9,8 +9,8 @@ package boardgames;
  * @author Tom
  */
 
-import boardgames.pegSolitaire.ClientPanel;
-import boardgames.pegSolitaire.SolitaireMove;
+//import boardgames.pegSolitaire.ClientPanel;
+//import boardgames.pegSolitaire.SolitaireMove;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -23,8 +23,8 @@ class Slave implements Runnable
     Socket connection1, connection2;
     private String line, message;
     
-    ObjectOutputStream out;
-    ObjectInputStream in;
+    ObjectOutputStream out1, out2;
+    ObjectInputStream in1, in2;
     
     Slave(Socket s1, Socket s2)
     {
@@ -32,13 +32,21 @@ class Slave implements Runnable
         connection2 = s2;
     }
     
-    void sendMessage(String msg)
+    void sendMessage(String msg, boolean one)
     {
         try
         {
-            out.writeObject(msg);
-            out.flush();
-            System.out.println("server>" + msg);
+			if(one)
+			{
+				out1.writeObject(msg);
+				out1.flush();
+			}
+			else
+			{
+				out2.writeObject(msg);
+				out2.flush();
+			}
+            //System.out.println("server>" + msg);
         }
         catch(IOException ioException)
         {
@@ -52,10 +60,14 @@ class Slave implements Runnable
     {
         try
         {
-            out = new ObjectOutputStream(connection1.getOutputStream());
-            out.flush();
-            in = new ObjectInputStream(connection1.getInputStream());
-            sendMessage("Connection successful");
+            out1 = new ObjectOutputStream(connection1.getOutputStream());
+            out1.flush();
+			out2 = new ObjectOutputStream(connection2.getOutputStream());
+            out2.flush();
+            in1 = new ObjectInputStream(connection1.getInputStream());
+            in2 = new ObjectInputStream(connection2.getInputStream());
+            sendMessage("Connection successful",true);
+            sendMessage("Connection successful",false);
             
             while(true)
             {
@@ -63,15 +75,16 @@ class Slave implements Runnable
                 {
                     System.out.println("Waiting for move");
                     message = "nothing";
-                    while(message.equals("nothing"))
-                    {
-                        System.out.println("Message still nothing");
-                        message = (String)in.readObject();
-                        System.out.println("Message now: "+message);
-                        sendMessage(message);
 
-                    }
-                    System.out.println(message);
+					message = (String)in1.readObject();		//receiving from in1, so send to out2
+					System.out.println("Message received: "+message);
+					sendMessage(message, false);
+					System.out.println("Message sent: "+message);
+					
+					message = (String)in2.readObject();
+					System.out.println("Message received: "+message);
+					sendMessage(message, true);
+					System.out.println("Message sent: "+message);
                 }
                 catch(ClassNotFoundException classNot)
                 {
@@ -79,7 +92,7 @@ class Slave implements Runnable
                 } 
                 catch (IOException ex) 
                 {
-                    Logger.getLogger(ClientPanel.class.getName()).log(Level.SEVERE, null, ex);
+                    //Logger.getLogger(ClientPanel.class.getName()).log(Level.SEVERE, null, ex);
                 }   
             }
         }
@@ -92,8 +105,10 @@ class Slave implements Runnable
         {
            try
            {
-                in.close();
-                out.close();
+                in1.close();
+                in2.close();
+                out1.close();
+                out2.close();
                 connection1.close();
                 connection2.close();
             }
@@ -111,7 +126,7 @@ public class Server
     {
         try
         {
-            ServerSocket providerSocket;
+            ServerSocket providerSocket, providerSocket2;
             Socket connection1, connection2;
             String message;
             int port_number = 2004;
@@ -123,9 +138,9 @@ public class Server
                 connection1 = providerSocket.accept();
                 System.out.println("Connection received from " + connection1.getInetAddress().getHostName());
                 
-                providerSocket = new ServerSocket(port_number++);
+                providerSocket2 = new ServerSocket(port_number++);
                 System.out.println("Waiting for second connection");
-                connection2 = providerSocket.accept();
+                connection2 = providerSocket2.accept();
                 System.out.println("Connection received from " + connection2.getInetAddress().getHostName());
                 
                 //now pass both players to the slave
@@ -142,3 +157,11 @@ public class Server
     }
     
 }
+
+/*
+try it without threads (just comment out the 3 thread lines at the end and see if it forms the connection w/ both
+
+
+
+
+*/
