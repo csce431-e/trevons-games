@@ -165,7 +165,7 @@ public class ClientPanel extends javax.swing.JPanel {
         {
             InetAddress addr = null;
             addr = InetAddress.getByAddress(serverIP);
-            requestSocket = new Socket(addr, 2004);
+            requestSocket = new Socket(addr, 2008);
             System.out.println("Connected to localhost in port 2004");
             //2. get Input and Output streams
             out = new ObjectOutputStream(requestSocket.getOutputStream());
@@ -222,7 +222,7 @@ public class ClientPanel extends javax.swing.JPanel {
                     waitForMove();
                 }
             //}
-            System.out.println(message);
+            //System.out.println(message);
         }
         catch(ClassNotFoundException classNot)
         {
