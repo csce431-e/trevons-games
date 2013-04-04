@@ -5,6 +5,7 @@
 package boardgames.checkers;
 
 import java.util.*;
+import java.math.*;
 /**
  *
  * @author Trevon
@@ -29,17 +30,19 @@ public class CheckersGame {
     
     public void sendMove()//(int x1, int y1, int x2, int y2)
     {
-        winner = b.isGameOver();
-        if(winner != Owner.EMPTY)
-        {
-            endGame();
-        }
+        
         System.out.println("Enter 0 for player vs player. Enter 1 for player vs AI:");
         Scanner sc = new Scanner(System.in);
         int option = sc.nextInt();
         
         for(;;)
         {
+            winner = b.isGameOver();
+            if(winner != Owner.EMPTY)
+            {
+                endGame();
+            }
+            
             System.out.println("Current Turn: " + turn.toString());
             turnCompleted = false;
             
@@ -74,31 +77,53 @@ public class CheckersGame {
         {
             sendAIMove();
         }
-        
+        /*
         System.out.println("Enter m or j to move or jump");
         Scanner sc = new Scanner(System.in);
         String choice = sc.next();
-
+        */
+        Scanner sc = new Scanner(System.in);
         CheckersMove m = new CheckersMove();
 
-        if (choice.equals("m")) {
-            System.out.println("Enter coordinates of piece that will be moved: ");
+        //if (choice.equals("m")) {
 
-            int x1, y1, x2, y2;
-
+            int x1 = -1;
+            int x2 = -1;
+            int y1 = -1;
+            int y2 = -1;
+            
+            while(!sc.hasNextInt())
+            {
+                System.out.println("Enter coordinates of piece that will be moved: ");
+                sc.nextLine();
+            }
+            
             x1 = sc.nextInt();
             y1 = sc.nextInt();
-
-            System.out.println("Enter coordinates of destination: ");
-
+           
+            while(!sc.hasNextInt())
+            {
+                 System.out.println("Enter coordinates of destination: ");
+                 sc.nextLine();
+            }
+            
             x2 = sc.nextInt();
             y2 = sc.nextInt();
-
-            m = new CheckersMove(CheckersBoard.board.get(x1).get(y1),
+            
+            if(Math.abs(x2-x1) > 1)
+            {
+                CheckersCell s = CheckersBoard.board.get(x1).get(y1);
+                CheckersCell d = CheckersBoard.board.get(x2).get(y2);
+                m = new CheckersJump(s, s.getMid(s,d), d);
+            }
+            else 
+            {
+                m = new CheckersMove(CheckersBoard.board.get(x1).get(y1),
                     CheckersBoard.board.get(x2).get(y2));
+            }
 
 
-        } else if (choice.equals("j")) {
+        /*} else if (choice.equals("j")) {
             System.out.println("Enter coordinates of piece that will be moved: ");
 
             int x1, y1, x2, y2, x3, y3;
@@ -119,7 +144,7 @@ public class CheckersGame {
             //CheckersJump j;
             m = new CheckersJump(CheckersBoard.board.get(x1).get(y1),
                     CheckersBoard.board.get(x2).get(y2), CheckersBoard.board.get(x3).get(y3));
-        }
+        }*/
         return m;
                     //m = (CheckersMove)j;
     }

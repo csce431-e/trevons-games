@@ -41,7 +41,10 @@ public class CheckersJump extends CheckersMove {
             d.setOwner(o);
             mid.setOwner(Owner.EMPTY);
             
+            Owner opponent = o.opposite();
+            
             o.pieces.remove(src);
+            opponent.pieces.remove(mid);
             o.pieces.add(d);
             
             if(o == Owner.PLAYER1)

@@ -193,18 +193,25 @@ public class CheckersCell {
         ArrayList<CheckersJump> jumps = new ArrayList();
         
         Owner opponent = owner.opposite();
-        if(opponent== Owner.EMPTY)
+        if(opponent == Owner.EMPTY)
         {
             return new ArrayList();
         }
         
         ArrayList<CheckersCell> jumpDest = new ArrayList();
-        jumpDest.add(new CheckersCell(this.x + 2, this.y + 2));
-        jumpDest.add(new CheckersCell(this.x - 2, this.y + 2));
-        jumpDest.add(new CheckersCell(this.x + 2, this.y - 2));
-        jumpDest.add(new CheckersCell(this.x - 2, this.y - 2));
-
-       
+        
+        if(king || owner == Owner.PLAYER1)
+        {
+            jumpDest.add(new CheckersCell(this.x - 2, this.y + 2));
+            jumpDest.add(new CheckersCell(this.x - 2, this.y - 2));
+        }
+        
+        if(king || owner == Owner.PLAYER2)
+        {
+            jumpDest.add(new CheckersCell(this.x + 2, this.y + 2));
+            jumpDest.add(new CheckersCell(this.x + 2, this.y - 2));
+        }
+        
         //delete destination cells that are off the board
         Iterator<CheckersCell> it = jumpDest.iterator();
         while (it.hasNext()) {
