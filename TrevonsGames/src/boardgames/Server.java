@@ -203,10 +203,10 @@ public class Server
 
 /*
 exit button to kill game once it starts (even if/especially if it's not your turn)******most important, need to also send msg to other player that you quit
-
+*       -- try: make a new thread just before calling waitformove().  run function creates a new window with a single 
+*           --button that allows the user to quit (it'll say "Waiting for opponent to move")
 * find new method for repainting correctly
 * stop it form painting the gui ON TOP OF the main menu for some reason
-* radio button "hover" take focus form the textbox which is pretty annoying
 
 
 

@@ -5,6 +5,8 @@
 package boardgames.pegSolitaire;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 import java.net.*;
 import javax.swing.*;
@@ -254,6 +256,7 @@ public class SolitaireGui extends javax.swing.JFrame {
             while(message.equals("nothing"))
             {
                 //System.out.println("Message still nothing");
+                
                 message = (String)in.readObject();
                 System.out.println("Message received: "+message);
                 SolitaireMove otherPlayerMove = getMoveFromString(message);
@@ -264,6 +267,7 @@ public class SolitaireGui extends javax.swing.JFrame {
                 JButton clicked = buts.get((-otherPlayerMove.dest.y)+3).get((otherPlayerMove.dest.x)+3);
                 apply_move_to_graphics(clicked);
                 //invalidate();
+                
                 myTurn = true;
             }
             System.out.println(message);
@@ -886,6 +890,32 @@ public class SolitaireGui extends javax.swing.JFrame {
                                myTurn = false;
                                SolitaireMove moveToSend = new SolitaireMove(c1, c2, moveMade);
                                sendMessage(moveToSend.toString());
+                               
+                               final JFrame game = this;
+                               class Quit_Window implements Runnable
+                                {
+                                    JFrame window;
+                                    JButton quit;
+                                    @Override
+                                    public void run()
+                                    {
+                                        quit = new JButton("Quit");
+                                        quit.addActionListener(new ActionListener() {
+
+                                            @Override
+                                            public void actionPerformed(ActionEvent e) {
+                                                window.dispose();
+                                                game.dispose();
+                                            }
+                                        });
+                                        window.add(quit);
+                                        window = new JFrame("Title");
+                                        window.setVisible(true);
+                                    }
+                                }
+                                Thread t = new Thread(new Quit_Window());
+                                t.start();
+                               
                                waitForMove();   
                             }
                         }
