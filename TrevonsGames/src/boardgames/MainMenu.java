@@ -139,13 +139,18 @@ public class MainMenu extends javax.swing.JPanel {
         buttonGroup1.add(locally_radiob);
         locally_radiob.setSelected(true);
         locally_radiob.setText("Play Locally");
+        locally_radiob.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                local_radioClicked(evt);
+            }
+        });
         add(locally_radiob, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 80, -1, -1));
 
         buttonGroup1.add(online_radiob);
         online_radiob.setText("Play Online");
-        online_radiob.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                online_radiobStateChanged(evt);
+        online_radiob.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                online_radioClicked(evt);
             }
         });
         add(online_radiob, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 110, -1, -1));
@@ -232,17 +237,18 @@ public class MainMenu extends javax.swing.JPanel {
         t.setText("");
     }//GEN-LAST:event_serverIpBoxClicked
 
-    private void online_radiobStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_online_radiobStateChanged
+    private void online_radioClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_online_radioClicked
         // TODO add your handling code here:
-        if(ip_input_box.isEnabled())
-        {
-            ip_input_box.setEnabled(false);
-        }
-        else
-        {
-            ip_input_box.setEnabled(true);
-        }
-    }//GEN-LAST:event_online_radiobStateChanged
+        ip_input_box.setEnabled(true);
+        ip_input_box.requestFocusInWindow();
+        ip_input_box.setText("");
+    }//GEN-LAST:event_online_radioClicked
+
+    private void local_radioClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_local_radioClicked
+        // TODO add your handling code here:
+        ip_input_box.setEnabled(false);
+        ip_input_box.setText("Server IP here");
+    }//GEN-LAST:event_local_radioClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
