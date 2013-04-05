@@ -17,6 +17,7 @@ public class CheckersGame {
     public boolean turnCompleted;
     public boolean AI;
     public Owner winner;
+    String status;
     
     public void initCheckers()
     {
@@ -39,6 +40,28 @@ public class CheckersGame {
         }
     }
     
+    public boolean checkGameOver()
+    {
+        winner = b.isGameOver();
+        if(winner != Owner.EMPTY)
+        {
+            endGame();
+            return true;
+        }
+         return false;
+    }
+    
+    public void setStatus(String s)
+    {
+        status = s; 
+        System.out.println(s);
+    }
+    
+    public String readStatus()
+    {
+        return status;
+    }
+    
     public void sendMove()//(int x1, int y1, int x2, int y2)
     {
         System.out.println("=-_-= Checkers =-_-=");
@@ -54,10 +77,8 @@ public class CheckersGame {
         for(;;)
         {
   
-            winner = b.isGameOver();
-            if(winner != Owner.EMPTY)
+            if(checkGameOver())
             {
-                endGame();
                 break;
             }
             
@@ -215,8 +236,8 @@ public class CheckersGame {
     
     public void endGame()
     {
-        System.out.println("Game Over. ");
-        System.out.println("Congratulations " + winner + " wins!");
+        setStatus("Game Over. ");
+        setStatus("Congratulations " + winner + " wins!");
     }
     
     public boolean isInBounds(int x, int y)

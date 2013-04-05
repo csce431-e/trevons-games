@@ -131,6 +131,11 @@ public class CheckersMove {
             return false;
         }
         
+        if(dest.y == source.y)
+        {
+            return false;
+        }
+        
         Owner o = source.getOwner();
         CheckersCell src = b.get(source.x).get(source.y);
         

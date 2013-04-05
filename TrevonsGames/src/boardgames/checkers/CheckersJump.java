@@ -68,6 +68,8 @@ public class CheckersJump extends CheckersMove {
                 src.setKing(false);
             }
             
+            mid.setKing(false);
+            
             System.out.println("Move: " + this.toString());
             
             b.anotherJump = true;

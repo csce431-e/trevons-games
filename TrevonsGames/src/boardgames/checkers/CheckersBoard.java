@@ -186,17 +186,17 @@ public class CheckersBoard {
         Owner currentOwner = m.source.getOwner();
         if(currentOwner == Owner.EMPTY)
         {
-            System.out.println("There is no piece there!");
+            currentGame.setStatus("There is no piece there!");
             return false;
         }
         else if(currentOwner != currentGame.turn)
         {
-            System.out.println("It is not your turn!");
+            currentGame.setStatus("It is not your turn!");
             return false;
         }
         if(!m.isValidMove())
         {
-            System.out.println("Invalid Move");
+            currentGame.setStatus("Invalid Move");
             return false;
         }
         
@@ -218,7 +218,7 @@ public class CheckersBoard {
 
             if(!moveFound)
             {
-                System.out.println("You must jump if one is available!");
+                currentGame.setStatus("You must jump if one is available!");
                 return false;
             }
 
@@ -253,8 +253,8 @@ public class CheckersBoard {
             printBoard();
             return true;
         }
-        
-        System.out.println("Error: Please try again!");
+     
+        currentGame.setStatus("Error: Please try again!");
         return false;
     }
     

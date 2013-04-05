@@ -42,6 +42,8 @@ public class CheckersGUI extends javax.swing.JFrame {
         BOARDSIZE = 8;
         firstSelection = true;
         game.turn = Owner.PLAYER1;
+        game.turnCompleted = false;
+        game.AI = false;
         init_buttons();
         updateBoard();
     }
@@ -154,20 +156,38 @@ public class CheckersGUI extends javax.swing.JFrame {
         {
             for(int j=0;j<BOARDSIZE;j++)
             {
-                Owner o = CheckersBoard.board.get(i).get(j).getOwner(); 
+                CheckersCell c = CheckersBoard.board.get(i).get(j);
+                Owner o = c.getOwner(); 
+                JButton b = guiBoard.get(i).get(j);
                 if(o == Owner.PLAYER1)
                 {
-                    guiBoard.get(i).get(j).setBackground(Color.BLACK);
+                    b.setBackground(Color.BLACK);
                 }
                 else if(o == Owner.PLAYER2)
                 {
-                     guiBoard.get(i).get(j).setBackground(Color.RED);
+                     b.setBackground(Color.RED);
                 }
                 else if(o == Owner.EMPTY)
                 {
-                    guiBoard.get(i).get(j).setBackground(Color.LIGHT_GRAY);
+                    b.setBackground(Color.LIGHT_GRAY);
                 }
+                
+                if(c.isKing())
+                {
+                    b.setForeground(Color.WHITE);
+                    b.setText("K");
+                }
+                
+                if(!c.isKing())
+                {
+                    b.setText(null);
+                }
+                    
             }
+        }
+        if(game.checkGameOver())
+        {
+            
         }
     }
     
@@ -189,24 +209,73 @@ public class CheckersGUI extends javax.swing.JFrame {
     private void actionHandler(java.awt.event.ActionEvent evt)
     {
         JButton b = (JButton) evt.getSource();
-        if(firstSelection)
+        CheckersCell c = getCellFromButton(b);
+        
+        
+        
+        if(!firstSelection && c.getOwner() == source.getOwner())
         {
-            source = getCellFromButton(b);
-            firstSelection = false;
-        }
-        else
-        {
-            destination = getCellFromButton(b);
-            currentMove = new CheckersMove(source, destination);
-            game.b.makeMove(currentMove);
-            
-            updateBoard();
-            game.turn = game.turn.opposite();
             firstSelection = true;
         }
         
+        if(game.b.anotherJump)
+        {
+            source = destination;
+            firstSelection = false;
+        }
         
+        if(firstSelection && c.getOwner() != Owner.EMPTY)
+        {
+            source = c;
+            firstSelection = false;
+        }
+        else if(!firstSelection)
+        {
+            destination = getCellFromButton(b);
+            if(Math.abs(source.x-destination.x) > 1)
+            {
+                currentMove = new CheckersJump(source,
+                        source.getMid(source,destination), destination);
+            }
+            else
+            {
+                currentMove = new CheckersMove(source, destination);
+            }
+            
+            if(game.b.makeMove(currentMove) && !game.b.anotherJump)
+            {
+                game.turnCompleted = true;
+                
+                switchTurns();
+                if(game.AI && game.turn == Owner.PLAYER2)
+                {
+                    do
+                    {
+                        game.sendAIMove();
+                        if(!game.b.anotherJump)
+                        {
+                            game.turnCompleted = true;
+                            switchTurns();
+                        }
+                    }while(game.b.anotherJump);
+                }
+                game.setStatus("Current Turn: " + game.turn.toString());
+                
+                //game.turnCompleted = false;
+            }
+            updateBoard();
+            firstSelection = true;
+        }
         
+    }
+    
+    public void switchTurns()
+    {
+        if(game.turnCompleted)
+        {
+            game.turn = game.turn.opposite();
+            game.turnCompleted = false;
+        }
     }
     /**
      * This method is called from within the constructor to initialize the form.
