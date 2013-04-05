@@ -1,24 +1,22 @@
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
- * pb4190@cjpeg.com
  */
 package boardgames.pegSolitaire;
-import java.util.*;
-import java.net.*;
-import java.io.*;
-import javax.swing.*;
+
 import java.awt.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.*;
+import java.net.*;
+import javax.swing.*;
+import java.util.*;
 /**
  *
  * @author Tom
  */
-public class ClientPanel extends javax.swing.JPanel {
+public class SolitaireGui extends javax.swing.JFrame {
 
     /**
-     * Creates new form ClientPanel
+     * Creates new form SolitaireGui
      */
     
     int BOARDSIZE;
@@ -29,8 +27,9 @@ public class ClientPanel extends javax.swing.JPanel {
     JButton firstChoice;
     JButton middleButton;
     ArrayList<ArrayList<JButton>> buts;
-    ArrayList<Thread> threads;
-    byte [] serverIP;
+    ArrayList<Thread> outerThreads;
+    //boolean returnVal;
+    
     
     ArrayList<JButton> column1;
     ArrayList<JButton> column2;
@@ -46,15 +45,16 @@ public class ClientPanel extends javax.swing.JPanel {
     int y1;
     int y2;
     
-    //online veriables
+    //for online play***************************************************
+    boolean isOnline;
+    byte [] serverIP;
     public boolean myTurn;
     Socket requestSocket;
     ObjectOutputStream out;
     ObjectInputStream in;
     String message;
     
-    
-    public ClientPanel(ArrayList<Integer> ip) {
+    public SolitaireGui(boolean online, byte[] ip) {
         initComponents();
         
         b = new SolitaireBoard();
@@ -64,23 +64,25 @@ public class ClientPanel extends javax.swing.JPanel {
         firstChoice = new JButton();
         middleButton = new JButton();
         buts = new ArrayList<>();
-        threads = new ArrayList<>();
-        BOARDSIZE = 7;
+        outerThreads = new ArrayList<>();
+        //returnVal = false;
+        isOnline = online;
         myTurn = false;
+        BOARDSIZE = 7;
         x1 = 0;
         x2 = 0;
         y1 = 0;
         y2 = 0;
-        //have something to test if that ip is reachable (maybe force a call to ping or something
-        serverIP = new byte[] {(byte)ip.get(0).intValue(),(byte)ip.get(1).intValue(),(byte)ip.get(2).intValue(),(byte)ip.get(3).intValue()};
-        //serverIP = new byte[] {(byte)172,(byte)17,(byte)105,(byte)105};
         init_buttons();
-        setup_client_socket();
-        //waitForMove(); //moved this into the call from mainMenu
+        
+        if(isOnline)
+        {
+            serverIP = ip;
+            setup_client_socket();
+        }
     }
     
-    
-    private void init_buttons()
+    final void init_buttons()
     {
         column1 = new ArrayList<>();
         column2 = new ArrayList<>();
@@ -155,15 +157,14 @@ public class ClientPanel extends javax.swing.JPanel {
         column7.add(offBoard);
         buts.add(column7);
     }
-    
-    
+
+    //online functions*******************************************************
     private void setup_client_socket()
     {
         try
         {
             System.out.println("Setting up client socket");
-            InetAddress addr = null;
-            addr = InetAddress.getByAddress(serverIP);
+            InetAddress addr = InetAddress.getByAddress(serverIP);
             requestSocket = new Socket(addr, 2008);
             
             
@@ -260,6 +261,7 @@ public class ClientPanel extends javax.swing.JPanel {
                 middleButton = buts.get((-otherPlayerMove.middle.y)+3).get((otherPlayerMove.middle.x)+3);
                 JButton clicked = buts.get((-otherPlayerMove.dest.y)+3).get((otherPlayerMove.dest.x)+3);
                 apply_move_to_graphics(clicked);
+                //invalidate();
                 myTurn = true;
             }
             System.out.println(message);
@@ -270,7 +272,7 @@ public class ClientPanel extends javax.swing.JPanel {
         } 
         catch (IOException ex) 
         {
-            Logger.getLogger(ClientPanel.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }   
     }
     
@@ -299,6 +301,9 @@ public class ClientPanel extends javax.swing.JPanel {
         SolitaireMove otherPlayerMove = new SolitaireMove(src,dest,mid);
         return otherPlayerMove;
     }
+    //end of online functions**************************************************
+    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -308,104 +313,52 @@ public class ClientPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        jButton16 = new javax.swing.JButton();
-        jButton32 = new javax.swing.JButton();
-        jButton14 = new javax.swing.JButton();
-        jButton33 = new javax.swing.JButton();
-        jButton15 = new javax.swing.JButton();
-        jButton30 = new javax.swing.JButton();
-        jButton12 = new javax.swing.JButton();
-        jButton31 = new javax.swing.JButton();
-        jButton13 = new javax.swing.JButton();
-        jButton10 = new javax.swing.JButton();
-        jButton11 = new javax.swing.JButton();
-        jButton34 = new javax.swing.JButton();
-        jButton8 = new javax.swing.JButton();
-        jButton9 = new javax.swing.JButton();
-        jButton18 = new javax.swing.JButton();
-        jButton17 = new javax.swing.JButton();
         jButton19 = new javax.swing.JButton();
         jButton20 = new javax.swing.JButton();
-        jButton21 = new javax.swing.JButton();
+        jButton13 = new javax.swing.JButton();
+        jButton14 = new javax.swing.JButton();
+        jButton11 = new javax.swing.JButton();
+        jButton12 = new javax.swing.JButton();
+        jButton17 = new javax.swing.JButton();
+        jButton18 = new javax.swing.JButton();
+        jButton15 = new javax.swing.JButton();
+        jButton16 = new javax.swing.JButton();
+        jButton30 = new javax.swing.JButton();
+        jButton8 = new javax.swing.JButton();
+        jButton9 = new javax.swing.JButton();
+        jButton10 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
         jButton22 = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
         jButton23 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
         jButton24 = new javax.swing.JButton();
         jButton25 = new javax.swing.JButton();
-        jButton26 = new javax.swing.JButton();
         jButton7 = new javax.swing.JButton();
+        jButton26 = new javax.swing.JButton();
         jButton27 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton29 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton28 = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
+        jButton31 = new javax.swing.JButton();
+        jButton28 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jButton32 = new javax.swing.JButton();
+        jButton29 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        jButton34 = new javax.swing.JButton();
+        jButton33 = new javax.swing.JButton();
+        jButton21 = new javax.swing.JButton();
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton16.setBackground(new java.awt.Color(0, 0, 255));
-        jButton16.addActionListener(new java.awt.event.ActionListener() {
+        jButton19.setBackground(new java.awt.Color(255, 255, 255));
+        jButton19.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonActionPerformed(evt);
             }
         });
 
-        jButton32.setBackground(new java.awt.Color(0, 0, 255));
-        jButton32.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonActionPerformed(evt);
-            }
-        });
-
-        jButton14.setBackground(new java.awt.Color(0, 0, 255));
-        jButton14.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonActionPerformed(evt);
-            }
-        });
-
-        jButton33.setBackground(new java.awt.Color(0, 0, 255));
-        jButton33.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonActionPerformed(evt);
-            }
-        });
-
-        jButton15.setBackground(new java.awt.Color(0, 0, 255));
-        jButton15.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonActionPerformed(evt);
-            }
-        });
-
-        jButton30.setBackground(new java.awt.Color(0, 0, 255));
-        jButton30.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonActionPerformed(evt);
-            }
-        });
-
-        jButton12.setBackground(new java.awt.Color(0, 0, 255));
-        jButton12.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonActionPerformed(evt);
-            }
-        });
-
-        jButton31.setBackground(new java.awt.Color(0, 0, 255));
-        jButton31.addActionListener(new java.awt.event.ActionListener() {
+        jButton20.setBackground(new java.awt.Color(0, 0, 255));
+        jButton20.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonActionPerformed(evt);
             }
@@ -418,8 +371,8 @@ public class ClientPanel extends javax.swing.JPanel {
             }
         });
 
-        jButton10.setBackground(new java.awt.Color(0, 0, 255));
-        jButton10.addActionListener(new java.awt.event.ActionListener() {
+        jButton14.setBackground(new java.awt.Color(0, 0, 255));
+        jButton14.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonActionPerformed(evt);
             }
@@ -432,11 +385,45 @@ public class ClientPanel extends javax.swing.JPanel {
             }
         });
 
-        jButton34.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
-        jButton34.setText("Hint");
-        jButton34.addActionListener(new java.awt.event.ActionListener() {
+        jButton12.setBackground(new java.awt.Color(0, 0, 255));
+        jButton12.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                hintClicked(evt);
+                jButtonActionPerformed(evt);
+            }
+        });
+
+        jButton17.setBackground(new java.awt.Color(0, 0, 255));
+        jButton17.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonActionPerformed(evt);
+            }
+        });
+
+        jButton18.setBackground(new java.awt.Color(0, 0, 255));
+        jButton18.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonActionPerformed(evt);
+            }
+        });
+
+        jButton15.setBackground(new java.awt.Color(0, 0, 255));
+        jButton15.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonActionPerformed(evt);
+            }
+        });
+
+        jButton16.setBackground(new java.awt.Color(0, 0, 255));
+        jButton16.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonActionPerformed(evt);
+            }
+        });
+
+        jButton30.setBackground(new java.awt.Color(0, 0, 255));
+        jButton30.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonActionPerformed(evt);
             }
         });
 
@@ -454,36 +441,15 @@ public class ClientPanel extends javax.swing.JPanel {
             }
         });
 
-        jButton18.setBackground(new java.awt.Color(0, 0, 255));
-        jButton18.addActionListener(new java.awt.event.ActionListener() {
+        jButton10.setBackground(new java.awt.Color(0, 0, 255));
+        jButton10.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonActionPerformed(evt);
             }
         });
 
-        jButton17.setBackground(new java.awt.Color(0, 0, 255));
-        jButton17.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonActionPerformed(evt);
-            }
-        });
-
-        jButton19.setBackground(new java.awt.Color(255, 255, 255));
-        jButton19.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonActionPerformed(evt);
-            }
-        });
-
-        jButton20.setBackground(new java.awt.Color(0, 0, 255));
-        jButton20.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonActionPerformed(evt);
-            }
-        });
-
-        jButton21.setBackground(new java.awt.Color(0, 0, 255));
-        jButton21.addActionListener(new java.awt.event.ActionListener() {
+        jButton4.setBackground(new java.awt.Color(0, 0, 255));
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonActionPerformed(evt);
             }
@@ -496,8 +462,22 @@ public class ClientPanel extends javax.swing.JPanel {
             }
         });
 
+        jButton5.setBackground(new java.awt.Color(0, 0, 255));
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonActionPerformed(evt);
+            }
+        });
+
         jButton23.setBackground(new java.awt.Color(0, 0, 255));
         jButton23.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonActionPerformed(evt);
+            }
+        });
+
+        jButton6.setBackground(new java.awt.Color(0, 0, 255));
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonActionPerformed(evt);
             }
@@ -517,15 +497,15 @@ public class ClientPanel extends javax.swing.JPanel {
             }
         });
 
-        jButton26.setBackground(new java.awt.Color(0, 0, 255));
-        jButton26.addActionListener(new java.awt.event.ActionListener() {
+        jButton7.setBackground(new java.awt.Color(0, 0, 255));
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonActionPerformed(evt);
             }
         });
 
-        jButton7.setBackground(new java.awt.Color(0, 0, 255));
-        jButton7.addActionListener(new java.awt.event.ActionListener() {
+        jButton26.setBackground(new java.awt.Color(0, 0, 255));
+        jButton26.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonActionPerformed(evt);
             }
@@ -538,29 +518,15 @@ public class ClientPanel extends javax.swing.JPanel {
             }
         });
 
-        jButton4.setBackground(new java.awt.Color(0, 0, 255));
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        jButton1.setBackground(new java.awt.Color(0, 0, 255));
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonActionPerformed(evt);
             }
         });
 
-        jButton3.setBackground(new java.awt.Color(0, 0, 255));
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonActionPerformed(evt);
-            }
-        });
-
-        jButton29.setBackground(new java.awt.Color(0, 0, 255));
-        jButton29.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonActionPerformed(evt);
-            }
-        });
-
-        jButton2.setBackground(new java.awt.Color(0, 0, 255));
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        jButton31.setBackground(new java.awt.Color(0, 0, 255));
+        jButton31.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonActionPerformed(evt);
             }
@@ -573,29 +539,58 @@ public class ClientPanel extends javax.swing.JPanel {
             }
         });
 
-        jButton1.setBackground(new java.awt.Color(0, 0, 255));
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        jButton2.setBackground(new java.awt.Color(0, 0, 255));
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonActionPerformed(evt);
             }
         });
 
-        jButton6.setBackground(new java.awt.Color(0, 0, 255));
-        jButton6.addActionListener(new java.awt.event.ActionListener() {
+        jButton32.setBackground(new java.awt.Color(0, 0, 255));
+        jButton32.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonActionPerformed(evt);
             }
         });
 
-        jButton5.setBackground(new java.awt.Color(0, 0, 255));
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
+        jButton29.setBackground(new java.awt.Color(0, 0, 255));
+        jButton29.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
+        jButton3.setBackground(new java.awt.Color(0, 0, 255));
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonActionPerformed(evt);
+            }
+        });
+
+        jButton34.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        jButton34.setText("Hint");
+        jButton34.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonHint_Clicked(evt);
+            }
+        });
+
+        jButton33.setBackground(new java.awt.Color(0, 0, 255));
+        jButton33.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonActionPerformed(evt);
+            }
+        });
+
+        jButton21.setBackground(new java.awt.Color(0, 0, 255));
+        jButton21.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
@@ -676,7 +671,8 @@ public class ClientPanel extends javax.swing.JPanel {
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addComponent(jButton33, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton29, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(jButton29, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(62, 62, 62)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -689,28 +685,28 @@ public class ClientPanel extends javax.swing.JPanel {
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                            .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                            .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addGroup(layout.createSequentialGroup()
                                         .addComponent(jButton34, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(jButton11, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(layout.createSequentialGroup()
                                         .addGap(0, 0, Short.MAX_VALUE)
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                    .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addComponent(jButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                    .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                             .addComponent(jButton13, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addComponent(jButton12, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -736,79 +732,96 @@ public class ClientPanel extends javax.swing.JPanel {
                     .addComponent(jButton23, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton22, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton24, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton21, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton31, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton32, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton33, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jButton24, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton33, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton22, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton21, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton31, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton32, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap())
         );
+
+        pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void hintClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hintClicked
+    private void jButtonHint_Clicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonHint_Clicked
         // TODO add your handling code here:
         final ArrayList<SolitaireMove> moves = b.get_all_possible_moves();
-        
+
         for(int i = 0; i<moves.size(); i++)
         {
             //JButton middleButton = buts.get((-moves.get(i).middle.y)+3).get((moves.get(i).middle.x)+3);
             JButton src = buts.get((-moves.get(i).src.y)+3).get((moves.get(i).src.x)+3);
             //JButton dest = buts.get((-moves.get(i).dest.y)+3).get((moves.get(i).dest.x)+3);
-            
+
             src.setBackground(Color.red);
             //need a way to go through and reset these to blue afterward
         }
 
         java.util.Timer timer = new java.util.Timer("blink buttons");
 
-         
         class MyTask extends TimerTask
         {
-             private int times = 0;
-             public void run() 
-             {
-                 disable_buttons = true;
-                 if (times < 6) 
-                 {
-                     if(times%2 == 0)
-                     {
-                         for(int i = 0; i<moves.size(); i++)
-                         {
-                             JButton src = buts.get((-moves.get(i).src.y)+3).get((moves.get(i).src.x)+3);
-                             src.setBackground(Color.red);
-                         }
-                     }
-                     else
-                     {
-                         for(int i = 0; i<moves.size(); i++)
-                         {
-                             JButton src = buts.get((-moves.get(i).src.y)+3).get((moves.get(i).src.x)+3);
-                             src.setBackground(Color.blue);
-                         }
-                     }
-                     times++;
-                 }
-                 else 
-                 {
-                     System.out.println("Timer stops now...");
-                     disable_buttons = false;
-                     System.out.println("Buttons re-enabled");
-                     this.cancel();  //stops the timer
-                 }
-              }
-         }
-       
-         timer.schedule(new MyTask(), 0, 300);
-        
-    }//GEN-LAST:event_hintClicked
+            private int times = 0;
+            public void run()
+            {
+                disable_buttons = true;
+                if (times < 6)
+                {
+                    if(times%2 == 0)
+                    {
+                        for(int i = 0; i<moves.size(); i++)
+                        {
+                            JButton src = buts.get((-moves.get(i).src.y)+3).get((moves.get(i).src.x)+3);
+                            src.setBackground(Color.red);
+                        }
+                    }
+                    else
+                    {
+                        for(int i = 0; i<moves.size(); i++)
+                        {
+                            JButton src = buts.get((-moves.get(i).src.y)+3).get((moves.get(i).src.x)+3);
+                            src.setBackground(Color.blue);
+                        }
+                    }
+                    times++;
+                }
+                else
+                {
+                    System.out.println("Timer stops now...");
+                    disable_buttons = false;
+                    System.out.println("Buttons re-enabled");
+                    this.cancel();  //stops the timer
+                }
+            }
+        }
 
+        timer.schedule(new MyTask(), 0, 300);
+
+    }//GEN-LAST:event_jButtonHint_Clicked
+
+    void kill_all_children(Thread current_thread) throws InterruptedException
+    {
+        for(Thread t : outerThreads)
+        {
+            if(!t.equals(current_thread))
+            {
+                System.out.println("killing thread: "+t.getName());
+                t.interrupt();
+                
+            }
+        }
+    }
+    
     private void jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonActionPerformed
         // TODO add your handling code here:
-        
-        if(!game_is_over && !disable_buttons && myTurn)
+        if(!game_is_over && !disable_buttons && (isOnline && myTurn) || (!isOnline))
         {
             JButton clicked = (JButton)evt.getSource();
 
@@ -858,11 +871,15 @@ public class ClientPanel extends javax.swing.JPanel {
                         {
                             middleButton = buts.get((-moveMade.y)+3).get((moveMade.x)+3);
                             apply_move_to_graphics(clicked);
-                            //tell server you made a move and what it was
-                            myTurn = false;
-                            SolitaireMove moveToSend = new SolitaireMove(c1, c2, moveMade);
-                            sendMessage(moveToSend.toString());
-                            waitForMove();
+                            
+                            //add for online play***************************************************************
+                            if(isOnline)
+                            {
+                               myTurn = false;
+                               SolitaireMove moveToSend = new SolitaireMove(c1, c2, moveMade);
+                               sendMessage(moveToSend.toString());
+                               waitForMove();   
+                            }
                         }
                     }
                 }
@@ -888,8 +905,80 @@ public class ClientPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jButtonActionPerformed
 
     
+    /*boolean find_proper_move(SolitaireBoard b_clone)
+    {
+        //System.out.println(x);
+        ArrayList<SolitaireMove> moves = b_clone.get_all_possible_moves();
+        ArrayList<Thread> innerThreads = new ArrayList<>();
+        returnVal = false;
+
+        if (moves.isEmpty() && b_clone.win())
+        {
+            System.out.println("WIN found");
+            return true;
+        }
+        else if (moves.isEmpty())
+        {
+            System.out.println("Loss: backtracking");
+            return false;
+        }
+
+        for(SolitaireMove m : moves)
+        {
+            b_clone.make_move(m);
+            
+            //possibly put all of these recursive calls in their own threads as well to see if it helps
+                //again, as they finish, check for a "solved == true" and when it finds one, kill the ones still running
+            
+            class InnerThread implements Runnable 
+            {
+                SolitaireMove move;
+                InnerThread(SolitaireMove m) 
+                {
+                    move = m;
+                }
+
+                @Override
+                public void run()
+                {
+                    //if the "kill all threads" variable is set, then do Thread.currentThread().interrupt();
+                    if(!Thread.currentThread().isInterrupted())
+                    {
+                        SolitaireBoard b_clone = new SolitaireBoard(b);
+                        b_clone.make_move(move);
+
+                        boolean solution_move = find_proper_move(b_clone);
+                        if(solution_move)
+                        {
+                            returnTrue();
+                            //Thread.currentThread().interrupt();
+                        }
+                        b_clone.un_make_move(move);
+                    }
+                }
+
+                    private synchronized void returnTrue()
+                    {
+                        returnVal = true;
+                    }
+                }
+            
+            InnerThread r = new InnerThread(m);
+            Thread t = new Thread(r);
+            innerThreads.add(t);
+        }
+        
+        for(Thread t : innerThreads)
+        {
+            System.out.println("Thread starting: " + t.getName());
+            t.start();
+        }
+        System.out.println("-----------" + returnVal);
+        return returnVal;
+    }
+    */
     
-     private int getX(JButton r)
+    private int getX(JButton r)
     {
         for (int i = 0; i < buts.size(); i++) //columns or x
         {
@@ -923,12 +1012,10 @@ public class ClientPanel extends javax.swing.JPanel {
     {
         //firstChoice is the source
         //middleButton is the middle
-        System.out.print("graphic started");
+        
         destination.setBackground(Color.BLUE);  //set dest to filled
         firstChoice.setBackground(Color.WHITE);  //set source to empty
         middleButton.setBackground(Color.WHITE);  //set middel to empty
-        this.paintImmediately(0, 0, 441, 348);
-        System.out.print("graphic finished");
     }
     
     boolean game_over()
@@ -949,7 +1036,7 @@ public class ClientPanel extends javax.swing.JPanel {
 
     }
     
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;
@@ -985,6 +1072,5 @@ public class ClientPanel extends javax.swing.JPanel {
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
-    private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }
