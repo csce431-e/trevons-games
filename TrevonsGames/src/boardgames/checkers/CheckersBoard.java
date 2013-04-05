@@ -88,7 +88,7 @@ public class CheckersBoard {
         }
         
         anotherJump = false;
-        printBoard();
+        //printBoard();
     }
     
     public void printBoard()
@@ -268,15 +268,20 @@ public class CheckersBoard {
     public Owner isGameOver()
     {
         
-        if(Owner.PLAYER1.pieces.isEmpty() == true)
+        if(Owner.PLAYER1.pieces.isEmpty())
         {
             gameOver = true;
             return Owner.PLAYER2;
         }
-        else if(Owner.PLAYER2.pieces.isEmpty() == true)
+        else if(Owner.PLAYER2.pieces.isEmpty())
         {
             gameOver = true;
             return Owner.PLAYER1;
+        }
+        else if(getAllMoves().isEmpty())
+        {
+            gameOver = true;
+            return currentGame.turn.opposite();
         }
       
         return Owner.EMPTY;

@@ -149,7 +149,8 @@ public class CheckersCell {
         {
             newLocation2 = b.get(newLocation2.x).get(newLocation2.y);
             CheckersMove m2 = new CheckersMove(this, newLocation2);
-            if (m2.isValidMove()) {
+            if (m2.isValidMove()) 
+            {
                 moves.add(m2);
             }
         }

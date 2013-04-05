@@ -4,6 +4,7 @@
  */
 package boardgames.checkers;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import javax.swing.JButton;
 import java.awt.event.ActionEvent;
@@ -23,15 +24,26 @@ public class CheckersGUI extends javax.swing.JFrame {
     CheckersGame game;
     int BOARDSIZE;
     
+    CheckersCell source;
+    CheckersCell destination;
+    CheckersMove currentMove;
+    
+    boolean firstSelection;
+    //Owner turn;
+    
     ArrayList<ArrayList<JButton>> guiBoard;
     
     public CheckersGUI()
     {
         initComponents();
-        
+        game = new CheckersGame();
+        game.initCheckers(true);
         guiBoard = new ArrayList<ArrayList<JButton>>();
         BOARDSIZE = 8;
+        firstSelection = true;
+        game.turn = Owner.PLAYER1;
         init_buttons();
+        updateBoard();
     }
     
     //sets up guiBoard
@@ -136,9 +148,66 @@ public class CheckersGUI extends javax.swing.JFrame {
         
     }
     
-
+    void updateBoard()
+    {
+        for(int i=0;i<BOARDSIZE;i++)
+        {
+            for(int j=0;j<BOARDSIZE;j++)
+            {
+                Owner o = CheckersBoard.board.get(i).get(j).getOwner(); 
+                if(o == Owner.PLAYER1)
+                {
+                    guiBoard.get(i).get(j).setBackground(Color.BLACK);
+                }
+                else if(o == Owner.PLAYER2)
+                {
+                     guiBoard.get(i).get(j).setBackground(Color.RED);
+                }
+                else if(o == Owner.EMPTY)
+                {
+                    guiBoard.get(i).get(j).setBackground(Color.LIGHT_GRAY);
+                }
+            }
+        }
+    }
+    
+    CheckersCell getCellFromButton(JButton b)
+    {
+        for(int i=0;i<BOARDSIZE; i++)
+        {
+            for(int j=0;j<BOARDSIZE;j++)
+            {
+               if(b.equals(guiBoard.get(i).get(j)))
+               {
+                   return CheckersBoard.board.get(i).get(j);
+               }                    
+            }
+        }
+        return new CheckersCell(-1,-1);
+    }
+    
     private void actionHandler(java.awt.event.ActionEvent evt)
-    {}
+    {
+        JButton b = (JButton) evt.getSource();
+        if(firstSelection)
+        {
+            source = getCellFromButton(b);
+            firstSelection = false;
+        }
+        else
+        {
+            destination = getCellFromButton(b);
+            currentMove = new CheckersMove(source, destination);
+            game.b.makeMove(currentMove);
+            
+            updateBoard();
+            game.turn = game.turn.opposite();
+            firstSelection = true;
+        }
+        
+        
+        
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

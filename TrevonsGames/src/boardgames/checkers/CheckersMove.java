@@ -145,7 +145,7 @@ public class CheckersMove {
                 return false;
             }
         }
-        else if(o == Owner.PLAYER2 && src.isKing())
+        else if(o == Owner.PLAYER2 && !src.isKing())
         {
             if(dest.x <= source.x)
             {

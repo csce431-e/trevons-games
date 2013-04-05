@@ -28,15 +28,32 @@ public class CheckersGame {
         sendMove();
     }
     
+    public void initCheckers(boolean gui)
+    {
+        AI = false;
+        b = new CheckersBoard(this);
+        turn = Owner.PLAYER1;  
+        if(!gui)
+        {
+            sendMove();
+        }
+    }
+    
     public void sendMove()//(int x1, int y1, int x2, int y2)
     {
+        System.out.println("=-_-= Checkers =-_-=");
+        System.out.println("0 Player vs Player");
+        System.out.println("1 Player vs AI");
+        System.out.println("=_=-_-=-_==_-=-_-=_=");
+        System.out.print("Enter choice: ");
         
-        System.out.println("Enter 0 for player vs player. Enter 1 for player vs AI:");
         Scanner sc = new Scanner(System.in);
         int option = sc.nextInt();
         
+        b.printBoard();
         for(;;)
         {
+  
             winner = b.isGameOver();
             if(winner != Owner.EMPTY)
             {
@@ -169,11 +186,14 @@ public class CheckersGame {
         Random generator = new Random();
         
         boolean moveMade = false;
-        while(!moveMade)
+        if(!l.isEmpty())
         {
-            int index = generator.nextInt(l.size());
-            CheckersMove m = l.get(index);
-            moveMade = b.makeMove(m);
+            while(!moveMade)
+            {
+                int index = generator.nextInt(l.size());
+                CheckersMove m = l.get(index);
+                moveMade = b.makeMove(m);
+            }
         }
         /*Iterator<CheckersMove> il = l.iterator();
         CheckersMove m = il.next();
