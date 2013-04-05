@@ -28,6 +28,7 @@ public class MainMenu extends javax.swing.JPanel {
     
     byte[] get_ip_array(String ip_box_str)
     {
+        //return new byte[] {127,0,0,1};
         ArrayList<Integer> ip = new ArrayList<>();
         String temp_s = "";
         for(int i = 0; i<ip_box_str.length(); i++)
@@ -43,8 +44,7 @@ public class MainMenu extends javax.swing.JPanel {
             }
         }
         ip.add(Integer.parseInt(temp_s));
-        byte[] serverIP = new byte[] {(byte)ip.get(0).intValue(),(byte)ip.get(1).intValue(),(byte)ip.get(2).intValue(),(byte)ip.get(3).intValue()}; 
-        return serverIP;
+        return new byte[] {(byte)ip.get(0).intValue(),(byte)ip.get(1).intValue(),(byte)ip.get(2).intValue(),(byte)ip.get(3).intValue()}; 
     }
 
     /**
@@ -134,7 +134,7 @@ public class MainMenu extends javax.swing.JPanel {
                 serverIpBoxClicked(evt);
             }
         });
-        add(ip_input_box, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 140, 81, -1));
+        add(ip_input_box, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 160, 81, -1));
 
         buttonGroup1.add(locally_radiob);
         locally_radiob.setSelected(true);
@@ -144,7 +144,7 @@ public class MainMenu extends javax.swing.JPanel {
                 local_radioClicked(evt);
             }
         });
-        add(locally_radiob, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 80, -1, -1));
+        add(locally_radiob, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 100, -1, -1));
 
         buttonGroup1.add(online_radiob);
         online_radiob.setText("Play Online");
@@ -153,7 +153,7 @@ public class MainMenu extends javax.swing.JPanel {
                 online_radioClicked(evt);
             }
         });
-        add(online_radiob, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 110, -1, -1));
+        add(online_radiob, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 130, -1, -1));
     }// </editor-fold>//GEN-END:initComponents
 
     private void solitaireClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_solitaireClicked
@@ -185,7 +185,7 @@ public class MainMenu extends javax.swing.JPanel {
 
                     if(!game.myTurn)
                     {
-                        game.paintAll(getGraphics());
+                        game.paintAll(game.getGraphics()); //makes sure to draw the board before triggering the block
                         game.waitForMove();
                     }
                 }
