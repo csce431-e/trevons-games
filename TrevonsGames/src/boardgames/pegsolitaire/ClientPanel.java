@@ -47,7 +47,7 @@ public class ClientPanel extends javax.swing.JPanel {
     int y2;
     
     //online veriables
-    boolean myTurn;
+    public boolean myTurn;
     Socket requestSocket;
     ObjectOutputStream out;
     ObjectInputStream in;
@@ -75,7 +75,7 @@ public class ClientPanel extends javax.swing.JPanel {
         serverIP = new byte[] {(byte)ip.get(0).intValue(),(byte)ip.get(1).intValue(),(byte)ip.get(2).intValue(),(byte)ip.get(3).intValue()};
         //serverIP = new byte[] {(byte)172,(byte)17,(byte)105,(byte)105};
         init_buttons();
-        run();
+        setup_client_socket();
         //waitForMove(); //moved this into the call from mainMenu
     }
     
@@ -157,22 +157,44 @@ public class ClientPanel extends javax.swing.JPanel {
     }
     
     
-
-    //make no change
-    private void run()
+    private void setup_client_socket()
     {
         try
         {
+            System.out.println("Setting up client socket");
             InetAddress addr = null;
             addr = InetAddress.getByAddress(serverIP);
             requestSocket = new Socket(addr, 2008);
-            System.out.println("Connected to localhost in port 2004");
-            //2. get Input and Output streams
+            
+            
             out = new ObjectOutputStream(requestSocket.getOutputStream());
             out.flush();
             in = new ObjectInputStream(requestSocket.getInputStream());
-            //3: Communicating with the server
-            try { message = (String)in.readObject(); } catch(ClassNotFoundException classNot){ System.err.println("data received in unknown format"); }
+            
+            try 
+            { 
+                out.writeObject("sol");
+                message = (String)in.readObject(); //waiting or starting
+                System.out.println("readin: "+ message);
+                
+                if(message.equals("waiting"))
+                {
+                    System.out.println("waiting for \"starting\"");
+                    message = (String)in.readObject(); //starting
+                    System.out.println(message);
+                    myTurn = true;
+                    System.out.println("its my turn");
+                }
+                else
+                {
+                    myTurn = false; 
+                    System.out.println("its NOT my turn");
+                }
+            } 
+            catch(ClassNotFoundException classNot)
+            { 
+                System.err.println("data received in unknown format"); 
+            }
         }
         catch(UnknownHostException unknownHost)
         {
@@ -198,41 +220,26 @@ public class ClientPanel extends javax.swing.JPanel {
             ioException.printStackTrace();
         }
     }
-    
-    public void turnOrder()
+
+    public void waitForOpponent()
     {
         try
         {
-            System.out.println("Determining turn order");
-            message = "nothing";
-            //while(message.equals("nothing"))
-            //{
-                //System.out.println("Message still nothing");
-                message = (String)in.readObject();
-                System.out.println("Message received: "+message);
-                
-                
-                if(message.compareTo("0") == 0)
-                {
-                    myTurn = true;
-                }
-                else
-                {
-                    myTurn = false;
-                    waitForMove();
-                }
-            //}
-            //System.out.println(message);
+            String message = (String)in.readObject();
+            System.out.println(message); //should be connection successful, shold only print when BOTH are connected   
         }
-        catch(ClassNotFoundException classNot)
+        catch(IOException e)
         {
-            System.err.println("data received in unknown format");
-        } 
-        catch (IOException ex) 
+           //System.out.println("IOexception in waiting for opponent");
+            e.printStackTrace();
+        }
+        catch(ClassNotFoundException e)
         {
-            Logger.getLogger(ClientPanel.class.getName()).log(Level.SEVERE, null, ex);
-        }   
+            //System.out.println("class not found in waiting for opponent");
+            e.printStackTrace();
+        }
     }
+    
     //only difference is how to actually make the move received and apply to graphics
     public void waitForMove()
     {
@@ -241,8 +248,8 @@ public class ClientPanel extends javax.swing.JPanel {
         {
             System.out.println("Waiting for move");
             message = "nothing";
-            //while(message.equals("nothing"))
-            //{
+            while(message.equals("nothing"))
+            {
                 //System.out.println("Message still nothing");
                 message = (String)in.readObject();
                 System.out.println("Message received: "+message);
@@ -254,7 +261,7 @@ public class ClientPanel extends javax.swing.JPanel {
                 JButton clicked = buts.get((-otherPlayerMove.dest.y)+3).get((otherPlayerMove.dest.x)+3);
                 apply_move_to_graphics(clicked);
                 myTurn = true;
-            //}
+            }
             System.out.println(message);
         }
         catch(ClassNotFoundException classNot)

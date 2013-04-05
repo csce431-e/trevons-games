@@ -233,9 +233,12 @@ public class MainMenu extends javax.swing.JPanel {
             gameFrame.setLocationRelativeTo(null);
             gameFrame.pack();
             gameFrame.setVisible(true);
-
+            
+            //was used to run commandline version
+            /*
             SolitaireGame g = new SolitaireGame();
             g.initGame();
+            */
         }
         else
         {
@@ -308,14 +311,25 @@ public class MainMenu extends javax.swing.JPanel {
         gameFrame.pack();
         gameFrame.setVisible(true);
         
+        client.waitForOpponent();
+        
+        if(!client.myTurn)
+        {
+            client.waitForMove();
+        }
+        
+        //was used to run commandline version
+        /*
         SolitaireGame g = new SolitaireGame();
+        System.out.println("here1");
         g.initGame();
-        client.turnOrder();
+        * */
     }//GEN-LAST:event_clientClicked
 
     private void serverClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_serverClicked
         // TODO add your handling code here:
-        gameFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        
+        /*gameFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         
         JLabel textLabel= new JLabel("Label56",SwingConstants.CENTER);
         textLabel.setPreferredSize(new Dimension(300,100));
@@ -329,7 +343,9 @@ public class MainMenu extends javax.swing.JPanel {
         gameFrame.setVisible(true);
         
         SolitaireGame g = new SolitaireGame();
-        g.initGame();
+        g.initGame();*/
+        Server s = new Server();
+        s.start();
     }//GEN-LAST:event_serverClicked
 
     private void ip_input_boxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ip_input_boxActionPerformed
