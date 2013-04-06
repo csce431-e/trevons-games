@@ -36,6 +36,11 @@ public class Ship {
     static class point{
         int x, y;
         
+        public point(){
+            x=0;
+            y=0;
+        }
+        
         public point(int xCoord, int yCoord){
             x=xCoord;
             y=yCoord;
@@ -51,6 +56,8 @@ public class Ship {
         name = "Ship";
         status=new int[size];
         sunk=false;
+        location=new point();
+        orientation = "";
     }
     
     public Ship(int s){
@@ -58,6 +65,8 @@ public class Ship {
         name = "Ship";
         status=new int[size];
         sunk=false;
+        location= new point();
+        orientation = "";
     }
     
     public Ship(int s, String n){
@@ -65,6 +74,8 @@ public class Ship {
         name = n;
         status=new int[size];
         sunk=false;
+        location=new point();
+        orientation = "";
     }
     
     public int size(){ return size;}
