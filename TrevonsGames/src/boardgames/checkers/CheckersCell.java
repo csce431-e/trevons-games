@@ -17,27 +17,33 @@ public class CheckersCell {
     private Owner owner;
     private RowType rowType;
     int x; //x position
-    int y; //y position
+    int y; //y position.
+    boolean king;
+   
     ArrayList< ArrayList< CheckersCell>> b = CheckersBoard.board;
     
     //Constructors
     public CheckersCell() {
         owner = Owner.EMPTY;
+        king = false;
     }
 
     public CheckersCell(Owner o) {
         owner = o;
+        king = false;
     }
 
     public CheckersCell(int xPos, int yPos) {
         x = xPos;
         y = yPos;
+        king = false;
     }
 
     public CheckersCell(Owner o, int xPos, int yPos) {
         owner = o;
         x = xPos;
         y = yPos;
+        king = false;
     }
 
     public CheckersCell(Owner o, RowType t) {
@@ -50,9 +56,20 @@ public class CheckersCell {
         this.rowType = c.rowType;
         this.x = c.x;
         this.y = c.y;
+        this.king = c.king;
     }
 
     //Getters and Setters
+    public boolean isKing()
+    {
+        return king;
+    }
+    
+    public void setKing(boolean k)
+    { 
+        this.king = k;
+    }
+    
     public void setOwner(Owner o) {
         this.owner = o;
     }
@@ -77,9 +94,12 @@ public class CheckersCell {
         int newX = 0;
         int newY = 0;
 
-        if (this.owner == Owner.PLAYER2) {
+        if (this.owner == Owner.PLAYER2) 
+        {
             newX = this.x + 1;
-        } else {
+        } 
+        else 
+        {
             newX = this.x - 1;
         }
 
@@ -92,10 +112,36 @@ public class CheckersCell {
         {
             newLocation1 = b.get(newLocation1.x).get(newLocation1.y);
             CheckersMove m1 = new CheckersMove(this, newLocation1);
-            if (m1.isValidMove()) {
+            if (m1.isValidMove()) 
+            {
                 moves.add(m1);
             }
         }
+        
+        if(this.isKing())
+        {
+            if (this.owner == Owner.PLAYER2) 
+            {
+                newX = this.x - 1;
+            } 
+            else 
+            {
+                newX = this.x + 1;
+            }
+            
+            newLocation1 = new CheckersCell(newX, newY);
+            //newLocation1.x = newX;
+            if(isValidCell(newLocation1))
+            {
+                newLocation1 = b.get(newLocation1.x).get(newLocation1.y);
+                CheckersMove m3 = new CheckersMove(this, newLocation1);
+                if (m3.isValidMove()) 
+                {
+                    moves.add(m3);
+                }
+            }
+        }
+        
         //Add right move
         newY = this.y + 1;
         CheckersCell newLocation2 = new CheckersCell();
@@ -105,13 +151,35 @@ public class CheckersCell {
         {
             newLocation2 = b.get(newLocation2.x).get(newLocation2.y);
             CheckersMove m2 = new CheckersMove(this, newLocation2);
-            if (m2.isValidMove()) {
+            if (m2.isValidMove()) 
+            {
                 moves.add(m2);
             }
         }
         
-        //Player must make a jump if one is available
-       
+        if(this.isKing())
+        {
+            if (this.owner == Owner.PLAYER2) 
+            {
+                newX = this.x + 1;
+            } 
+            else 
+            {
+                newX = this.x - 1;
+            }
+            
+            newLocation2 = new CheckersCell(newX, newY);
+            //newLocation2.x = newX;
+            if(isValidCell(newLocation2))
+            {
+                newLocation2 = b.get(newLocation2.x).get(newLocation2.y);
+                CheckersMove m4 = new CheckersMove(this, newLocation2);
+                if (m4.isValidMove()) 
+                {
+                    moves.add(m4);
+                }
+            }
+        }
         
         return moves;
         
@@ -124,23 +192,31 @@ public class CheckersCell {
         return mid;
     }
 
+    //Returns an array of the jumps available from a given cell
     public ArrayList<CheckersJump> getJumps() {
         
         ArrayList<CheckersJump> jumps = new ArrayList();
         
         Owner opponent = owner.opposite();
-        if(opponent== Owner.EMPTY)
+        if(opponent == Owner.EMPTY)
         {
             return new ArrayList();
         }
         
         ArrayList<CheckersCell> jumpDest = new ArrayList();
-        jumpDest.add(new CheckersCell(this.x + 2, this.y + 2));
-        jumpDest.add(new CheckersCell(this.x - 2, this.y + 2));
-        jumpDest.add(new CheckersCell(this.x + 2, this.y - 2));
-        jumpDest.add(new CheckersCell(this.x - 2, this.y - 2));
-
-       
+        
+        if(king || owner == Owner.PLAYER1)
+        {
+            jumpDest.add(new CheckersCell(this.x - 2, this.y + 2));
+            jumpDest.add(new CheckersCell(this.x - 2, this.y - 2));
+        }
+        
+        if(king || owner == Owner.PLAYER2)
+        {
+            jumpDest.add(new CheckersCell(this.x + 2, this.y + 2));
+            jumpDest.add(new CheckersCell(this.x + 2, this.y - 2));
+        }
+        
         //delete destination cells that are off the board
         Iterator<CheckersCell> it = jumpDest.iterator();
         while (it.hasNext()) {
@@ -206,13 +282,33 @@ public class CheckersCell {
 
     //Convert to string for console play
     @Override
-    public String toString() {
-        if (owner == Owner.EMPTY) {
+    public String toString() 
+    {
+        if (owner == Owner.EMPTY) 
+        {
             return "~";
-        } else if (owner == Owner.PLAYER1) {
-            return "B";
-        } else {
-            return "R";
+        } 
+        else if (owner == Owner.PLAYER1) 
+        {
+            if(isKing())
+            {
+                return "b";
+            }
+            else
+            {
+                return "B";
+            }
+        } 
+        else 
+        {
+            if(isKing())
+            {
+                return "r";
+            }
+            else
+            {
+                return "R";
+            }
         }
     }
 }

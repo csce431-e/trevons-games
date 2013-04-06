@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package boardgames.pegSolitaire;
+package boardgames.connectfour;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -13,11 +13,11 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @author Tom
+ * @author Jonathan
  */
-public class SolitaireGameTest {
+public class PieceTest {
     
-    public SolitaireGameTest() {
+    public PieceTest() {
     }
     
     @BeforeClass
@@ -37,30 +37,31 @@ public class SolitaireGameTest {
     }
 
     /**
-     * Test of initGame method, of class SolitaireGame.
+     * Test of setColor method, of class Piece.
      */
     @Test
-    public void testInitGame() {
-        System.out.println("initGame");
-        SolitaireGame instance = new SolitaireGame();
-        instance.initGame();
+    public void testSetColor() {
+        System.out.println("setColor");
+        int col = 0;
+        Piece instance = new Piece();
+        instance.setColor(col);
+        assertEquals(col, instance.pieceColor());
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        //fail("The test case is a prototype.");
     }
 
     /**
-     * Test of sendMove method, of class SolitaireGame.
+     * Test of pieceColor method, of class Piece.
      */
     @Test
-    public void testSendMove() {
-        System.out.println("sendMove");
-        int x1 = 0;
-        int y1 = 0;
-        int x2 = 0;
-        int y2 = 0;
-        SolitaireGame instance = new SolitaireGame();
-        instance.sendMove(x1, y1, x2, y2);
+    public void testPieceColor() {
+        System.out.println("pieceColor");
+        Piece instance = new Piece();
+        int expResult = 0;
+        instance.setColor(expResult);
+        int result = instance.pieceColor();
+        assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        //fail("The test case is a prototype.");
     }
 }

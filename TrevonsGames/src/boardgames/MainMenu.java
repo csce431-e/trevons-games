@@ -10,8 +10,7 @@ import boardgames.checkers.*;
 import boardgames.Mancala.*;
 import boardgames.connectfour.*;
 
-import java.util.ArrayList;
-import java.awt.*;
+import java.util.*;
 import javax.swing.*;
 
 /**
@@ -23,22 +22,30 @@ public class MainMenu extends javax.swing.JPanel {
     /**
      * Creates new form Test_GUI
      */
-    
-    SolitaireGuiPanel pegGui;
-    ClientPanel client;
-    ServerPanel server;
-    JFrame gameFrame;
-    
     public MainMenu() {
         initComponents();
-        
-        pegGui = new SolitaireGuiPanel();
-        
-        
-        gameFrame = new JFrame("GUI2");
     }
     
-
+    byte[] get_ip_array(String ip_box_str)
+    {
+        //return new byte[] {127,0,0,1};
+        ArrayList<Integer> ip = new ArrayList<>();
+        String temp_s = "";
+        for(int i = 0; i<ip_box_str.length(); i++)
+        {
+            if(ip_box_str.charAt(i) == '.')
+            {
+                ip.add(Integer.parseInt(temp_s));
+                temp_s = "";
+            }
+            else
+            {
+                temp_s += ip_box_str.charAt(i);
+            }
+        }
+        ip.add(Integer.parseInt(temp_s));
+        return new byte[] {(byte)ip.get(0).intValue(),(byte)ip.get(1).intValue(),(byte)ip.get(2).intValue(),(byte)ip.get(3).intValue()}; 
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -50,17 +57,19 @@ public class MainMenu extends javax.swing.JPanel {
     private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
+        buttonGroup2 = new javax.swing.ButtonGroup();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
-        jButton7 = new javax.swing.JButton();
-        jButton8 = new javax.swing.JButton();
+        server_button = new javax.swing.JButton();
         ip_input_box = new javax.swing.JTextField();
         locally_radiob = new javax.swing.JRadioButton();
         online_radiob = new javax.swing.JRadioButton();
+
+        setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jButton1.setText("Peg Solitaire");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -68,6 +77,7 @@ public class MainMenu extends javax.swing.JPanel {
                 solitaireClicked(evt);
             }
         });
+        add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, 150, 80));
 
         jButton2.setText("Connect 4");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -75,6 +85,7 @@ public class MainMenu extends javax.swing.JPanel {
                 ConnectFourClicked(evt);
             }
         });
+        add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 0, 150, 80));
 
         jButton3.setText("Checkers");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
@@ -82,6 +93,7 @@ public class MainMenu extends javax.swing.JPanel {
                 CheckersClicked(evt);
             }
         });
+        add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, 150, 80));
 
         jButton4.setText("Gomoku");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
@@ -89,6 +101,7 @@ public class MainMenu extends javax.swing.JPanel {
                 GomokuClicked(evt);
             }
         });
+        add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 100, 150, 80));
 
         jButton5.setText("Mancala");
         jButton5.addActionListener(new java.awt.event.ActionListener() {
@@ -96,6 +109,7 @@ public class MainMenu extends javax.swing.JPanel {
                 MancalaClicked(evt);
             }
         });
+        add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 220, 150, 80));
 
         jButton6.setText("Battleship");
         jButton6.addActionListener(new java.awt.event.ActionListener() {
@@ -103,147 +117,83 @@ public class MainMenu extends javax.swing.JPanel {
                 BattleshipClicked(evt);
             }
         });
+        add(jButton6, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 200, 150, 80));
 
-        jButton7.setText("server");
-        jButton7.addActionListener(new java.awt.event.ActionListener() {
+        server_button.setText("Server");
+        server_button.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 serverClicked(evt);
             }
         });
-
-        jButton8.setText("client");
-        jButton8.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                clientClicked(evt);
-            }
-        });
+        add(server_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 270, -1, -1));
 
         ip_input_box.setText("Server IP here");
-        ip_input_box.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ip_input_boxActionPerformed(evt);
+        ip_input_box.setEnabled(false);
+        ip_input_box.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                serverIpBoxClicked(evt);
             }
         });
+        add(ip_input_box, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 160, 81, -1));
 
         buttonGroup1.add(locally_radiob);
         locally_radiob.setSelected(true);
         locally_radiob.setText("Play Locally");
+        locally_radiob.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                local_radioClicked(evt);
+            }
+        });
+        add(locally_radiob, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 100, -1, -1));
 
         buttonGroup1.add(online_radiob);
         online_radiob.setText("Play Online");
-        online_radiob.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                online_radiobActionPerformed(evt);
+        online_radiob.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                online_radioClicked(evt);
             }
         });
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(23, 23, 23)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(10, 10, 10)
-                                .addComponent(ip_input_box)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jButton8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(locally_radiob)
-                        .addContainerGap())
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(57, 57, 57)
-                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 57, Short.MAX_VALUE))))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(online_radiob)
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton7)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton8))
-                    .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(ip_input_box, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(locally_radiob))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(online_radiob)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(27, 27, 27))
-        );
+        add(online_radiob, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 130, -1, -1));
     }// </editor-fold>//GEN-END:initComponents
 
     private void solitaireClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_solitaireClicked
         // TODO add your handling code here:
-        
-        /*SolitaireGui gui = new SolitaireGui();
-        gui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        
-        JLabel textLabel= new JLabel("Label56",SwingConstants.CENTER);
-        textLabel.setPreferredSize(new Dimension(300,100));
-        gui.getContentPane().add(textLabel,BorderLayout.CENTER);
-
-        gui.setLocationRelativeTo(null);
-        gui.pack();
-        gui.setVisible(true);
-        */
-        if(locally_radiob.isSelected())
+        if(locally_radiob.isSelected())  //local play
         {
-            gameFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        
-            JLabel textLabel= new JLabel("Label56",SwingConstants.CENTER);
-            textLabel.setPreferredSize(new Dimension(300,100));
-            gameFrame.getContentPane().add(textLabel,BorderLayout.CENTER);
-            
-            gameFrame.add((pegGui));
-            
-            gameFrame.setLocationRelativeTo(null);
-            gameFrame.pack();
-            gameFrame.setVisible(true);
-
-            SolitaireGame g = new SolitaireGame();
-            g.initGame();
+            java.awt.EventQueue.invokeLater(new Runnable() 
+            {
+                @Override
+                public void run() 
+                {
+                    SolitaireGui game = new SolitaireGui(false, new byte[] {}); //2 params, whether or not it's online and the ip addr
+                    game.setVisible(true);
+                    game.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                }
+            });
         }
-        else
+        else //online play
         {
-            //trigger another panel to ask if client or server and if client what the ip of the server is
-            clientClicked(evt);
+            java.awt.EventQueue.invokeLater(new Runnable() 
+            {
+                @Override
+                public void run() 
+                {
+                    SolitaireGui game = new SolitaireGui(true, get_ip_array(ip_input_box.getText()));
+                    game.setVisible(true);
+                    game.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    game.waitForOpponent();
+
+                    if(!game.myTurn)
+                    {
+                        game.paintAll(game.getGraphics()); //makes sure to draw the board before triggering the block
+                        game.waitForMove();
+                    }
+                }
+            });
         }
     }//GEN-LAST:event_solitaireClicked
 
+    
     private void ConnectFourClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConnectFourClicked
         // TODO add your handling code here:
         ConnectFourGUIPanel g = new ConnectFourGUIPanel();
@@ -252,13 +202,12 @@ public class MainMenu extends javax.swing.JPanel {
 
     private void CheckersClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckersClicked
         // TODO add your handling code here:
-        CheckersGame g = new CheckersGame();
-        g.initCheckers();
+        CheckersGUI g = new CheckersGUI();
+        g.playGame();
     }//GEN-LAST:event_CheckersClicked
 
     private void GomokuClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GomokuClicked
         GomokuGUI g = new GomokuGUI();
-        
         g.playGame(); //if statement "unclicks" gomoku when game is over
     }//GEN-LAST:event_GomokuClicked
 
@@ -274,74 +223,36 @@ public class MainMenu extends javax.swing.JPanel {
         b.playGame();
     }//GEN-LAST:event_BattleshipClicked
 
-    private void clientClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clientClicked
-        // TODO add your handling code here:
-        gameFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        
-        JLabel textLabel= new JLabel("Label56",SwingConstants.CENTER);
-        textLabel.setPreferredSize(new Dimension(300,100));
-        gameFrame.getContentPane().add(textLabel,BorderLayout.CENTER);
-        
-        String str = ip_input_box.getText();
-        //declare arraylist
-        //pull chars one at a time appending to a temp string until char == '.', then convert to int and add to array list
-        ArrayList<Integer> ip = new ArrayList<>();
-        String temp_s = "";
-        for(int i = 0; i<str.length(); i++)
-        {
-            if(str.charAt(i) == '.')
-            {
-                ip.add(Integer.parseInt(temp_s));
-                temp_s = "";
-            }
-            else
-            {
-                temp_s += str.charAt(i);
-            }
-        }
-        ip.add(Integer.parseInt(temp_s));
-        System.out.println(ip.toString());
-        client = new ClientPanel(ip);
-        gameFrame.add((client));
-        
-        gameFrame.setLocationRelativeTo(null);
-        gameFrame.pack();
-        gameFrame.setVisible(true);
-        
-        SolitaireGame g = new SolitaireGame();
-        g.initGame();
-        client.turnOrder();
-    }//GEN-LAST:event_clientClicked
-
     private void serverClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_serverClicked
         // TODO add your handling code here:
-        gameFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        server_button.setEnabled(false);
         
-        JLabel textLabel= new JLabel("Label56",SwingConstants.CENTER);
-        textLabel.setPreferredSize(new Dimension(300,100));
-        gameFrame.getContentPane().add(textLabel,BorderLayout.CENTER);
-        
-        server = new ServerPanel();
-        gameFrame.add((server));
-        
-        gameFrame.setLocationRelativeTo(null);
-        gameFrame.pack();
-        gameFrame.setVisible(true);
-        
-        SolitaireGame g = new SolitaireGame();
-        g.initGame();
+        Server s = new Server();
+        s.start();
     }//GEN-LAST:event_serverClicked
 
-    private void ip_input_boxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ip_input_boxActionPerformed
+    private void serverIpBoxClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_serverIpBoxClicked
         // TODO add your handling code here:
-    }//GEN-LAST:event_ip_input_boxActionPerformed
+        JTextField t = (JTextField)evt.getComponent();
+        t.setText("");
+    }//GEN-LAST:event_serverIpBoxClicked
 
-    private void online_radiobActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_online_radiobActionPerformed
+    private void online_radioClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_online_radioClicked
         // TODO add your handling code here:
-    }//GEN-LAST:event_online_radiobActionPerformed
+        ip_input_box.setEnabled(true);
+        ip_input_box.requestFocusInWindow();
+        ip_input_box.setText("");
+    }//GEN-LAST:event_online_radioClicked
+
+    private void local_radioClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_local_radioClicked
+        // TODO add your handling code here:
+        ip_input_box.setEnabled(false);
+        ip_input_box.setText("Server IP here");
+    }//GEN-LAST:event_local_radioClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JTextField ip_input_box;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
@@ -349,9 +260,8 @@ public class MainMenu extends javax.swing.JPanel {
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
-    private javax.swing.JButton jButton8;
     private javax.swing.JRadioButton locally_radiob;
     private javax.swing.JRadioButton online_radiob;
+    private javax.swing.JButton server_button;
     // End of variables declaration//GEN-END:variables
 }

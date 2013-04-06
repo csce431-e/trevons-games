@@ -19,6 +19,8 @@ public class CheckersBoard {
     public static int BOARDSIZE = 8;
     public static ArrayList< ArrayList<CheckersCell> > board = new ArrayList<>();
     public CheckersGame currentGame;
+    public boolean anotherJump;
+    public boolean gameOver;
     
     public CheckersBoard(CheckersGame g)
     {
@@ -85,7 +87,8 @@ public class CheckersBoard {
             }
         }
         
-        printBoard();
+        anotherJump = false;
+        //printBoard();
     }
     
     public void printBoard()
@@ -177,29 +180,31 @@ public class CheckersBoard {
         return moves;
     }
     
+    
     public boolean makeMove(CheckersMove m)
     {
+        CheckersMove.testBoard();
         Owner currentOwner = m.source.getOwner();
         if(currentOwner == Owner.EMPTY)
         {
-            System.out.println("There is no piece there!");
+            currentGame.setStatus("There is no piece there!");
             return false;
         }
         else if(currentOwner != currentGame.turn)
         {
-            System.out.println("It is not your turn!");
+            currentGame.setStatus("It is not your turn!");
             return false;
         }
         if(!m.isValidMove())
         {
-            System.out.println("Invalid Move");
+            currentGame.setStatus("Invalid Move");
             return false;
         }
         
-        
+        CheckersMove.testBoard();
         ArrayList<CheckersJump> jumps = getJumpMoves();
         //@TODO double jump logic is off. check recursion conditions
-        while(jumps.size() > 0)
+        if(jumps.size() > 0)
         {
             boolean moveFound = false;
 
@@ -214,11 +219,11 @@ public class CheckersBoard {
 
             if(!moveFound)
             {
-                System.out.println("You must jump if one is available!");
+                currentGame.setStatus("You must jump if one is available!");
                 return false;
             }
 
-            if(m.updateBoard(this))
+           /* if(m.updateBoard(this))
             {
                 printBoard();
                 jumps = getJumpMoves();
@@ -233,52 +238,53 @@ public class CheckersBoard {
                 {
                     return true;
                 }
-            }    
+            }    */
             //return true;
         }
-        
+        CheckersMove.testBoard();
         if(m.updateBoard(this))
         {
+            int destRow = m.dest.x;
+            if(m.dest.getJumps().isEmpty() || destRow == CheckersMove.BOTOFBOARD
+                    || destRow == CheckersMove.TOPOFBOARD)
+            {
+                anotherJump = false;
+            }
+            
             printBoard();
             return true;
         }
-        
-        System.out.println("Error: Please try again!");
+     
+        currentGame.setStatus("Error: Please try again!");
         return false;
     }
     
-    
-    /*public boolean makeMove(CheckersCell source, CheckersCell dest)
+    public CheckersCell getCell(int x, int y)
     {
-        
-        CheckersMove m = new CheckersMove(source, dest);
-        if(CheckersCell.isValidMove(m))
-        {
-            Owner o = source.getOwner();
-            source.setOwner(Owner.EMPTY);
-            dest.setOwner(o);
-            o.pieces.remove(m.source);
-            o.pieces.add(dest);
-            
-            System.out.println("Move: " + m.toString());
-            printBoard();
-            return true;
-        }
-        System.out.println("Invalid Move: " + m.toString());
-        return false;
-    }*/
-    
+        return board.get(x).get(y);
+    }
+ 
+
     //returns the winner of the game. if the game is not over, returns empty
     public Owner isGameOver()
     {
-        if(Owner.PLAYER1.pieces.isEmpty() == true)
+        
+        if(Owner.PLAYER1.pieces.isEmpty())
         {
+            gameOver = true;
             return Owner.PLAYER2;
         }
-        else if(Owner.PLAYER2.pieces.isEmpty() == true)
+        else if(Owner.PLAYER2.pieces.isEmpty())
         {
+            gameOver = true;
             return Owner.PLAYER1;
         }
+        else if(getAllMoves().isEmpty())
+        {
+            gameOver = true;
+            return currentGame.turn.opposite();
+        }
+      
         return Owner.EMPTY;
     }
     

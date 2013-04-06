@@ -4,16 +4,21 @@
  */
 package boardgames.checkers;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author Trevon
  */
 public class CheckersMove {
     
+    public static final int TOPOFBOARD = 0;
+    public static final int BOTOFBOARD = 7;
     CheckersCell source;
     CheckersCell dest;
     
     static boolean jump;
+    ArrayList< ArrayList< CheckersCell>> b = CheckersBoard.board;
     
     public CheckersMove()
     {
@@ -31,6 +36,8 @@ public class CheckersMove {
     {
         CheckersCell src = b.board.get(source.x).get(source.y);
         CheckersCell d = b.board.get(dest.x).get(dest.y);
+        //CheckersCell src = b.getCell(source.x, source.y);
+        //CheckersCell d = b.getCell(dest.x, dest.y);
         
         if(isValidMove())
         {
@@ -40,11 +47,51 @@ public class CheckersMove {
             o.pieces.remove(src);
             o.pieces.add(d);
             
+            if(o == Owner.PLAYER1)
+            {
+                if(d.x == TOPOFBOARD)
+                {
+                    d.setKing(true);
+                }
+            }
+            else if(o == Owner.PLAYER2)
+            {
+                if(d.x == BOTOFBOARD)
+                {
+                    d.setKing(true);
+                }
+            }
+            
+            if(src.isKing())
+            {
+                d.setKing(true);
+                src.setKing(false);
+            }
+            
+            b.anotherJump = false;
+            testBoard();
             System.out.println("Move: " + this.toString());
             return true;
         }
         
+        
+        
         return false;
+    }
+    
+    public static void testBoard()
+    {
+        for(int i=0;i<CheckersBoard.BOARDSIZE;i++)
+        {
+            for(int j=0;j<CheckersBoard.BOARDSIZE;j++)
+            {
+                CheckersCell c = CheckersBoard.board.get(i).get(j);
+                if(c.x != i || c.y != j)
+                {
+                    System.out.println("You changed the board");
+                }
+            }
+        }
     }
     
     //TODO make sure this only allows legal moves
@@ -102,20 +149,26 @@ public class CheckersMove {
             return false;
         }
         
+        if(dest.y == source.y)
+        {
+            return false;
+        }
+        
         Owner o = source.getOwner();
+        CheckersCell src = b.get(source.x).get(source.y);
         
         if (o == Owner.EMPTY) 
         {
             return false;
         }
-        else if(o == Owner.PLAYER1)
+        else if(o == Owner.PLAYER1 && !src.isKing())
         {
             if(dest.x >= source.x)
             {
                 return false;
             }
         }
-        else if(o == Owner.PLAYER2)
+        else if(o == Owner.PLAYER2 && !src.isKing())
         {
             if(dest.x <= source.x)
             {
