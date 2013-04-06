@@ -6,8 +6,10 @@ package boardgames.checkers;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 
 
 /**
@@ -31,6 +33,7 @@ public class CheckersGUI extends javax.swing.JFrame {
     boolean gameStarted;
     boolean firstSelection;
     boolean disableButtons;
+    boolean showMoves;
     //Owner turn;
     
     ArrayList<ArrayList<JButton>> guiBoard;
@@ -78,6 +81,7 @@ public class CheckersGUI extends javax.swing.JFrame {
         game.AI = true;
         disableButtons = true;
         gameStarted = false;
+        showMoves = false;
         
         init_buttons();
         updateBoard();
@@ -179,6 +183,15 @@ public class CheckersGUI extends javax.swing.JFrame {
                     }
                 });
         
+        showMovesButton.addActionListener(new java.awt.event.ActionListener()
+                {
+                    @Override
+                    public void actionPerformed(java.awt.event.ActionEvent evt)
+                    {
+                        showMovesHandler(evt);
+                    }
+                });
+        
         //CheckersBoard buttons
         for(ArrayList<JButton> row: guiBoard)
         {
@@ -218,18 +231,18 @@ public class CheckersGUI extends javax.swing.JFrame {
         
     }
     
-    public class DelayPaintTask extends TimerTask
+   /* public class DelayPaintTask extends TimerTask
     {
         public void run()
         {
             redrawBoard();
             
         }
-    }
+    }*/
     
     
     
-    void redrawBoard()
+    void updateBoard()
     {
         for(int i=0;i<BOARDSIZE;i++)
         {
@@ -264,6 +277,7 @@ public class CheckersGUI extends javax.swing.JFrame {
                     
             }
         }
+        //repaint();
         if(game.checkGameOver())
         {
             disableButtons = true;
@@ -271,7 +285,46 @@ public class CheckersGUI extends javax.swing.JFrame {
         }
     }
     
+    public void showAvailableMoves(JButton b)
+    {
+        updateBoard();
+        CheckersCell c = getCellFromButton(b);
+        ArrayList<CheckersJump> allJumps = game.b.getJumpMoves();
+        ArrayList<CheckersMove> moves = c.getMoves();
+        ArrayList<CheckersJump> jumps = c.getJumps();
+        
+        if(allJumps.isEmpty())
+        {
+            for(int i=0;i<moves.size();i++)
+            {
+                JButton button = getButtonFromCell(moves.get(i).dest);
+                button.setBackground(Color.blue);
+            }
+        }
+        else
+        {
+            for(int i=0;i<jumps.size();i++)
+            {
+                JButton button = getButtonFromCell(jumps.get(i).dest);
+                button.setBackground(Color.blue);
+            }
+        }
+    }
     
+    JButton getButtonFromCell(CheckersCell c)
+    {
+        for(int i=0;i<BOARDSIZE; i++)
+        {
+            for(int j=0;j<BOARDSIZE;j++)
+            {
+               if(c.equals(CheckersBoard.board.get(i).get(j)))
+               {
+                   return guiBoard.get(i).get(j);
+               }                    
+            }
+        }
+        return new JButton();
+    }
     
     CheckersCell getCellFromButton(JButton b)
     {
@@ -288,6 +341,12 @@ public class CheckersGUI extends javax.swing.JFrame {
         return new CheckersCell(-1,-1);
     }
     
+    private void showMovesHandler(java.awt.event.ActionEvent evt)
+    {
+        showMoves ^= true;
+        updateBoard();
+    }
+    
     private void startHandler(java.awt.event.ActionEvent evt)
     {
         disableButtons = false;
@@ -302,6 +361,7 @@ public class CheckersGUI extends javax.swing.JFrame {
         
         if(!disableButtons && !game.checkGameOver())
         {
+            //if jumps is > 0 then 
             if(!firstSelection && c.getOwner() == source.getOwner())
             {
                 firstSelection = true;
@@ -311,10 +371,15 @@ public class CheckersGUI extends javax.swing.JFrame {
             {
                 source = destination;
                 firstSelection = false;
+                
             }
 
             if(firstSelection && c.getOwner() != Owner.EMPTY)
             {
+                if(showMoves)
+                {
+                    showAvailableMoves(b);
+                }
                 source = c;
                 firstSelection = false;
             }
@@ -334,7 +399,7 @@ public class CheckersGUI extends javax.swing.JFrame {
                 if(game.b.makeMove(currentMove) && !game.b.anotherJump)
                 {
                     game.turnCompleted = true;
-
+                    
                     switchTurns();
                     if(game.AI && game.turn == Owner.PLAYER2)
                     {
@@ -349,22 +414,28 @@ public class CheckersGUI extends javax.swing.JFrame {
                         }while(game.b.anotherJump);
                     }
                     game.setStatus("Current Turn: " + game.turn.toString());
-
-                    //game.turnCompleted = false;
+                    try {
+                        Thread.sleep(0);
+                        //game.turnCompleted = false;
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(CheckersGUI.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
                 updateBoard();
+                if(game.b.anotherJump)
+                {
+                    if(showMoves)
+                    {
+                        showAvailableMoves(getButtonFromCell(destination));
+                    }
+                }
                 firstSelection = true;
             }
         }
         
     }
     
-    void updateBoard()
-    {
-        java.util.Timer timer = new java.util.Timer("paint delay");
-        
-        timer.schedule(new DelayPaintTask(), 0);
-    }
+  
     
     public void switchTurns()
     {
@@ -455,6 +526,7 @@ public class CheckersGUI extends javax.swing.JFrame {
         statusTextArea = new javax.swing.JTextArea();
         jLabel1 = new javax.swing.JLabel();
         startButton = new javax.swing.JButton();
+        showMovesButton = new javax.swing.JToggleButton();
 
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
@@ -598,6 +670,9 @@ public class CheckersGUI extends javax.swing.JFrame {
 
         startButton.setText("Start");
 
+        showMovesButton.setText("Show Moves");
+        showMovesButton.setMaximumSize(new java.awt.Dimension(97, 23));
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -667,10 +742,8 @@ public class CheckersGUI extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton63, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton64, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(52, 52, 52)
-                        .addComponent(startButton, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(0, 54, Short.MAX_VALUE))
+                        .addComponent(jButton64, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 182, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -728,7 +801,11 @@ public class CheckersGUI extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton31, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton32, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jButton32, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(50, 50, 50)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(startButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(showMovesButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -780,14 +857,8 @@ public class CheckersGUI extends javax.swing.JFrame {
                             .addComponent(jButton21, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jButton22, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jButton23, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton24, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(3, 3, 3)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(jButton24, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jButton25, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jButton26, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -837,7 +908,14 @@ public class CheckersGUI extends javax.swing.JFrame {
                             .addComponent(jButton62, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jButton63, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jButton64, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(startButton))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(3, 3, 3)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(startButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(showMovesButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(0, 40, Short.MAX_VALUE))
         );
 
@@ -967,6 +1045,7 @@ public class CheckersGUI extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JToggleButton showMovesButton;
     private javax.swing.JButton startButton;
     private javax.swing.JTextArea statusTextArea;
     // End of variables declaration//GEN-END:variables

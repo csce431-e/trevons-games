@@ -161,11 +161,11 @@ public class CheckersCell {
         {
             if (this.owner == Owner.PLAYER2) 
             {
-                newX = this.x - 1;
+                newX = this.x + 1;
             } 
             else 
             {
-                newX = this.x + 1;
+                newX = this.x - 1;
             }
             
             newLocation2 = new CheckersCell(newX, newY);
@@ -192,6 +192,7 @@ public class CheckersCell {
         return mid;
     }
 
+    //Returns an array of the jumps available from a given cell
     public ArrayList<CheckersJump> getJumps() {
         
         ArrayList<CheckersJump> jumps = new ArrayList();
