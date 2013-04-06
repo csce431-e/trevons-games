@@ -69,11 +69,29 @@ public class CheckersMove {
             }
             
             b.anotherJump = false;
+            testBoard();
             System.out.println("Move: " + this.toString());
             return true;
         }
         
+        
+        
         return false;
+    }
+    
+    public static void testBoard()
+    {
+        for(int i=0;i<CheckersBoard.BOARDSIZE;i++)
+        {
+            for(int j=0;j<CheckersBoard.BOARDSIZE;j++)
+            {
+                CheckersCell c = CheckersBoard.board.get(i).get(j);
+                if(c.x != i || c.y != j)
+                {
+                    System.out.println("You changed the board");
+                }
+            }
+        }
     }
     
     //TODO make sure this only allows legal moves

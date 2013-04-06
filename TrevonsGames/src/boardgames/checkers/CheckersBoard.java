@@ -183,6 +183,7 @@ public class CheckersBoard {
     
     public boolean makeMove(CheckersMove m)
     {
+        CheckersMove.testBoard();
         Owner currentOwner = m.source.getOwner();
         if(currentOwner == Owner.EMPTY)
         {
@@ -200,7 +201,7 @@ public class CheckersBoard {
             return false;
         }
         
-        
+        CheckersMove.testBoard();
         ArrayList<CheckersJump> jumps = getJumpMoves();
         //@TODO double jump logic is off. check recursion conditions
         if(jumps.size() > 0)
@@ -240,7 +241,7 @@ public class CheckersBoard {
             }    */
             //return true;
         }
-        
+        CheckersMove.testBoard();
         if(m.updateBoard(this))
         {
             int destRow = m.dest.x;

@@ -19,8 +19,11 @@ public class CheckersGame {
     public Owner winner;
     String status;
     
+   
+    
     public void initCheckers()
     {
+        status = "";
         AI = false;
         b = new CheckersBoard(this);
         turn = Owner.PLAYER1;
@@ -31,6 +34,7 @@ public class CheckersGame {
     
     public void initCheckers(boolean gui)
     {
+        status = "";
         AI = false;
         b = new CheckersBoard(this);
         turn = Owner.PLAYER1;  
@@ -203,7 +207,9 @@ public class CheckersGame {
     }
     public void sendAIMove()
     {
+        CheckersMove.testBoard();
         ArrayList<CheckersMove> l = b.getAllMoves();
+        CheckersMove.testBoard();
         Random generator = new Random();
         
         boolean moveMade = false;
@@ -236,8 +242,7 @@ public class CheckersGame {
     
     public void endGame()
     {
-        setStatus("Game Over. ");
-        setStatus("Congratulations " + winner + " wins!");
+        setStatus("Game Over.\nCongratulations,\n " + winner + " wins!");
     }
     
     public boolean isInBounds(int x, int y)

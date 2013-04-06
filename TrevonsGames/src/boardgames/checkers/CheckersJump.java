@@ -73,9 +73,10 @@ public class CheckersJump extends CheckersMove {
             System.out.println("Move: " + this.toString());
             
             b.anotherJump = true;
+            testBoard();
             return true;
         }
-        
+       
         return false;
     }
     

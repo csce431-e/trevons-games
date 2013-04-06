@@ -19,6 +19,7 @@ public class CheckersCell {
     int x; //x position
     int y; //y position.
     boolean king;
+   
     ArrayList< ArrayList< CheckersCell>> b = CheckersBoard.board;
     
     //Constructors
@@ -128,7 +129,8 @@ public class CheckersCell {
                 newX = this.x + 1;
             }
             
-            newLocation1.x = newX;
+            newLocation1 = new CheckersCell(newX, newY);
+            //newLocation1.x = newX;
             if(isValidCell(newLocation1))
             {
                 newLocation1 = b.get(newLocation1.x).get(newLocation1.y);
@@ -166,7 +168,8 @@ public class CheckersCell {
                 newX = this.x + 1;
             }
             
-            newLocation2.x = newX;
+            newLocation2 = new CheckersCell(newX, newY);
+            //newLocation2.x = newX;
             if(isValidCell(newLocation2))
             {
                 newLocation2 = b.get(newLocation2.x).get(newLocation2.y);
