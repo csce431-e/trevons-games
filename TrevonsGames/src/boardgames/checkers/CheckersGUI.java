@@ -289,10 +289,11 @@ public class CheckersGUI extends javax.swing.JFrame {
     {
         updateBoard();
         CheckersCell c = getCellFromButton(b);
+        ArrayList<CheckersJump> allJumps = game.b.getJumpMoves();
         ArrayList<CheckersMove> moves = c.getMoves();
         ArrayList<CheckersJump> jumps = c.getJumps();
-  
-        if(jumps.isEmpty())
+        
+        if(allJumps.isEmpty())
         {
             for(int i=0;i<moves.size();i++)
             {
@@ -360,6 +361,7 @@ public class CheckersGUI extends javax.swing.JFrame {
         
         if(!disableButtons && !game.checkGameOver())
         {
+            //if jumps is > 0 then 
             if(!firstSelection && c.getOwner() == source.getOwner())
             {
                 firstSelection = true;
