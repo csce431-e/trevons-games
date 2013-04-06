@@ -69,19 +69,6 @@
                       </Group>
                   </Group>
                   <Group type="102" attributes="0">
-                      <Component id="r5c2" min="-2" pref="40" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="r5c3" min="-2" pref="40" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="r5c4" min="-2" pref="40" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="r5c5" min="-2" pref="40" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="r5c6" min="-2" pref="40" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="r5c7" min="-2" pref="40" max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="102" attributes="0">
                       <Component id="r4c2" min="-2" pref="40" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="r4c3" min="-2" pref="40" max="-2" attributes="0"/>
@@ -93,19 +80,6 @@
                       <Component id="r4c6" min="-2" pref="40" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="r4c7" min="-2" pref="40" max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="102" attributes="0">
-                      <Component id="r3c2" min="-2" pref="40" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="r3c3" min="-2" pref="40" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="r3c4" min="-2" pref="40" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="r3c5" min="-2" pref="40" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="r3c6" min="-2" pref="40" max="-2" attributes="0"/>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="r3c7" min="-2" pref="40" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" attributes="0">
                       <Component id="r2c2" min="-2" pref="40" max="-2" attributes="0"/>
@@ -133,15 +107,59 @@
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="r1c7" min="-2" pref="40" max="-2" attributes="0"/>
                   </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="r5c2" min="-2" pref="40" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="r5c3" min="-2" pref="40" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="r5c4" min="-2" pref="40" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="r5c5" min="-2" pref="40" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="r5c6" min="-2" pref="40" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="r5c7" min="-2" pref="40" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="r3c2" min="-2" pref="40" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="r3c3" min="-2" pref="40" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="r3c4" min="-2" pref="40" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="r3c5" min="-2" pref="40" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="r3c6" min="-2" pref="40" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="r3c7" min="-2" pref="40" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <Component id="winnerText" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="winnerButton" min="-2" pref="40" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" attributes="0">
+                              <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
+                              <Component id="turnText" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="turnButton" min="-2" pref="40" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                  </Group>
               </Group>
-              <EmptySpace pref="40" max="32767" attributes="0"/>
+              <EmptySpace pref="37" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
-              <EmptySpace pref="41" max="32767" attributes="0"/>
+              <EmptySpace pref="46" max="32767" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                   <Component id="r6c7" pref="40" max="32767" attributes="0"/>
                   <Component id="r6c6" max="32767" attributes="0"/>
@@ -151,17 +169,34 @@
                   <Component id="r6c4" max="32767" attributes="0"/>
                   <Component id="r6c5" max="32767" attributes="0"/>
               </Group>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="r5c1" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
-                  <Component id="r5c2" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
-                  <Component id="r5c3" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
-                  <Component id="r5c4" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
-                  <Component id="r5c5" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
-                  <Component id="r5c6" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
-                  <Component id="r5c7" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="r5c1" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
+                                  <Component id="r5c2" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
+                                  <Component id="r5c3" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
+                                  <Component id="r5c4" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
+                                  <Component id="r5c5" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
+                                  <Component id="r5c6" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
+                                  <Component id="r5c7" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                          <Group type="102" alignment="1" attributes="0">
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="turnButton" min="-2" pref="40" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="1" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="turnText" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
+                  </Group>
               </Group>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="r4c1" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
                   <Component id="r4c2" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
@@ -171,15 +206,27 @@
                   <Component id="r4c6" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
                   <Component id="r4c7" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="r3c1" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
-                  <Component id="r3c2" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
-                  <Component id="r3c3" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
-                  <Component id="r3c4" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
-                  <Component id="r3c5" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
-                  <Component id="r3c6" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
-                  <Component id="r3c7" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" attributes="0">
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="r3c1" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
+                          <Component id="r3c2" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
+                          <Component id="r3c3" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
+                          <Component id="r3c4" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
+                          <Component id="r3c5" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
+                          <Component id="r3c6" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
+                          <Component id="r3c7" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
+                      <Component id="winnerButton" min="-2" pref="40" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
+                      <Component id="winnerText" min="-2" max="-2" attributes="0"/>
+                  </Group>
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
@@ -500,6 +547,29 @@
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="r1c7">
+      <Properties>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="turnText">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Turn:"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="winnerText">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Winner:"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="turnButton">
+      <Properties>
+        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="0" green="0" red="0" type="rgb"/>
+        </Property>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="winnerButton">
       <Properties>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
