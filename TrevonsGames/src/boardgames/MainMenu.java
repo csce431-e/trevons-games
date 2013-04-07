@@ -212,9 +212,10 @@ public class MainMenu extends javax.swing.JPanel {
     }//GEN-LAST:event_GomokuClicked
 
     private void MancalaClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MancalaClicked
-        MancalaGame g = new MancalaGame();
-        
-        g.initMancala();
+
+        if(locally_radiob.isSelected()) {
+            MancalaDialog d = new MancalaDialog();
+        }
     }//GEN-LAST:event_MancalaClicked
 
     private void BattleshipClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BattleshipClicked
