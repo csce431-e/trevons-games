@@ -88,6 +88,52 @@ public class MancalaBoard {
         return validMove;
     }
     
+    public int AIPlay() {
+        Random generator = new Random();
+        int validMove = 0;
+        int move = generator.nextInt(6)+1;
+        while(board[1][move].size()==0) {
+            move = generator.nextInt(6)+1;
+        }
+        int i=1;
+        int j = move+1;
+        while(board[1][move].size() > 0) {
+                if ( j == rows && i == 1) {
+                    i = (i == 0) ? 1 : 0;
+                    j = 0;
+                }
+                else if ( j == rows && (i == 0)) {
+                    i = (i == 0) ? 1 : 0;
+                    j = 1;
+                }
+                moveOnePiece(1,move,i,j);
+                if((board[1][move].size() == 0) && (board[i][j].size() == 1) && (i == 1)) {
+                    int opp = (i == 0) ? 1 : 0;
+                    if(board[opp][rows-j].size()>0) {
+                        moveAllPieces(opp,rows-j,opp,0);  //stopped here!!!
+                        moveOnePiece(i,j,opp,0);
+                    }
+                }
+                j++;
+            }
+        if ( j == 1 && (i == 1)) {
+                validMove = 0;
+            }
+            else {
+                validMove = 1;
+            }
+        return validMove;
+    }
+    
+    public int getNumPiecesInPit(int i, int j) {
+        if (i<cols && j < rows) {
+            return board[i][j].size();
+        }
+        else {
+            return 0;
+        }
+    }
+    
     public int getWinner() {
         int winner = 0;
         if(board[0][0].size()>board[1][0].size()) {
