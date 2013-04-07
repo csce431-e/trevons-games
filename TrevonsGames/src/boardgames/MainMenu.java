@@ -202,8 +202,8 @@ public class MainMenu extends javax.swing.JPanel {
 
     private void CheckersClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckersClicked
         // TODO add your handling code here:
-        CheckersGame g = new CheckersGame();
-        g.initCheckers();
+        CheckersGUI g = new CheckersGUI();
+        g.playGame();
     }//GEN-LAST:event_CheckersClicked
 
     private void GomokuClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GomokuClicked

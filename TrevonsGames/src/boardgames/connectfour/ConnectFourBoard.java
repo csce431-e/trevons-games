@@ -172,7 +172,7 @@ public class ConnectFourBoard {
         
 //        Scanner scanner = new Scanner(System.in);
 //        
-        System.out.println("Please select column to place piece player " + nextPlayer + ": ");
+        //System.out.println("Please select column to place piece player " + nextPlayer + ": ");
 //        colMove = scanner.nextInt();
         
         switch(colMove){
