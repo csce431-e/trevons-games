@@ -25,6 +25,7 @@ public class CheckersBoard {
     public CheckersBoard(CheckersGame g)
     {
         currentGame = g;
+        board.clear();
         //Create nxn board
         for(int i = 0; i < BOARDSIZE; i++)
         {
