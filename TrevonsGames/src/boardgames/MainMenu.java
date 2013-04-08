@@ -23,6 +23,7 @@ public class MainMenu extends javax.swing.JPanel {
      * Creates new form Test_GUI
      */
     public MainMenu() {
+
         initComponents();
     }
     
@@ -202,8 +203,9 @@ public class MainMenu extends javax.swing.JPanel {
 
     private void CheckersClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckersClicked
         // TODO add your handling code here:
+        make_pretty();
         CheckersGUI g = new CheckersGUI();
-        g.playGame();
+        g.setVisible(true);
     }//GEN-LAST:event_CheckersClicked
 
     private void GomokuClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GomokuClicked
@@ -251,6 +253,26 @@ public class MainMenu extends javax.swing.JPanel {
         ip_input_box.setText("Server IP here");
     }//GEN-LAST:event_local_radioClicked
 
+    private void make_pretty()
+    {
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(CheckersGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(CheckersGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(CheckersGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(CheckersGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
