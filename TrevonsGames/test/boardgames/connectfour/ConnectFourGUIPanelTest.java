@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package boardgames.pegSolitaire;
+package boardgames.connectfour;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -13,11 +13,11 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @author Tom
+ * @author Jonathan
  */
-public class SolitaireMoveTest {
+public class ConnectFourGUIPanelTest {
     
-    public SolitaireMoveTest() {
+    public ConnectFourGUIPanelTest() {
     }
     
     @BeforeClass
@@ -37,16 +37,14 @@ public class SolitaireMoveTest {
     }
 
     /**
-     * Test of toString method, of class SolitaireMove.
+     * Test of playConnect method, of class ConnectFourGUIPanel.
      */
     @Test
-    public void testToString() {
-        System.out.println("toString");
-        SolitaireMove instance = null;
-        String expResult = "";
-        String result = instance.toString();
-        assertEquals(expResult, result);
+    public void testPlayConnect() {
+        System.out.println("playConnect");
+        ConnectFourGUIPanel instance = new ConnectFourGUIPanel();
+        instance.playConnect();
         // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        //fail("The test case is a prototype.");
     }
 }
