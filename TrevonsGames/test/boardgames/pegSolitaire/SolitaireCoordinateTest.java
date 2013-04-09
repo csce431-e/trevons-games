@@ -49,14 +49,18 @@ public class SolitaireCoordinateTest {
         int y = 0;
         SolitaireCoordinate instance = new SolitaireCoordinate(x,y,true,true);
         ArrayList<SolitaireCoordinate> expResult = new ArrayList();
-        SolitaireCoordinate [] list = {new SolitaireCoordinate(x,y-2,true,true),
-                                        new SolitaireCoordinate(x-2,y,true,true),
-                                        new SolitaireCoordinate(x+2,y,true,true),
-                                        new SolitaireCoordinate(x,y+2,true,true)};
+        SolitaireCoordinate [] list = {b.getCoordinate(x,y-2),
+                                        b.getCoordinate(x-2,y),
+                                        b.getCoordinate(x+2,y),
+                                        b.getCoordinate(x,y+2)};
         expResult.addAll(Arrays.asList(list));
         
         ArrayList<SolitaireCoordinate> result = instance.getTwoSpacesAway(b);
-        assertEquals(expResult, result);
+        
+        for(int i = 0; i<result.size(); i++)
+        {
+            assertTrue(expResult.contains(result.get(i)));
+        }
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");
     }
@@ -75,7 +79,6 @@ public class SolitaireCoordinateTest {
         //ArrayList<SolitaireMove> expResult = null;
         ArrayList<SolitaireMove> result = src.getJumpsSrc(b);
         
-        
         assertTrue(result.contains(move));
         //assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
@@ -88,11 +91,14 @@ public class SolitaireCoordinateTest {
     @Test
     public void testGetJumpsDest() {
         System.out.println("getJumpsDest");
-        SolitaireBoard b = null;
-        SolitaireCoordinate instance = new SolitaireCoordinate();
-        ArrayList expResult = null;
-        ArrayList result = instance.getJumpsDest(b);
-        assertEquals(expResult, result);
+        SolitaireBoard b = new SolitaireBoard();
+        SolitaireMove move = new SolitaireMove(b.getCoordinate(0, -2), b.getCoordinate(0, 0), b.getCoordinate(0, -1));
+        SolitaireCoordinate dest = b.getCoordinate(0, 0);
+        
+        ArrayList<SolitaireMove> result = dest.getJumpsDest(b);
+        
+        assertTrue(result.contains(move));
+        //assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");
     }
@@ -169,10 +175,16 @@ public class SolitaireCoordinateTest {
     @Test
     public void testToString() {
         System.out.println("toString");
-        SolitaireCoordinate instance = new SolitaireCoordinate();
-        String expResult = "";
-        String result = instance.toString();
-        assertEquals(expResult, result);
+        SolitaireBoard b = new SolitaireBoard();
+        SolitaireCoordinate instance1 = b.getCoordinate(0, 0);
+        SolitaireCoordinate instance2 = b.getCoordinate(1, 1);
+        String result1 = instance1.toString();
+        String result2 = instance2.toString();
+        String expResult1 = "O";
+        String expResult2 = "X";
+        
+        assertEquals(expResult1, result1);
+        assertEquals(expResult2, result2);
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");
     }
