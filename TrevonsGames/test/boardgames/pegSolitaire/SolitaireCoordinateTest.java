@@ -68,15 +68,16 @@ public class SolitaireCoordinateTest {
     public void testGetJumpsSrc() {
         System.out.println("getJumpsSrc");
         SolitaireBoard b = new SolitaireBoard();
-        SolitaireCoordinate dest = new SolitaireCoordinate(0,0,false,true);
-        SolitaireCoordinate src = new SolitaireCoordinate(0,-2,true,true);
-        
-        ArrayList<SolitaireMove> expResult = null;
+        SolitaireMove move = new SolitaireMove(b.getCoordinate(0, -2), b.getCoordinate(0, 0), b.getCoordinate(0, -1));
+        SolitaireCoordinate src = b.getCoordinate(0, -2);
+        SolitaireCoordinate src2 = new SolitaireCoordinate(0,-2,true,true);
+        //assertEquals(src, src2);
+        //ArrayList<SolitaireMove> expResult = null;
         ArrayList<SolitaireMove> result = src.getJumpsSrc(b);
         
         
-        
-        assertEquals(expResult, result);
+        assertTrue(result.contains(move));
+        //assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");
     }
