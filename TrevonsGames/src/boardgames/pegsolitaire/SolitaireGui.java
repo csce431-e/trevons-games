@@ -187,7 +187,39 @@ public class SolitaireGui extends javax.swing.JFrame {
                 if(message.equals("waiting"))
                 {
                     System.out.println("waiting for \"starting\"");
+                    //window
+                    
+                    // window
+                    
+                    class Waiting_handler implements Runnable
+                    {
+                        @Override
+                        public void run()
+                        {
+                            
+                                final JFrame wait_window = new JFrame("Waiting for an opponent");
+                                JButton quit_button = new JButton("CANCEL");
+
+                                //accept.setSize(50, 100);  //dsnt seem to change button size
+                                quit_button.addActionListener(new ActionListener() {
+                                    @Override
+                                    public void actionPerformed(ActionEvent e) {
+                                        wait_window.dispose();
+                                    }
+                                });
+                                wait_window.add(quit_button);
+                                wait_window.setLocation(300, 300);
+                                wait_window.setSize(400, 200);
+                                wait_window.setVisible(true);
+                                wait_window.paintAll(wait_window.getGraphics());
+                            
+                        }
+                    }
+                    Thread t = new Thread(new Waiting_handler());
+                    t.start();
+                    
                     message = (String)in.readObject(); //starting
+                    
                     System.out.println(message);
                     myTurn = true;
                     System.out.println("its my turn");
@@ -263,6 +295,19 @@ public class SolitaireGui extends javax.swing.JFrame {
                 System.out.println("Message received: "+message);
                 if(message.equals("quit"))
                 {
+                    final JFrame quit_window = new JFrame("Your opponent has quit");
+                    JButton accept = new JButton("OK");
+                    //accept.setSize(50, 100);  //dsnt seem to change button size
+                    accept.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            quit_window.dispose();
+                        }
+                    });
+                    quit_window.add(accept);
+                    quit_window.setLocation(300, 300);
+                    quit_window.setSize(400, 200);
+                    quit_window.setVisible(true);
                     this.dispose();
                     return;
                 }
@@ -948,7 +993,10 @@ public class SolitaireGui extends javax.swing.JFrame {
         // TODO add your handling code here:
         
         //send message to other player that you quit (it should sit in their queue if it is currently their turn and theyll get it when they make a move
-        sendMessage("quit");
+        if(isOnline)
+        {
+            sendMessage("quit");
+        }
         this.dispose();
     }//GEN-LAST:event_quit_buttonClicked
 
