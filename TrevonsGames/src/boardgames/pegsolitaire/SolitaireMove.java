@@ -4,6 +4,8 @@
  */
 package boardgames.pegSolitaire;
 
+import java.util.Objects;
+
 /**
  *
  * @author Tom
@@ -20,6 +22,39 @@ public class SolitaireMove
         dest = d;
         middle = m;
     }
+    
+    @Override
+        public boolean equals(Object other){
+            if (other == null) 
+            {
+                return false;
+            }
+            if (other == this) 
+            {
+                return true;
+            }
+            if (!(other instanceof SolitaireMove))
+            {
+                return false;
+            }
+            SolitaireMove otherMyClass = (SolitaireMove)other;
+            
+            if(otherMyClass.src.equals(src) && otherMyClass.dest.equals(dest) && otherMyClass.middle.equals(middle))
+            {
+                return true;
+            }
+            return false;
+        }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 83 * hash + Objects.hashCode(this.src);
+        hash = 83 * hash + Objects.hashCode(this.dest);
+        hash = 83 * hash + Objects.hashCode(this.middle);
+        return hash;
+    }
+    
     
     public String toString()
     {
