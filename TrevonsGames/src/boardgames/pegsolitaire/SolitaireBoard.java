@@ -17,7 +17,7 @@ public class SolitaireBoard
             pieces_left = 32;
             for (int i = 0; i < BOARDSIZE; i++)
             {
-                ArrayList<SolitaireCoordinate> list_c = new ArrayList<SolitaireCoordinate>();
+                ArrayList<SolitaireCoordinate> list_c = new ArrayList<>();
                 for (int j = 0; j < BOARDSIZE; j++)
                 {
                     SolitaireCoordinate c = new SolitaireCoordinate();

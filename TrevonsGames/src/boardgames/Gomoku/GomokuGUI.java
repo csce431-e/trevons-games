@@ -8,6 +8,7 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import javax.swing.JButton;
+import javax.swing.UIManager;
 
 /**
  *
@@ -37,6 +38,14 @@ public class GomokuGUI extends javax.swing.JFrame
      */
     public GomokuGUI() 
     {
+         //required to see colors with OSX
+         try 
+         {
+             UIManager.setLookAndFeel( UIManager.getCrossPlatformLookAndFeelClassName() );
+         } catch (Exception e) {
+            e.printStackTrace();
+         }
+        
         initComponents();
      
         buttonArray = new ArrayList<ArrayList<JButton>>();
@@ -337,8 +346,8 @@ public class GomokuGUI extends javax.swing.JFrame
                             coords = getMove(b);
                                 row = coords.getY();
                                 col = coords.getX();
-                            
-                            g.incTC();
+                                
+                                g.incTC();
                             
                             if(g.turnCounter % 2 != 0)
                             {
@@ -362,10 +371,20 @@ public class GomokuGUI extends javax.swing.JFrame
                                 g.recentY.add(row);
                                 
                             updateBoard();
+                            //buttonArray.get(row).get(col).paintImmediately();
                                 
-                            g.gameOver = g.checkWin(row,col,clr);
+                            g.gameOver = g.checkWin(row,col,clr); //Y U NO WORK?
                             
-                            if(g.gameOver) quitGame();
+                            int c = (char) (g.turnCounter + 1);
+                            jTextPane4.setText(String.valueOf(c));
+                            
+                            if(clr == 'b') jTextPane2.setText("It's white's turn");
+                            if(clr == 'w') jTextPane2.setText("It's black's turn");
+                            
+                            if(g.gameOver) 
+                            {
+                                quitGame();
+                            }
                     }
                 });
             }
@@ -380,15 +399,15 @@ public class GomokuGUI extends javax.swing.JFrame
             {
                 if(g.UBoard.getSquareState(i,j) == 'b') //not working
                 {
-                    System.out.println("trying to change to black: ("+i+","+j+")");
                     buttonArray.get(i).get(j).setBackground(Color.black);
-                    System.out.println("done");
+                    buttonArray.get(i).get(j).repaint();
+                    buttonArray.get(i).get(j).setEnabled(false);
                 }
                 else if(g.UBoard.getSquareState(i,j) == 'w')
                 {
-                    System.out.println("trying to change to white: ("+i+","+j+")");
                     buttonArray.get(i).get(j).setBackground(Color.white);
-                    System.out.println("done");
+                    buttonArray.get(i).get(j).repaint(); 
+                    buttonArray.get(i).get(j).setEnabled(false);
                 }
                 else if(g.UBoard.getSquareState(i,j) == '+')
                 {
@@ -422,9 +441,17 @@ public class GomokuGUI extends javax.swing.JFrame
     
     public void quitGame()
     {
-        //show celebratory message on right hand bar with reset option
+        jTextPane2.setText("GAME OVER!");
         
-        //g.restart();
+        //disable all buttons
+        for(int i=0;i<16;++i)
+        {
+            for(int j=0;j<16;++j)
+            {
+                    buttonArray.get(i).get(j).setEnabled(false);
+            }
+        }
+        
     }
 
     /**
@@ -2512,7 +2539,7 @@ public class GomokuGUI extends javax.swing.JFrame
         jTextPane3.setToolTipText("");
         jScrollPane3.setViewportView(jTextPane3);
 
-        jTextPane4.setText("0");
+        jTextPane4.setText("1");
         jTextPane4.setToolTipText("");
         jScrollPane4.setViewportView(jTextPane4);
 
@@ -2532,7 +2559,7 @@ public class GomokuGUI extends javax.swing.JFrame
                             .add(layout.createSequentialGroup()
                                 .add(jScrollPane3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .add(jScrollPane4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 21, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                                .add(jScrollPane4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 47, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                             .add(jScrollPane2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
                 .add(0, 68, Short.MAX_VALUE))
         );
