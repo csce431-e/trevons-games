@@ -246,6 +246,7 @@ public class Gomoku
         
         for(int i=0;i<x;++i)
         {
+            if(recentX.size() > 0)
             UBoard.unplay(recentX.get(recentX.size()-1),recentY.get(recentY.size()-1));
         }
     }

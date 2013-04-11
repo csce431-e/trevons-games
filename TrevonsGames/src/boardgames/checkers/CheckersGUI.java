@@ -249,7 +249,7 @@ public class CheckersGUI extends javax.swing.JFrame {
         {
             for(int j=0;j<BOARDSIZE;j++)
             {
-                CheckersCell c = CheckersBoard.board.get(i).get(j);
+                CheckersCell c = game.b.board.get(i).get(j);
                 Owner o = c.getOwner(); 
                 JButton b = guiBoard.get(i).get(j);
                 if(o == Owner.PLAYER1)
@@ -321,7 +321,7 @@ public class CheckersGUI extends javax.swing.JFrame {
         {
             for(int j=0;j<BOARDSIZE;j++)
             {
-               if(c.equals(CheckersBoard.board.get(i).get(j)))
+               if(c.equals(game.b.board.get(i).get(j)))
                {
                    return guiBoard.get(i).get(j);
                }                    
@@ -338,7 +338,7 @@ public class CheckersGUI extends javax.swing.JFrame {
             {
                if(b.equals(guiBoard.get(i).get(j)))
                {
-                   return CheckersBoard.board.get(i).get(j);
+                   return game.b.board.get(i).get(j);
                }                    
             }
         }
@@ -394,11 +394,11 @@ public class CheckersGUI extends javax.swing.JFrame {
                 if(Math.abs(source.x-destination.x) > 1)
                 {
                     currentMove = new CheckersJump(source,
-                            source.getMid(source,destination), destination);
+                            source.getMid(source,destination),destination,game.b);
                 }
                 else
                 {
-                    currentMove = new CheckersMove(source, destination);
+                    currentMove = new CheckersMove(source, destination,game.b);
                 }
 
                 if(game.b.makeMove(currentMove) && !game.b.anotherJump)
