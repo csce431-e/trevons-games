@@ -12,6 +12,7 @@ public class CheckersJump extends CheckersMove {
     
     CheckersCell middle;
     static boolean jump;
+    CheckersBoard b;
     
     public CheckersJump()
     {
@@ -19,16 +20,17 @@ public class CheckersJump extends CheckersMove {
         jump = true;
     }
     
-    public CheckersJump(CheckersCell s, CheckersCell m, CheckersCell d)
+    public CheckersJump(CheckersCell s, CheckersCell m, CheckersCell d, CheckersBoard board)
     {
         source = s;
         middle = m;
         dest = d;
         jump = true;
+        b = board;
     }
     
     @Override
-    public boolean updateBoard(CheckersBoard b)
+    public boolean updateBoard()
     {
         CheckersCell src = b.board.get(source.x).get(source.y);
         CheckersCell mid = b.board.get(middle.x).get(middle.y);
@@ -73,7 +75,7 @@ public class CheckersJump extends CheckersMove {
             System.out.println("Move: " + this.toString());
             
             b.anotherJump = true;
-            testBoard();
+    
             return true;
         }
        
@@ -89,6 +91,22 @@ public class CheckersJump extends CheckersMove {
             return false;
         }
         if(dest.getOwner() != Owner.EMPTY)
+        {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    @Override
+    public boolean equals(Object obj)
+    {
+        CheckersJump j = (CheckersJump)obj;
+        if(!super.equals(j))
+        {
+            return false;
+        }
+        if(!this.middle.equals(j.middle))
         {
             return false;
         }

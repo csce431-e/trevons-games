@@ -19,8 +19,8 @@ public class CheckersCell {
     int x; //x position
     int y; //y position.
     boolean king;
-   
-    ArrayList< ArrayList< CheckersCell>> b = CheckersBoard.board;
+    CheckersBoard b;
+    //ArrayList< ArrayList< CheckersCell>> b;
     
     //Constructors
     public CheckersCell() {
@@ -39,11 +39,13 @@ public class CheckersCell {
         king = false;
     }
 
-    public CheckersCell(Owner o, int xPos, int yPos) {
+    public CheckersCell(Owner o, int xPos, int yPos, 
+            CheckersBoard cb) {
         owner = o;
         x = xPos;
         y = yPos;
         king = false;
+        b = cb;
     }
 
     public CheckersCell(Owner o, RowType t) {
@@ -57,6 +59,7 @@ public class CheckersCell {
         this.x = c.x;
         this.y = c.y;
         this.king = c.king;
+        this.b = c.b;
     }
 
     //Getters and Setters
@@ -110,8 +113,8 @@ public class CheckersCell {
         newLocation1.y = newY;
         if(isValidCell(newLocation1))
         {
-            newLocation1 = b.get(newLocation1.x).get(newLocation1.y);
-            CheckersMove m1 = new CheckersMove(this, newLocation1);
+            newLocation1 = b.board.get(newLocation1.x).get(newLocation1.y);
+            CheckersMove m1 = new CheckersMove(this, newLocation1,b);
             if (m1.isValidMove()) 
             {
                 moves.add(m1);
@@ -133,8 +136,8 @@ public class CheckersCell {
             //newLocation1.x = newX;
             if(isValidCell(newLocation1))
             {
-                newLocation1 = b.get(newLocation1.x).get(newLocation1.y);
-                CheckersMove m3 = new CheckersMove(this, newLocation1);
+                newLocation1 = b.board.get(newLocation1.x).get(newLocation1.y);
+                CheckersMove m3 = new CheckersMove(this, newLocation1,b);
                 if (m3.isValidMove()) 
                 {
                     moves.add(m3);
@@ -149,8 +152,8 @@ public class CheckersCell {
         newLocation2.y = newY;
         if(isValidCell(newLocation2))
         {
-            newLocation2 = b.get(newLocation2.x).get(newLocation2.y);
-            CheckersMove m2 = new CheckersMove(this, newLocation2);
+            newLocation2 = b.board.get(newLocation2.x).get(newLocation2.y);
+            CheckersMove m2 = new CheckersMove(this, newLocation2,b);
             if (m2.isValidMove()) 
             {
                 moves.add(m2);
@@ -172,8 +175,8 @@ public class CheckersCell {
             //newLocation2.x = newX;
             if(isValidCell(newLocation2))
             {
-                newLocation2 = b.get(newLocation2.x).get(newLocation2.y);
-                CheckersMove m4 = new CheckersMove(this, newLocation2);
+                newLocation2 = b.board.get(newLocation2.x).get(newLocation2.y);
+                CheckersMove m4 = new CheckersMove(this, newLocation2,b);
                 if (m4.isValidMove()) 
                 {
                     moves.add(m4);
@@ -188,7 +191,7 @@ public class CheckersCell {
     public CheckersCell getMid(CheckersCell src, CheckersCell dest) {
         int xPos = (src.x + dest.x) / 2;
         int yPos = (src.y + dest.y) / 2;
-        CheckersCell mid = b.get(xPos).get(yPos);
+        CheckersCell mid = b.board.get(xPos).get(yPos);
         return mid;
     }
 
@@ -230,11 +233,11 @@ public class CheckersCell {
         while (it.hasNext())
         {
             CheckersCell temp = it.next();
-            CheckersCell jump = b.get(temp.x).get(temp.y);
+            CheckersCell jump = b.board.get(temp.x).get(temp.y);
             CheckersCell mid = getMid(this, jump);
             if(mid.owner == opponent)
             {
-                CheckersJump j = new CheckersJump(this,mid,jump);
+                CheckersJump j = new CheckersJump(this,mid,jump,b);
                 if(j.isValidJump())
                 {
                     jumps.add(j);
@@ -266,6 +269,8 @@ public class CheckersCell {
         this.x = c.x;
         this.y = c.y;
     }
+    
+    
     
     public boolean equals(CheckersCell c)
     {

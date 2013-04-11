@@ -16,27 +16,36 @@ public class CheckersGame {
     public Owner turn;
     public boolean turnCompleted;
     public boolean AI;
+    //public boolean gui;
     public Owner winner;
     String status;
     
    
+  /*  public CheckersGame()
+    {
+        
+        initCheckers(false);
+        sendMove();
+    }*/
     
     public void initCheckers()
     {
         status = "";
         AI = false;
-        b = new CheckersBoard(this);
+        b = new CheckersBoard();
+        b.initGame(this);
         turn = Owner.PLAYER1;
         
         //b.printBoard();
-        sendMove();
+        //sendMove();
     }
     
     public void initCheckers(boolean gui)
     {
         status = "";
         AI = false;
-        b = new CheckersBoard(this);
+        b = new CheckersBoard();
+        b.initGame(this);
         turn = Owner.PLAYER1;  
         if(!gui)
         {
@@ -163,20 +172,20 @@ public class CheckersGame {
       
         if(!isInBounds(x1,y1) || !isInBounds(x2,y2))
         {
-            return new CheckersMove(CheckersBoard.board.get(0).get(0),
-                    CheckersBoard.board.get(0).get(0));
+            return new CheckersMove(b.board.get(0).get(0),
+                    b.board.get(0).get(0),b);
         }
 
         if(Math.abs(x2-x1) > 1)
         {
-            CheckersCell s = CheckersBoard.board.get(x1).get(y1);
-            CheckersCell d = CheckersBoard.board.get(x2).get(y2);
-            m = new CheckersJump(s, s.getMid(s,d), d);
+            CheckersCell s = b.board.get(x1).get(y1);
+            CheckersCell d = b.board.get(x2).get(y2);
+            m = new CheckersJump(s, s.getMid(s,d),d,b);
         }
         else 
         {
-            m = new CheckersMove(CheckersBoard.board.get(x1).get(y1),
-                CheckersBoard.board.get(x2).get(y2));
+            m = new CheckersMove(b.board.get(x1).get(y1),
+                b.board.get(x2).get(y2),b);
         }
 
 
@@ -207,9 +216,9 @@ public class CheckersGame {
     }
     public void sendAIMove()
     {
-        CheckersMove.testBoard();
+       
         ArrayList<CheckersMove> l = b.getAllMoves();
-        CheckersMove.testBoard();
+  
         Random generator = new Random();
         
         boolean moveMade = false;
@@ -238,11 +247,17 @@ public class CheckersGame {
     {
         CheckersGame g = new CheckersGame();
         g.initCheckers();
+        g.sendMove();
     }
     
     public void endGame()
     {
         setStatus("Game Over.\nCongratulations,\n " + winner + " wins!");
+    }
+    
+    public boolean equals(CheckersGame g)
+    {
+        return true;
     }
     
     public boolean isInBounds(int x, int y)
