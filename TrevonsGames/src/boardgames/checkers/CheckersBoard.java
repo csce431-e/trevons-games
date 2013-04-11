@@ -17,21 +17,21 @@ public class CheckersBoard {
      * The indexing starts at the top and Player1 is at the bottom. 
      */
     public static int BOARDSIZE = 8;
-    public static ArrayList< ArrayList<CheckersCell> > board = new ArrayList<>();
+    public ArrayList< ArrayList<CheckersCell> > board = new ArrayList<>();
     public CheckersGame currentGame;
     public boolean anotherJump;
     public boolean gameOver;
     
-    public CheckersBoard(CheckersGame g)
+    public CheckersBoard()
     {
-        currentGame = g;
+        board.clear();
         //Create nxn board
         for(int i = 0; i < BOARDSIZE; i++)
         {
             ArrayList<CheckersCell> currentRow = new ArrayList<>();
             for(int j =0; j< BOARDSIZE; j++) 
             {
-                currentRow.add(new CheckersCell(Owner.EMPTY,i,j));
+                currentRow.add(new CheckersCell(Owner.EMPTY,i,j,this));
             }
             
             board.add(currentRow);
@@ -89,6 +89,11 @@ public class CheckersBoard {
         
         anotherJump = false;
         //printBoard();
+    }
+    
+    public void initGame(CheckersGame g)
+    {
+        currentGame = g;
     }
     
     public void printBoard()
@@ -183,7 +188,6 @@ public class CheckersBoard {
     
     public boolean makeMove(CheckersMove m)
     {
-        CheckersMove.testBoard();
         Owner currentOwner = m.source.getOwner();
         if(currentOwner == Owner.EMPTY)
         {
@@ -200,8 +204,7 @@ public class CheckersBoard {
             currentGame.setStatus("Invalid Move");
             return false;
         }
-        
-        CheckersMove.testBoard();
+
         ArrayList<CheckersJump> jumps = getJumpMoves();
         //@TODO double jump logic is off. check recursion conditions
         if(jumps.size() > 0)
@@ -241,8 +244,8 @@ public class CheckersBoard {
             }    */
             //return true;
         }
-        CheckersMove.testBoard();
-        if(m.updateBoard(this))
+        
+        if(m.updateBoard())
         {
             int destRow = m.dest.x;
             if(m.dest.getJumps().isEmpty() || destRow == CheckersMove.BOTOFBOARD
@@ -286,11 +289,6 @@ public class CheckersBoard {
         }
       
         return Owner.EMPTY;
-    }
-    
-    public boolean jump(CheckersCell source, CheckersCell dest)
-    {
-        return true;
     }
     
    /* public static void main(String[] args) 

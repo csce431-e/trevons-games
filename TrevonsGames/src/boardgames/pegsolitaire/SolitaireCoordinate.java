@@ -33,42 +33,75 @@ public class SolitaireCoordinate {
             filled = f;
             onBoard = o;
         }
+        
+        @Override
+        public boolean equals(Object other){
+            if (other == null) 
+            {
+                return false;
+            }
+            if (other == this) 
+            {
+                return true;
+            }
+            if (!(other instanceof SolitaireCoordinate))
+            {
+                return false;
+            }
+            SolitaireCoordinate otherMyClass = (SolitaireCoordinate)other;
+            
+            if(otherMyClass.x == x && otherMyClass.y == y && otherMyClass.filled == filled && otherMyClass.onBoard==onBoard)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 3;
+            hash = 89 * hash + this.x;
+            hash = 89 * hash + this.y;
+            hash = 89 * hash + (this.filled ? 1 : 0);
+            return hash;
+        }
 
         ArrayList<SolitaireCoordinate> getTwoSpacesAway(SolitaireBoard b)
         {
             ArrayList<SolitaireCoordinate> dests = new ArrayList<>();
-            if(y-2>=-3)//down
+            if(y-2>=-3 && b.getCoordinate(x,y-2).onBoard)//down
             {
                 dests.add(b.getCoordinate(x,y-2));
             }
-            if(y+2<=3)//up
+            if(y+2<=3 && b.getCoordinate(x,y+2).onBoard)//up
             {
                 dests.add(b.getCoordinate(x, y + 2));
             }
-            if(x-2>=-3)//left
+            if(x-2>=-3 && b.getCoordinate(x-2,y).onBoard)//left
             {
                 dests.add(b.getCoordinate(x - 2, y));
             }
-            if(x+2<=3)//right
+            if(x+2<=3 && b.getCoordinate(x+2,y).onBoard)//right
             {
                 dests.add(b.getCoordinate(x + 2, y));
             }
-            if(y-2>=-3 && x+2<=3)//down right
+            if(y-2>=-3 && x+2<=3 && b.getCoordinate(x+2,y-2).onBoard)//down right
             {
                 dests.add(b.getCoordinate(x + 2, y - 2));
             }
-            if(y-2>=-3 && x-2>=-3)//dwn left
+            if(y-2>=-3 && x-2>=-3 && b.getCoordinate(x-2,y-2).onBoard)//dwn left
             {
                 dests.add(b.getCoordinate(x - 2, y - 2));
             }
-            if(y+2<=3 && x+2<=3)//up right
+            if(y+2<=3 && x+2<=3 && b.getCoordinate(x+2,y+2).onBoard)//up right
             {
                 dests.add(b.getCoordinate(x + 2, y + 2));
             }
-            if(y+2<=3 && x-2>=-3)//up left
+            if(y+2<=3 && x-2>=-3 && b.getCoordinate(x-2,y+2).onBoard)//up left
             {
                  dests.add(b.getCoordinate(x - 2, y + 2));
             }
+            
             return dests;
         }
 
@@ -85,7 +118,6 @@ public class SolitaireCoordinate {
                     SolitaireMove m = new SolitaireMove(this, dests.get(i), middle);
                     jumps.add(m);
                 }
-                //System.out.println("hereish " + i);
             }
 
             return jumps;
@@ -103,10 +135,7 @@ public class SolitaireCoordinate {
                 {
                     SolitaireMove m = new SolitaireMove(srcs.get(i), this, middle);
                     jumps.add(m);
-                    //System.out.println("jumpFound: "+srcs.get(i).x+srcs.get(i).y+" to " +this.x+this.y);
-                    //return jumps;
                 }
-                //System.out.println("hereish " + i);
             }
 
             return jumps;
