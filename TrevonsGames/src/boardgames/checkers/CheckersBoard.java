@@ -291,11 +291,6 @@ public class CheckersBoard {
         return Owner.EMPTY;
     }
     
-    public boolean jump(CheckersCell source, CheckersCell dest)
-    {
-        return true;
-    }
-    
    /* public static void main(String[] args) 
     {
          System.out.println("Start");

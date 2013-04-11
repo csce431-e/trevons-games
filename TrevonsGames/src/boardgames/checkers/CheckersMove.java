@@ -186,6 +186,22 @@ public class CheckersMove {
         return true;
     }
  
+    @Override
+    public boolean equals(Object obj)
+    {
+        CheckersMove m = (CheckersMove) obj;
+        if(!(m.source.equals(this.source)))
+        {
+            return false;
+        }
+        if(!(m.dest.equals(this.dest)))
+        {
+            return false;
+        }         
+        
+        return true;
+    }
+    
     public boolean equals(CheckersMove m)
     {
         if(!(m.source.equals(this.source)))

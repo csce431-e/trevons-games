@@ -99,6 +99,22 @@ public class CheckersJump extends CheckersMove {
     }
     
     @Override
+    public boolean equals(Object obj)
+    {
+        CheckersJump j = (CheckersJump)obj;
+        if(!super.equals(j))
+        {
+            return false;
+        }
+        if(!this.middle.equals(j.middle))
+        {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    @Override
     public boolean equals(CheckersMove m)
     {
         CheckersJump j = (CheckersJump)m;

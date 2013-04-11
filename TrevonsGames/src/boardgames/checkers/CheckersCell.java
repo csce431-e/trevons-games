@@ -270,6 +270,8 @@ public class CheckersCell {
         this.y = c.y;
     }
     
+    
+    
     public boolean equals(CheckersCell c)
     {
         if(!this.owner.equals(c.owner))

@@ -16,10 +16,17 @@ public class CheckersGame {
     public Owner turn;
     public boolean turnCompleted;
     public boolean AI;
+    //public boolean gui;
     public Owner winner;
     String status;
     
    
+  /*  public CheckersGame()
+    {
+        
+        initCheckers(false);
+        sendMove();
+    }*/
     
     public void initCheckers()
     {
@@ -30,7 +37,7 @@ public class CheckersGame {
         turn = Owner.PLAYER1;
         
         //b.printBoard();
-        sendMove();
+        //sendMove();
     }
     
     public void initCheckers(boolean gui)
@@ -240,11 +247,17 @@ public class CheckersGame {
     {
         CheckersGame g = new CheckersGame();
         g.initCheckers();
+        g.sendMove();
     }
     
     public void endGame()
     {
         setStatus("Game Over.\nCongratulations,\n " + winner + " wins!");
+    }
+    
+    public boolean equals(CheckersGame g)
+    {
+        return true;
     }
     
     public boolean isInBounds(int x, int y)
