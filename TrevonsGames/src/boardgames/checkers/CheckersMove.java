@@ -18,21 +18,23 @@ public class CheckersMove {
     CheckersCell dest;
     
     static boolean jump;
-    ArrayList< ArrayList< CheckersCell>> b = CheckersBoard.board;
+    //ArrayList< ArrayList< CheckersCell>> b = CheckersBoard.board;
+    CheckersBoard b;
     
     public CheckersMove()
     {
         jump = false;
     }
     
-    public CheckersMove(CheckersCell src, CheckersCell d)
+    public CheckersMove(CheckersCell src, CheckersCell d, CheckersBoard board)
     {
         source = src;
         dest = d;
         jump = false;
+        b = board;
     }
     
-    public boolean updateBoard(CheckersBoard b)
+    public boolean updateBoard()
     {
         CheckersCell src = b.board.get(source.x).get(source.y);
         CheckersCell d = b.board.get(dest.x).get(dest.y);
@@ -79,13 +81,13 @@ public class CheckersMove {
         return false;
     }
     
-    public static void testBoard()
+    public void testBoard()
     {
         for(int i=0;i<CheckersBoard.BOARDSIZE;i++)
         {
             for(int j=0;j<CheckersBoard.BOARDSIZE;j++)
             {
-                CheckersCell c = CheckersBoard.board.get(i).get(j);
+                CheckersCell c = b.board.get(i).get(j);
                 if(c.x != i || c.y != j)
                 {
                     System.out.println("You changed the board");
@@ -155,20 +157,20 @@ public class CheckersMove {
         }
         
         Owner o = source.getOwner();
-        CheckersCell src = b.get(source.x).get(source.y);
+        //CheckersCell src = b.board.get(source.x).get(source.y);
         
         if (o == Owner.EMPTY) 
         {
             return false;
         }
-        else if(o == Owner.PLAYER1 && !src.isKing())
+        else if(o == Owner.PLAYER1 && !source.isKing())
         {
             if(dest.x >= source.x)
             {
                 return false;
             }
         }
-        else if(o == Owner.PLAYER2 && !src.isKing())
+        else if(o == Owner.PLAYER2 && !source.isKing())
         {
             if(dest.x <= source.x)
             {
@@ -184,6 +186,22 @@ public class CheckersMove {
         return true;
     }
  
+    @Override
+    public boolean equals(Object obj)
+    {
+        CheckersMove m = (CheckersMove) obj;
+        if(!(m.source.equals(this.source)))
+        {
+            return false;
+        }
+        if(!(m.dest.equals(this.dest)))
+        {
+            return false;
+        }         
+        
+        return true;
+    }
+    
     public boolean equals(CheckersMove m)
     {
         if(!(m.source.equals(this.source)))
