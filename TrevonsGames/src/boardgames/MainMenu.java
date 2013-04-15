@@ -179,14 +179,25 @@ public class MainMenu extends javax.swing.JPanel {
                 @Override
                 public void run() 
                 {
-                    SolitaireGui game = new SolitaireGui(true, get_ip_array(ip_input_box.getText()));
-                    game.setVisible(true);
+                    final SolitaireGui game = new SolitaireGui(true, get_ip_array(ip_input_box.getText()));
                     game.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                    game.waitForOpponent();
+                    
+                    class Waiting_handler2 implements Runnable
+                    {
+                        @Override
+                        public void run()
+                        {
+                            game.waitForOpponent();// put in thread
+                            game.setVisible(true);//put in thread
+                        }
+                    }
+                    Thread t = new Thread(new Waiting_handler2());
+                    t.start();
 
                     if(!game.myTurn)
                     {
                         game.paintAll(game.getGraphics()); //makes sure to draw the board before triggering the block
+                        System.out.println("waiting for opponents first move");
                         game.waitForMove();
                     }
                 }

@@ -11,6 +11,8 @@ import java.io.*;
 import java.net.*;
 import javax.swing.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 /**
  *
  * @author Tom
@@ -57,6 +59,7 @@ public class SolitaireGui extends javax.swing.JFrame {
     ObjectOutputStream out;
     ObjectInputStream in;
     String message;
+    boolean alive;
     
     public SolitaireGui(boolean online, byte[] ip) {
         initComponents();
@@ -83,6 +86,7 @@ public class SolitaireGui extends javax.swing.JFrame {
         if(isOnline)
         {
             serverIP = ip;
+            alive = true;
             setup_client_socket();
         }
     }
@@ -170,8 +174,9 @@ public class SolitaireGui extends javax.swing.JFrame {
         try
         {
             System.out.println("Setting up client socket");
-            InetAddress addr = InetAddress.getByAddress(serverIP);
+            final InetAddress addr = InetAddress.getByAddress(serverIP);
             requestSocket = new Socket(addr, 2008);
+            //requestSocket.setSoTimeout(1000);
             
             
             out = new ObjectOutputStream(requestSocket.getOutputStream());
@@ -181,16 +186,14 @@ public class SolitaireGui extends javax.swing.JFrame {
             try 
             { 
                 out.writeObject("sol");
+                System.out.println("waiting for response from server");
                 message = (String)in.readObject(); //waiting or starting
                 System.out.println("readin: "+ message);
                 
                 if(message.equals("waiting"))
                 {
                     System.out.println("waiting for \"starting\"");
-                    //window
-                    
-                    // window
-                    
+
                     class Waiting_handler implements Runnable
                     {
                         @Override
@@ -198,52 +201,71 @@ public class SolitaireGui extends javax.swing.JFrame {
                         {
                             try
                             {
-                                final JFrame wait_window = new JFrame("Waiting for an opponent");
-                                wait_window.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-                                JButton accept = new JButton("CANCEL");
-                                
-                                //accept.setSize(50, 100);  //dsnt seem to change button size
-                                accept.addActionListener(new ActionListener() {
-                                    @Override
-                                    public void actionPerformed(ActionEvent e) {
-                                        System.out.println("HERE");
-                                        //wait_window.dispose();
-                                    }
-                                });
-                                
-                                wait_window.add(accept);
-                                wait_window.setLocation(300, 300);
-                                wait_window.setSize(400, 200);
-                                wait_window.setVisible(true);
-                                wait_window.paintAll(wait_window.getGraphics());
-                                
+                                 message = (String)in.readObject(); //starting put in thread
                             }
-                            /*catch(IOException ioException)
+                            /*catch(SocketTimeoutException ste)
                             {
+                                if(alive)
+                                {
+                                    this.run();
+                                }
+                            }*/
+                            catch(IOException ioException)
+                            {
+                                System.out.println("waiting err");
                                 ioException.printStackTrace();
                             }
                             catch(ClassNotFoundException e)
                             {
-                                System.out.println("class not found in server main");
-                            }*/
+                                System.out.println("class not found in client waiting");
+                            }
                             catch(Exception e)
                             {
                                 System.err.println("some exception in quit window while watiting");
                             }
                         }
                     }
-                    Thread t2 = new Thread(new Waiting_handler());
+                    final Thread t2 = new Thread(new Waiting_handler());
                     t2.start();
-                    System.out.println("thread started, now waiting truly");
-                    message = (String)in.readObject(); //starting
-                    //t2.interrupt();
-                    //in.readObject(); //starting
-                    //System.err.println("waiting on join");
+
+                    //create window
+                    final JFrame wait_window = new JFrame("Waiting for an opponent");
+                    wait_window.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+                    JButton accept = new JButton("CANCEL");
+
+                    accept.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            System.out.println("Cancel Clicked");
+                            
+                                /*if(t2.isAlive()) System.out.println("alive");
+                                alive = false;
+                                
+                                if(t2.isAlive()) System.out.println("alive");
+                                if(!t2.isAlive()) System.out.println("dead");*/
+                                //trigger deletion of the game that started (remove from server's list and halt all threads)
+                              try 
+                              {  
+                                  Socket requestSocket2 = new Socket(addr, 2008);
+                                  ObjectOutputStream out2 = new ObjectOutputStream(requestSocket2.getOutputStream());
+                                  out2.writeObject("rsol"); //tell server to remove from list
+                                  out2.flush();
+                                  wait_window.dispose();
+                              } 
+                              catch (IOException ex) 
+                              {
+                                    Logger.getLogger(SolitaireGui.class.getName()).log(Level.SEVERE, null, ex);
+                              }
+                        }
+                    });
+
+                    wait_window.add(accept);
+                    wait_window.setLocation(300, 300);
+                    wait_window.setSize(400, 200);
+                    wait_window.setVisible(true);
+                    wait_window.paintAll(wait_window.getGraphics());
+                    //window done
                     
-                    
-                    
-                    
-                    System.out.println(message);
                     myTurn = true;
                     System.out.println("its my turn");
                 }

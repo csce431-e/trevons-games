@@ -154,7 +154,14 @@ public class Server
                     System.out.println("Searching for host");
                     for(int i = 0; i<waiting_hosts.size(); i++)
                     {
-                        if(message.equals(waiting_hosts.get(i).game_name))
+                        if(message.equals("r"+waiting_hosts.get(i).game_name))
+                        {
+                            //deleting host
+                            System.out.println("found waiting host to delete");
+                            found = true;
+                            waiting_hosts.remove(i);
+                        }
+                        else if(message.equals(waiting_hosts.get(i).game_name))
                         {
                             System.out.println("found waiting host");
                            found = true;
