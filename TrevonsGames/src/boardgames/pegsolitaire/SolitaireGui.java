@@ -196,29 +196,52 @@ public class SolitaireGui extends javax.swing.JFrame {
                         @Override
                         public void run()
                         {
-                            
+                            try
+                            {
                                 final JFrame wait_window = new JFrame("Waiting for an opponent");
-                                JButton quit_button = new JButton("CANCEL");
-
+                                wait_window.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+                                JButton accept = new JButton("CANCEL");
+                                
                                 //accept.setSize(50, 100);  //dsnt seem to change button size
-                                quit_button.addActionListener(new ActionListener() {
+                                accept.addActionListener(new ActionListener() {
                                     @Override
                                     public void actionPerformed(ActionEvent e) {
-                                        wait_window.dispose();
+                                        System.out.println("HERE");
+                                        //wait_window.dispose();
                                     }
                                 });
-                                wait_window.add(quit_button);
+                                
+                                wait_window.add(accept);
                                 wait_window.setLocation(300, 300);
                                 wait_window.setSize(400, 200);
                                 wait_window.setVisible(true);
                                 wait_window.paintAll(wait_window.getGraphics());
-                            
+                                
+                            }
+                            /*catch(IOException ioException)
+                            {
+                                ioException.printStackTrace();
+                            }
+                            catch(ClassNotFoundException e)
+                            {
+                                System.out.println("class not found in server main");
+                            }*/
+                            catch(Exception e)
+                            {
+                                System.err.println("some exception in quit window while watiting");
+                            }
                         }
                     }
-                    Thread t = new Thread(new Waiting_handler());
-                    t.start();
-                    
+                    Thread t2 = new Thread(new Waiting_handler());
+                    t2.start();
+                    System.out.println("thread started, now waiting truly");
                     message = (String)in.readObject(); //starting
+                    //t2.interrupt();
+                    //in.readObject(); //starting
+                    //System.err.println("waiting on join");
+                    
+                    
+                    
                     
                     System.out.println(message);
                     myTurn = true;
@@ -230,6 +253,8 @@ public class SolitaireGui extends javax.swing.JFrame {
                     System.out.println("its NOT my turn");
                 }
             } 
+            //catch(InterruptedException ie)
+           // {}
             catch(ClassNotFoundException classNot)
             { 
                 System.err.println("data received in unknown format"); 
@@ -264,6 +289,7 @@ public class SolitaireGui extends javax.swing.JFrame {
     {
         try
         {
+            //****put the quit window here**
             String message = (String)in.readObject();
             System.out.println(message); //should be connection successful, shold only print when BOTH are connected   
         }
