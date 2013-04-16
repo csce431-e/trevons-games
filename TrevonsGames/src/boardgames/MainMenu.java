@@ -187,19 +187,23 @@ public class MainMenu extends javax.swing.JPanel {
                         @Override
                         public void run()
                         {
-                            game.waitForOpponent();// put in thread
+                            if(game.myTurn)
+                            {
+                                game.waitForOpponent_host();// put in thread
+                            }
+                            else
+                            {
+                                game.waitForOpponent_nothost();// put in thread
+                                game.paintAll(game.getGraphics()); //makes sure to draw the board before triggering the block
+                                System.out.println("waiting for opponents first move");
+                                game.waitForMove();
+                            }
                             game.setVisible(true);//put in thread
                         }
                     }
                     Thread t = new Thread(new Waiting_handler2());
                     t.start();
 
-                    if(!game.myTurn)
-                    {
-                        game.paintAll(game.getGraphics()); //makes sure to draw the board before triggering the block
-                        System.out.println("waiting for opponents first move");
-                        game.waitForMove();
-                    }
                 }
             });
         }

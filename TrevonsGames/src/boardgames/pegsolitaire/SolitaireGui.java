@@ -59,7 +59,7 @@ public class SolitaireGui extends javax.swing.JFrame {
     ObjectOutputStream out;
     ObjectInputStream in;
     String message;
-    boolean alive;
+    boolean iquit;
     
     public SolitaireGui(boolean online, byte[] ip) {
         initComponents();
@@ -86,7 +86,7 @@ public class SolitaireGui extends javax.swing.JFrame {
         if(isOnline)
         {
             serverIP = ip;
-            alive = true;
+            iquit = false;
             setup_client_socket();
         }
     }
@@ -194,6 +194,47 @@ public class SolitaireGui extends javax.swing.JFrame {
                 {
                     System.out.println("waiting for \"starting\"");
 
+                    //create window
+                    final JFrame wait_window = new JFrame("Waiting for an opponent");
+                    wait_window.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+                    JButton accept = new JButton("CANCEL");
+
+                    accept.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            System.out.println("Cancel Clicked");
+                            
+                                /*if(t2.isAlive()) System.out.println("alive");
+                                alive = false;
+                                
+                                if(t2.isAlive()) System.out.println("alive");
+                                if(!t2.isAlive()) System.out.println("dead");*/
+                                //trigger deletion of the game that started (remove from server's list and halt all threads)
+                              //try 
+                              {  
+                                  /*Socket requestSocket2 = new Socket(addr, 2008);
+                                  ObjectOutputStream out2 = new ObjectOutputStream(requestSocket2.getOutputStream());
+                                  out2.writeObject("rsol"); //tell server to remove from list
+                                  out2.flush();*/
+                                  
+                                  //out.writeObject("rsol");
+                                  iquit = true;
+                                  wait_window.dispose();
+                              } 
+                              /*catch (IOException ex) 
+                              {
+                                    Logger.getLogger(SolitaireGui.class.getName()).log(Level.SEVERE, null, ex);
+                              }*/
+                        }
+                    });
+
+                    wait_window.add(accept);
+                    wait_window.setLocation(300, 300);
+                    wait_window.setSize(400, 200);
+                    wait_window.setVisible(true);
+                    wait_window.paintAll(wait_window.getGraphics());
+                    //window done
+                    
                     class Waiting_handler implements Runnable
                     {
                         @Override
@@ -202,6 +243,7 @@ public class SolitaireGui extends javax.swing.JFrame {
                             try
                             {
                                  message = (String)in.readObject(); //starting put in thread
+                                 wait_window.dispose();
                             }
                             /*catch(SocketTimeoutException ste)
                             {
@@ -226,45 +268,7 @@ public class SolitaireGui extends javax.swing.JFrame {
                         }
                     }
                     final Thread t2 = new Thread(new Waiting_handler());
-                    t2.start();
-
-                    //create window
-                    final JFrame wait_window = new JFrame("Waiting for an opponent");
-                    wait_window.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-                    JButton accept = new JButton("CANCEL");
-
-                    accept.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            System.out.println("Cancel Clicked");
-                            
-                                /*if(t2.isAlive()) System.out.println("alive");
-                                alive = false;
-                                
-                                if(t2.isAlive()) System.out.println("alive");
-                                if(!t2.isAlive()) System.out.println("dead");*/
-                                //trigger deletion of the game that started (remove from server's list and halt all threads)
-                              try 
-                              {  
-                                  Socket requestSocket2 = new Socket(addr, 2008);
-                                  ObjectOutputStream out2 = new ObjectOutputStream(requestSocket2.getOutputStream());
-                                  out2.writeObject("rsol"); //tell server to remove from list
-                                  out2.flush();
-                                  wait_window.dispose();
-                              } 
-                              catch (IOException ex) 
-                              {
-                                    Logger.getLogger(SolitaireGui.class.getName()).log(Level.SEVERE, null, ex);
-                              }
-                        }
-                    });
-
-                    wait_window.add(accept);
-                    wait_window.setLocation(300, 300);
-                    wait_window.setSize(400, 200);
-                    wait_window.setVisible(true);
-                    wait_window.paintAll(wait_window.getGraphics());
-                    //window done
+                    //t2.start();
                     
                     myTurn = true;
                     System.out.println("its my turn");
@@ -307,12 +311,48 @@ public class SolitaireGui extends javax.swing.JFrame {
         }
     }
 
-    public void waitForOpponent()
+    public void waitForOpponent_nothost()
     {
         try
         {
-            //****put the quit window here**
+            System.out.println("blocking in nothost");
             String message = (String)in.readObject();
+            System.out.println(message); //should be connection successful, shold only print when BOTH are connected   
+        }
+        catch(IOException e)
+        {
+           //System.out.println("IOexception in waiting for opponent");
+            e.printStackTrace();
+        }
+        catch(ClassNotFoundException e)
+        {
+            //System.out.println("class not found in waiting for opponent");
+            e.printStackTrace();
+        }
+    }
+    
+    public void waitForOpponent_host()
+    {
+        try
+        {
+             //****put the quit window here**
+            System.out.println("blocking in host didyouquit");
+            String message = (String)in.readObject(); //should be didyouquit
+            System.out.println(message);
+            
+            if(iquit)
+            {
+                out.writeObject("yes");
+                
+                return; //you quit so no reason to continue
+            }
+            else
+            {
+                out.writeObject("no");
+            }
+            
+            System.out.println("blocking in host for game start");
+            message = (String)in.readObject();
             System.out.println(message); //should be connection successful, shold only print when BOTH are connected   
         }
         catch(IOException e)
