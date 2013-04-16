@@ -60,7 +60,7 @@ class Slave implements Runnable
     {
         try
         {
-            sendMessage("Connection successful",true);
+            //sendMessage("Connection successful",true);
             sendMessage("Connection successful",false);
             
             while(true)
@@ -145,7 +145,7 @@ public class Server
                     System.out.println("Waiting for connection #"+ count.toString());
                     connection = serverSocket.accept();
                     System.out.println("Connection received from " + connection.getInetAddress().getHostName());
-
+                    
                     ObjectOutputStream out = new ObjectOutputStream(connection.getOutputStream());
                     ObjectInputStream in = new ObjectInputStream(connection.getInputStream());
                     String message = (String)in.readObject();
@@ -156,16 +156,27 @@ public class Server
                     {
                         if(message.equals(waiting_hosts.get(i).game_name))
                         {
-                            System.out.println("found waiting host");
-                           found = true;
-                           out.writeObject("starting"); //tell second player starting
-                           out.flush();
-                           waiting_hosts.get(i).out_stream.writeObject("starting"); //tell original player starting
-                           waiting_hosts.get(i).out_stream.flush();
+                           System.out.println("found waiting host");
+                           waiting_hosts.get(i).out_stream.writeObject("didyouquit");
+                           String check_quit = (String)waiting_hosts.get(i).in_stream.readObject();
+                           if(check_quit.equals("yes"))
+                           {
+                               //deleting host
+                                System.out.println("found waiting host to delete");
+                                waiting_hosts.remove(i);
+                           }
+                           else
+                           {
+                                found = true;
+                                out.writeObject("starting"); //tell second player starting
+                                out.flush();
+                                waiting_hosts.get(i).out_stream.writeObject("starting"); //tell original player starting
+                                waiting_hosts.get(i).out_stream.flush();
 
-                           Thread t = new Thread(new Slave(connection, waiting_hosts.get(i).socket,waiting_hosts.get(i).out_stream,waiting_hosts.get(i).in_stream,out,in));
-                           waiting_hosts.remove(i);
-                           t.start();
+                                Thread t = new Thread(new Slave(connection, waiting_hosts.get(i).socket,waiting_hosts.get(i).out_stream,waiting_hosts.get(i).in_stream,out,in));
+                                waiting_hosts.remove(i);
+                                t.start();
+                           }
                         }
                     }
                     if(found == false)
