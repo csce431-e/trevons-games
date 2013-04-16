@@ -179,16 +179,39 @@ public class MainMenu extends javax.swing.JPanel {
                 @Override
                 public void run() 
                 {
-                    SolitaireGui game = new SolitaireGui(true, get_ip_array(ip_input_box.getText()));
-                    game.setVisible(true);
+                    final SolitaireGui game = new SolitaireGui(true, get_ip_array(ip_input_box.getText()));
                     game.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                    game.waitForOpponent();
-
-                    if(!game.myTurn)
+                    
+                    class Waiting_handler implements Runnable
                     {
-                        game.paintAll(game.getGraphics()); //makes sure to draw the board before triggering the block
-                        game.waitForMove();
+                        @Override
+                        public void run()
+                        {
+                            
+                            if(game.myTurn)
+                            {
+                                game.waitForOpponent_host();// put in thread
+                                game.wait_window.dispose();
+                                if(game.iquit)
+                                {
+                                    return;
+                                }
+                                game.setVisible(true);//put in thread
+                            }
+                            else
+                            {
+                                game.waitForOpponent_nothost();// put in thread
+                                game.wait_window.dispose();
+                                game.paintAll(game.getGraphics()); //makes sure to draw the board before triggering the block
+                                game.setVisible(true);//put in thread
+                                System.out.println("waiting for opponents first move");
+                                game.waitForMove();
+                            }
+                        }
                     }
+                    Thread t = new Thread(new Waiting_handler());
+                    t.start();
+
                 }
             });
         }
