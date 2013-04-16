@@ -11,8 +11,6 @@ import java.io.*;
 import java.net.*;
 import javax.swing.*;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 /**
  *
  * @author Tom
@@ -32,10 +30,7 @@ public class SolitaireGui extends javax.swing.JFrame {
     JButton firstChoice;
     JButton middleButton;
     ArrayList<ArrayList<JButton>> buts;
-    ArrayList<Thread> outerThreads;
-    //boolean returnVal;
     Integer move_counter;
-    
     
     ArrayList<JButton> column1;
     ArrayList<JButton> column2;
@@ -51,15 +46,16 @@ public class SolitaireGui extends javax.swing.JFrame {
     int y1;
     int y2;
     
-    //for online play***************************************************
+    //start0 for online play******************************************************************************************************
     boolean isOnline;
     byte [] serverIP;
     public boolean myTurn;
     Socket requestSocket;
     ObjectOutputStream out;
     ObjectInputStream in;
-    String message;
-    boolean iquit;
+    public boolean iquit;
+    public final JFrame wait_window = new JFrame("Waiting for an opponent");
+    //end0 for online play******************************************************************************************************
     
     public SolitaireGui(boolean online, byte[] ip) {
         initComponents();
@@ -71,9 +67,7 @@ public class SolitaireGui extends javax.swing.JFrame {
         firstChoice = new JButton();
         middleButton = new JButton();
         buts = new ArrayList<>();
-        outerThreads = new ArrayList<>();
-        //returnVal = false;
-        isOnline = online;
+        isOnline = false;
         myTurn = false;
         BOARDSIZE = 7;
         move_counter = 0;
@@ -83,12 +77,15 @@ public class SolitaireGui extends javax.swing.JFrame {
         y2 = 0;
         init_buttons();
         
+        //start1 for online play******************************************************************************************************
         if(isOnline)
         {
+            isOnline = online;
             serverIP = ip;
             iquit = false;
             setup_client_socket();
         }
+        //end1 for online play******************************************************************************************************
     }
     
     final void init_buttons()
@@ -168,7 +165,7 @@ public class SolitaireGui extends javax.swing.JFrame {
         buts.add(column7);
     }
 
-    //online functions*******************************************************
+    //start2 for online play******************************************************************************************************
     private void setup_client_socket()
     {
         try
@@ -176,8 +173,6 @@ public class SolitaireGui extends javax.swing.JFrame {
             System.out.println("Setting up client socket");
             final InetAddress addr = InetAddress.getByAddress(serverIP);
             requestSocket = new Socket(addr, 2008);
-            //requestSocket.setSoTimeout(1000);
-            
             
             out = new ObjectOutputStream(requestSocket.getOutputStream());
             out.flush();
@@ -187,44 +182,24 @@ public class SolitaireGui extends javax.swing.JFrame {
             { 
                 out.writeObject("sol");
                 System.out.println("waiting for response from server");
-                message = (String)in.readObject(); //waiting or starting
-                System.out.println("readin: "+ message);
+                String msg = (String)in.readObject(); //waiting or starting
+                System.out.println("readin: "+ msg);
                 
-                if(message.equals("waiting"))
+                if(msg.equals("waiting"))
                 {
                     System.out.println("waiting for \"starting\"");
 
                     //create window
-                    final JFrame wait_window = new JFrame("Waiting for an opponent");
+                    
                     wait_window.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
                     JButton accept = new JButton("CANCEL");
 
                     accept.addActionListener(new ActionListener() {
                         @Override
-                        public void actionPerformed(ActionEvent e) {
-                            System.out.println("Cancel Clicked");
-                            
-                                /*if(t2.isAlive()) System.out.println("alive");
-                                alive = false;
-                                
-                                if(t2.isAlive()) System.out.println("alive");
-                                if(!t2.isAlive()) System.out.println("dead");*/
-                                //trigger deletion of the game that started (remove from server's list and halt all threads)
-                              //try 
-                              {  
-                                  /*Socket requestSocket2 = new Socket(addr, 2008);
-                                  ObjectOutputStream out2 = new ObjectOutputStream(requestSocket2.getOutputStream());
-                                  out2.writeObject("rsol"); //tell server to remove from list
-                                  out2.flush();*/
-                                  
-                                  //out.writeObject("rsol");
-                                  iquit = true;
-                                  wait_window.dispose();
-                              } 
-                              /*catch (IOException ex) 
-                              {
-                                    Logger.getLogger(SolitaireGui.class.getName()).log(Level.SEVERE, null, ex);
-                              }*/
+                        public void actionPerformed(ActionEvent e) 
+                        {
+                            iquit = true;
+                            wait_window.dispose();
                         }
                     });
 
@@ -234,42 +209,7 @@ public class SolitaireGui extends javax.swing.JFrame {
                     wait_window.setVisible(true);
                     wait_window.paintAll(wait_window.getGraphics());
                     //window done
-                    
-                    class Waiting_handler implements Runnable
-                    {
-                        @Override
-                        public void run()
-                        {
-                            try
-                            {
-                                 message = (String)in.readObject(); //starting put in thread
-                                 wait_window.dispose();
-                            }
-                            /*catch(SocketTimeoutException ste)
-                            {
-                                if(alive)
-                                {
-                                    this.run();
-                                }
-                            }*/
-                            catch(IOException ioException)
-                            {
-                                System.out.println("waiting err");
-                                ioException.printStackTrace();
-                            }
-                            catch(ClassNotFoundException e)
-                            {
-                                System.out.println("class not found in client waiting");
-                            }
-                            catch(Exception e)
-                            {
-                                System.err.println("some exception in quit window while watiting");
-                            }
-                        }
-                    }
-                    final Thread t2 = new Thread(new Waiting_handler());
-                    //t2.start();
-                    
+
                     myTurn = true;
                     System.out.println("its my turn");
                 }
@@ -316,8 +256,8 @@ public class SolitaireGui extends javax.swing.JFrame {
         try
         {
             System.out.println("blocking in nothost");
-            String message = (String)in.readObject();
-            System.out.println(message); //should be connection successful, shold only print when BOTH are connected   
+            String msg = (String)in.readObject();
+            System.out.println(msg); //should be connection successful, shold only print when BOTH are connected   
         }
         catch(IOException e)
         {
@@ -337,8 +277,8 @@ public class SolitaireGui extends javax.swing.JFrame {
         {
              //****put the quit window here**
             System.out.println("blocking in host didyouquit");
-            String message = (String)in.readObject(); //should be didyouquit
-            System.out.println(message);
+            String msg = (String)in.readObject(); //should be didyouquit
+            System.out.println(msg);
             
             if(iquit)
             {
@@ -352,8 +292,8 @@ public class SolitaireGui extends javax.swing.JFrame {
             }
             
             System.out.println("blocking in host for game start");
-            message = (String)in.readObject();
-            System.out.println(message); //should be connection successful, shold only print when BOTH are connected   
+            msg = (String)in.readObject();
+            System.out.println(msg); //should be connection successful, shold only print when BOTH are connected   
         }
         catch(IOException e)
         {
@@ -374,41 +314,35 @@ public class SolitaireGui extends javax.swing.JFrame {
         try
         {
             System.out.println("Waiting for move");
-            message = "nothing";
-            while(message.equals("nothing"))
+            String msg = (String)in.readObject();
+            System.out.println("Message received: "+msg);
+            
+            if(msg.equals("quit"))
             {
-                //System.out.println("Message still nothing");
-                
-                message = (String)in.readObject();
-                System.out.println("Message received: "+message);
-                if(message.equals("quit"))
-                {
-                    final JFrame quit_window = new JFrame("Your opponent has quit");
-                    JButton accept = new JButton("OK");
-                    //accept.setSize(50, 100);  //dsnt seem to change button size
-                    accept.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            quit_window.dispose();
-                        }
-                    });
-                    quit_window.add(accept);
-                    quit_window.setLocation(300, 300);
-                    quit_window.setSize(400, 200);
-                    quit_window.setVisible(true);
-                    this.dispose();
-                    return;
-                }
-                SolitaireMove otherPlayerMove = getMoveFromString(message);
-                b.make_move(otherPlayerMove);
-                
-                firstChoice = buts.get((-otherPlayerMove.src.y)+3).get((otherPlayerMove.src.x)+3);
-                middleButton = buts.get((-otherPlayerMove.middle.y)+3).get((otherPlayerMove.middle.x)+3);
-                JButton clicked = buts.get((-otherPlayerMove.dest.y)+3).get((otherPlayerMove.dest.x)+3);
-                apply_move_to_graphics(clicked);
-                myTurn = true;
+                final JFrame quit_window = new JFrame("Your opponent has quit");
+                JButton accept = new JButton("OK");
+                accept.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        quit_window.dispose();
+
+                    }
+                });
+                quit_window.add(accept);
+                quit_window.setLocation(300, 300);
+                quit_window.setSize(400, 200);
+                quit_window.setVisible(true);
+                this.dispose();
+                return;
             }
-            System.out.println(message);
+            SolitaireMove otherPlayerMove = getMoveFromString(msg);
+            b.make_move(otherPlayerMove);
+
+            firstChoice = buts.get((-otherPlayerMove.src.y)+3).get((otherPlayerMove.src.x)+3);
+            middleButton = buts.get((-otherPlayerMove.middle.y)+3).get((otherPlayerMove.middle.x)+3);
+            JButton clicked = buts.get((-otherPlayerMove.dest.y)+3).get((otherPlayerMove.dest.x)+3);
+            apply_move_to_graphics(clicked);
+            myTurn = true;
         }
         catch(ClassNotFoundException classNot)
         {
@@ -445,7 +379,7 @@ public class SolitaireGui extends javax.swing.JFrame {
         SolitaireMove otherPlayerMove = new SolitaireMove(src,dest,mid);
         return otherPlayerMove;
     }
-    //end of online functions**************************************************
+    //end2 for online play******************************************************************************************************
     
     
     /**
@@ -927,6 +861,7 @@ public class SolitaireGui extends javax.swing.JFrame {
         class MyTask extends TimerTask
         {
             private int times = 0;
+            @Override
             public void run()
             {
                 disable_buttons = true;
@@ -964,18 +899,6 @@ public class SolitaireGui extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jButtonHint_Clicked
 
-    void kill_all_children(Thread current_thread) throws InterruptedException
-    {
-        for(Thread t : outerThreads)
-        {
-            if(!t.equals(current_thread))
-            {
-                System.out.println("killing thread: "+t.getName());
-                t.interrupt();
-                
-            }
-        }
-    }
     
     private void jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonActionPerformed
         // TODO add your handling code here:
@@ -1033,7 +956,7 @@ public class SolitaireGui extends javax.swing.JFrame {
                             move_counter++;
                             moves_textbox.setText("Number of Moves: "+move_counter.toString());
                             
-                            //add for online play***************************************************************
+                            //start3 for online play******************************************************************************************************
                             if(isOnline)
                             {
                                myTurn = false;
@@ -1052,6 +975,7 @@ public class SolitaireGui extends javax.swing.JFrame {
                                 t.start();
 
                             }
+                            //end3 for online play******************************************************************************************************
                         }
                     }
                 }
@@ -1077,6 +1001,7 @@ public class SolitaireGui extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButtonActionPerformed
 
+    //start4 for online play******************************************************************************************************
     private void quit_buttonClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quit_buttonClicked
         // TODO add your handling code here:
         
@@ -1087,80 +1012,7 @@ public class SolitaireGui extends javax.swing.JFrame {
         }
         this.dispose();
     }//GEN-LAST:event_quit_buttonClicked
-
-    
-    /*boolean find_proper_move(SolitaireBoard b_clone)
-    {
-        //System.out.println(x);
-        ArrayList<SolitaireMove> moves = b_clone.get_all_possible_moves();
-        ArrayList<Thread> innerThreads = new ArrayList<>();
-        returnVal = false;
-
-        if (moves.isEmpty() && b_clone.win())
-        {
-            System.out.println("WIN found");
-            return true;
-        }
-        else if (moves.isEmpty())
-        {
-            System.out.println("Loss: backtracking");
-            return false;
-        }
-
-        for(SolitaireMove m : moves)
-        {
-            b_clone.make_move(m);
-            
-            //possibly put all of these recursive calls in their own threads as well to see if it helps
-                //again, as they finish, check for a "solved == true" and when it finds one, kill the ones still running
-            
-            class InnerThread implements Runnable 
-            {
-                SolitaireMove move;
-                InnerThread(SolitaireMove m) 
-                {
-                    move = m;
-                }
-
-                @Override
-                public void run()
-                {
-                    //if the "kill all threads" variable is set, then do Thread.currentThread().interrupt();
-                    if(!Thread.currentThread().isInterrupted())
-                    {
-                        SolitaireBoard b_clone = new SolitaireBoard(b);
-                        b_clone.make_move(move);
-
-                        boolean solution_move = find_proper_move(b_clone);
-                        if(solution_move)
-                        {
-                            returnTrue();
-                            //Thread.currentThread().interrupt();
-                        }
-                        b_clone.un_make_move(move);
-                    }
-                }
-
-                    private synchronized void returnTrue()
-                    {
-                        returnVal = true;
-                    }
-                }
-            
-            InnerThread r = new InnerThread(m);
-            Thread t = new Thread(r);
-            innerThreads.add(t);
-        }
-        
-        for(Thread t : innerThreads)
-        {
-            System.out.println("Thread starting: " + t.getName());
-            t.start();
-        }
-        System.out.println("-----------" + returnVal);
-        return returnVal;
-    }
-    */
+    //end4 for online play******************************************************************************************************
     
     private int getX(JButton r)
     {
