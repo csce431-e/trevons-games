@@ -70,15 +70,12 @@ public class MainMenu extends javax.swing.JPanel {
         locally_radiob = new javax.swing.JRadioButton();
         online_radiob = new javax.swing.JRadioButton();
 
-        setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
         jButton1.setText("Peg Solitaire");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 solitaireClicked(evt);
             }
         });
-        add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, 150, 80));
 
         jButton2.setText("Connect 4");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -86,7 +83,6 @@ public class MainMenu extends javax.swing.JPanel {
                 ConnectFourClicked(evt);
             }
         });
-        add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 0, 150, 80));
 
         jButton3.setText("Checkers");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
@@ -94,7 +90,6 @@ public class MainMenu extends javax.swing.JPanel {
                 CheckersClicked(evt);
             }
         });
-        add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, 150, 80));
 
         jButton4.setText("Gomoku");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
@@ -102,7 +97,6 @@ public class MainMenu extends javax.swing.JPanel {
                 GomokuClicked(evt);
             }
         });
-        add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 100, 150, 80));
 
         jButton5.setText("Mancala");
         jButton5.addActionListener(new java.awt.event.ActionListener() {
@@ -110,7 +104,6 @@ public class MainMenu extends javax.swing.JPanel {
                 MancalaClicked(evt);
             }
         });
-        add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 220, 150, 80));
 
         jButton6.setText("Battleship");
         jButton6.addActionListener(new java.awt.event.ActionListener() {
@@ -118,7 +111,6 @@ public class MainMenu extends javax.swing.JPanel {
                 BattleshipClicked(evt);
             }
         });
-        add(jButton6, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 200, 150, 80));
 
         server_button.setText("Server");
         server_button.addActionListener(new java.awt.event.ActionListener() {
@@ -126,7 +118,6 @@ public class MainMenu extends javax.swing.JPanel {
                 serverClicked(evt);
             }
         });
-        add(server_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 270, -1, -1));
 
         ip_input_box.setText("Server IP here");
         ip_input_box.setEnabled(false);
@@ -135,7 +126,6 @@ public class MainMenu extends javax.swing.JPanel {
                 serverIpBoxClicked(evt);
             }
         });
-        add(ip_input_box, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 160, 81, -1));
 
         buttonGroup1.add(locally_radiob);
         locally_radiob.setSelected(true);
@@ -145,7 +135,6 @@ public class MainMenu extends javax.swing.JPanel {
                 local_radioClicked(evt);
             }
         });
-        add(locally_radiob, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 100, -1, -1));
 
         buttonGroup1.add(online_radiob);
         online_radiob.setText("Play Online");
@@ -154,7 +143,62 @@ public class MainMenu extends javax.swing.JPanel {
                 online_radioClicked(evt);
             }
         });
-        add(online_radiob, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 130, -1, -1));
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(20, 20, 20)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(20, 20, 20)
+                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(10, 10, 10)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(locally_radiob)
+                            .addComponent(online_radiob)
+                            .addComponent(ip_input_box, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(20, 20, 20)
+                        .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(20, 20, 20)
+                        .addComponent(server_button))))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(locally_radiob)
+                        .addGap(7, 7, 7)
+                        .addComponent(online_radiob)
+                        .addGap(7, 7, 7)
+                        .addComponent(ip_input_box, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(70, 70, 70)
+                        .addComponent(server_button))))
+        );
     }// </editor-fold>//GEN-END:initComponents
 
     private void solitaireClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_solitaireClicked
@@ -211,7 +255,6 @@ public class MainMenu extends javax.swing.JPanel {
                     }
                     Thread t = new Thread(new Waiting_handler());
                     t.start();
-
                 }
             });
         }
@@ -254,7 +297,7 @@ public class MainMenu extends javax.swing.JPanel {
         server_button.setEnabled(false);
         
         Server s = new Server();
-        s.start();
+        s.start(this);
     }//GEN-LAST:event_serverClicked
 
     private void serverIpBoxClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_serverIpBoxClicked
