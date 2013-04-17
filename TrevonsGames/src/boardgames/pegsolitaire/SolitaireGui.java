@@ -171,63 +171,91 @@ public class SolitaireGui extends javax.swing.JFrame {
         {
             System.out.println("Setting up client socket");
             final InetAddress addr = InetAddress.getByAddress(serverIP);
+            //if you request a socket to a nonexistent addr, then
             requestSocket = new Socket(addr, 2008);
             
             out = new ObjectOutputStream(requestSocket.getOutputStream());
             out.flush();
             in = new ObjectInputStream(requestSocket.getInputStream());
             
-            try 
-            { 
-                out.writeObject("sol");
-                System.out.println("waiting for response from server");
-                String msg = (String)in.readObject(); //waiting or starting
-                System.out.println("readin: "+ msg);
-                
-                if(msg.equals("waiting"))
-                {
-                    System.out.println("waiting for \"starting\"");
+            out.writeObject("sol");
+            System.out.println("waiting for response from server");
+            String msg = (String)in.readObject(); //waiting or starting
+            System.out.println("readin: "+ msg);
 
-                    //create window
-                    
-                    wait_window.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-                    JButton accept = new JButton("CANCEL");
+            if(msg.equals("waiting"))
+            {
+                System.out.println("waiting for \"starting\"");
 
-                    accept.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) 
-                        {
-                            iquit = true;
-                            wait_window.dispose();
-                        }
-                    });
+                //create window
 
-                    wait_window.add(accept);
-                    wait_window.setLocation(300, 300);
-                    wait_window.setSize(400, 200);
-                    wait_window.setVisible(true);
-                    wait_window.paintAll(wait_window.getGraphics());
-                    //window done
+                wait_window.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+                JButton accept = new JButton("CANCEL");
 
-                    myTurn = true;
-                    System.out.println("its my turn");
-                }
-                else
-                {
-                    myTurn = false; 
-                    System.out.println("its NOT my turn");
-                }
-            } 
-            //catch(InterruptedException ie)
-           // {}
-            catch(ClassNotFoundException classNot)
-            { 
-                System.err.println("data received in unknown format"); 
+                accept.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) 
+                    {
+                        iquit = true;
+                        wait_window.dispose();
+                    }
+                });
+
+                wait_window.add(accept);
+                wait_window.setLocation(300, 300);
+                wait_window.setSize(400, 200);
+                wait_window.setVisible(true);
+                wait_window.paintAll(wait_window.getGraphics());
+                //window done
+
+                myTurn = true;
+                System.out.println("its my turn");
             }
+            else
+            {
+                myTurn = false; 
+                System.out.println("its NOT my turn");
+            }
+        }
+        catch(ConnectException ce)
+        {
+            System.err.println("Connection timed out - invalid ip most like");
+            final JFrame quit_window = new JFrame("Unable to connect to given IP");
+            JButton accept = new JButton("OK");
+            accept.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    quit_window.dispose();
+
+                }
+            });
+            quit_window.add(accept);
+            quit_window.setLocation(300, 300);
+            quit_window.setSize(400, 200);
+            quit_window.setVisible(true);
+            this.dispose();
+        }
+        catch(ClassNotFoundException classNot)
+        { 
+            System.err.println("data received in unknown format"); 
         }
         catch(UnknownHostException unknownHost)
         {
             System.err.println("You are trying to connect to an unknown host!");
+            final JFrame quit_window = new JFrame("Unable to connect to given IP - Unknown Host");
+            JButton accept = new JButton("OK");
+            accept.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    quit_window.dispose();
+
+                }
+            });
+            quit_window.add(accept);
+            quit_window.setLocation(300, 300);
+            quit_window.setSize(400, 200);
+            quit_window.setVisible(true);
+            this.dispose();
         }
         catch(IOException ioException)
         {
