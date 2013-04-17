@@ -9,6 +9,8 @@ import boardgames.BattleShip.*;
 import boardgames.checkers.*;
 import boardgames.Mancala.*;
 import boardgames.connectfour.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import java.util.*;
 import javax.swing.*;
@@ -30,24 +32,48 @@ public class MainMenu extends javax.swing.JPanel {
     byte[] get_ip_array(String ip_box_str)
     {
         //return new byte[] {127,0,0,1};
-        ArrayList<Integer> ip = new ArrayList<>();
-        String temp_s = "";
-        for(int i = 0; i<ip_box_str.length(); i++)
+        try
         {
-            if(ip_box_str.charAt(i) == '.')
+            ArrayList<Integer> ip = new ArrayList<>();
+            String temp_s = "";
+            for(int i = 0; i<ip_box_str.length(); i++)
             {
-                ip.add(Integer.parseInt(temp_s));
-                temp_s = "";
+                if(ip_box_str.charAt(i) == '.')
+                {
+                    ip.add(Integer.parseInt(temp_s));
+                    temp_s = "";
+                }
+                else
+                {
+                    temp_s += ip_box_str.charAt(i);
+                }
             }
-            else
+            ip.add(Integer.parseInt(temp_s));
+            if(ip.size() != 3)
             {
-                temp_s += ip_box_str.charAt(i);
+                throw new NumberFormatException();
             }
+            return new byte[] {(byte)ip.get(0).intValue(),(byte)ip.get(1).intValue(),(byte)ip.get(2).intValue(),(byte)ip.get(3).intValue()}; 
+    
         }
-        ip.add(Integer.parseInt(temp_s));
-        return new byte[] {(byte)ip.get(0).intValue(),(byte)ip.get(1).intValue(),(byte)ip.get(2).intValue(),(byte)ip.get(3).intValue()}; 
+        catch(NumberFormatException n)
+        {
+            System.err.println("Invalid IPv4 Address");
+            final JFrame quit_window = new JFrame("Invalid IPv4 Address");
+            JButton accept = new JButton("OK");
+            accept.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    quit_window.dispose();
+                }
+            });
+            quit_window.add(accept);
+            quit_window.setLocation(300, 300);
+            quit_window.setSize(400, 200);
+            quit_window.setVisible(true);
+            return null;
+        }
     }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
