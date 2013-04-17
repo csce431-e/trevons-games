@@ -67,7 +67,6 @@ public class SolitaireGui extends javax.swing.JFrame {
         firstChoice = new JButton();
         middleButton = new JButton();
         buts = new ArrayList<>();
-        isOnline = false;
         myTurn = false;
         BOARDSIZE = 7;
         move_counter = 0;
@@ -78,9 +77,9 @@ public class SolitaireGui extends javax.swing.JFrame {
         init_buttons();
         
         //start1 for online play******************************************************************************************************
+        isOnline = online;
         if(isOnline)
         {
-            isOnline = online;
             serverIP = ip;
             iquit = false;
             setup_client_socket();
