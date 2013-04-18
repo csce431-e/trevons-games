@@ -78,6 +78,37 @@ public class SolitaireBoard
 
         //end constructors
 
+        @Override
+        public boolean equals(Object other){
+            if (other == null) 
+            {
+                return false;
+            }
+            if (other == this) 
+            {
+                return true;
+            }
+            if (!(other instanceof SolitaireBoard))
+            {
+                return false;
+            }
+            SolitaireBoard otherMyClass = (SolitaireBoard)other;
+            
+            if(otherMyClass.pieces_left == pieces_left && otherMyClass.coordinates.equals(coordinates))
+            {
+                return true;
+            }
+            return false;
+        }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + Objects.hashCode(this.coordinates);
+        hash = 97 * hash + this.pieces_left;
+        return hash;
+    }
+        
         //member functions
 
         public boolean win()

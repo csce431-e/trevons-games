@@ -30,10 +30,7 @@ public class SolitaireGui extends javax.swing.JFrame {
     JButton firstChoice;
     JButton middleButton;
     ArrayList<ArrayList<JButton>> buts;
-    ArrayList<Thread> outerThreads;
-    //boolean returnVal;
     Integer move_counter;
-    
     
     ArrayList<JButton> column1;
     ArrayList<JButton> column2;
@@ -49,14 +46,16 @@ public class SolitaireGui extends javax.swing.JFrame {
     int y1;
     int y2;
     
-    //for online play***************************************************
+    //start0 for online play******************************************************************************************************
     boolean isOnline;
     byte [] serverIP;
     public boolean myTurn;
     Socket requestSocket;
     ObjectOutputStream out;
     ObjectInputStream in;
-    String message;
+    public boolean iquit;
+    public final JFrame wait_window = new JFrame("Waiting for an opponent");
+    //end0 for online play******************************************************************************************************
     
     public SolitaireGui(boolean online, byte[] ip) {
         initComponents();
@@ -68,9 +67,6 @@ public class SolitaireGui extends javax.swing.JFrame {
         firstChoice = new JButton();
         middleButton = new JButton();
         buts = new ArrayList<>();
-        outerThreads = new ArrayList<>();
-        //returnVal = false;
-        isOnline = online;
         myTurn = false;
         BOARDSIZE = 7;
         move_counter = 0;
@@ -80,11 +76,15 @@ public class SolitaireGui extends javax.swing.JFrame {
         y2 = 0;
         init_buttons();
         
+        //start1 for online play******************************************************************************************************
+        isOnline = online;
         if(isOnline)
         {
             serverIP = ip;
+            iquit = false;
             setup_client_socket();
         }
+        //end1 for online play******************************************************************************************************
     }
     
     final void init_buttons()
@@ -164,48 +164,98 @@ public class SolitaireGui extends javax.swing.JFrame {
         buts.add(column7);
     }
 
-    //online functions*******************************************************
+    //start2 for online play******************************************************************************************************
     private void setup_client_socket()
     {
         try
         {
             System.out.println("Setting up client socket");
-            InetAddress addr = InetAddress.getByAddress(serverIP);
+            final InetAddress addr = InetAddress.getByAddress(serverIP);
+            //if you request a socket to a nonexistent addr, then
             requestSocket = new Socket(addr, 2008);
-            
             
             out = new ObjectOutputStream(requestSocket.getOutputStream());
             out.flush();
             in = new ObjectInputStream(requestSocket.getInputStream());
             
-            try 
-            { 
-                out.writeObject("sol");
-                message = (String)in.readObject(); //waiting or starting
-                System.out.println("readin: "+ message);
-                
-                if(message.equals("waiting"))
-                {
-                    System.out.println("waiting for \"starting\"");
-                    message = (String)in.readObject(); //starting
-                    System.out.println(message);
-                    myTurn = true;
-                    System.out.println("its my turn");
-                }
-                else
-                {
-                    myTurn = false; 
-                    System.out.println("its NOT my turn");
-                }
-            } 
-            catch(ClassNotFoundException classNot)
-            { 
-                System.err.println("data received in unknown format"); 
+            out.writeObject("sol");
+            System.out.println("waiting for response from server");
+            String msg = (String)in.readObject(); //waiting or starting
+            System.out.println("readin: "+ msg);
+
+            if(msg.equals("waiting"))
+            {
+                System.out.println("waiting for \"starting\"");
+
+                //create window
+
+                wait_window.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+                JButton accept = new JButton("CANCEL");
+
+                accept.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) 
+                    {
+                        iquit = true;
+                        wait_window.dispose();
+                    }
+                });
+
+                wait_window.add(accept);
+                wait_window.setLocation(300, 300);
+                wait_window.setSize(400, 200);
+                wait_window.setVisible(true);
+                wait_window.paintAll(wait_window.getGraphics());
+                //window done
+
+                myTurn = true;
+                System.out.println("its my turn");
             }
+            else
+            {
+                myTurn = false; 
+                System.out.println("its NOT my turn");
+            }
+        }
+        catch(ConnectException ce)
+        {
+            System.err.println("Connection timed out - invalid ip most like");
+            final JFrame quit_window = new JFrame("Unable to connect to given IP");
+            JButton accept = new JButton("OK");
+            accept.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    quit_window.dispose();
+
+                }
+            });
+            quit_window.add(accept);
+            quit_window.setLocation(300, 300);
+            quit_window.setSize(400, 200);
+            quit_window.setVisible(true);
+            this.dispose();
+        }
+        catch(ClassNotFoundException classNot)
+        { 
+            System.err.println("data received in unknown format"); 
         }
         catch(UnknownHostException unknownHost)
         {
             System.err.println("You are trying to connect to an unknown host!");
+            final JFrame quit_window = new JFrame("Unable to connect to given IP - Unknown Host");
+            JButton accept = new JButton("OK");
+            accept.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    quit_window.dispose();
+
+                }
+            });
+            quit_window.add(accept);
+            quit_window.setLocation(300, 300);
+            quit_window.setSize(400, 200);
+            quit_window.setVisible(true);
+            this.dispose();
         }
         catch(IOException ioException)
         {
@@ -228,12 +278,49 @@ public class SolitaireGui extends javax.swing.JFrame {
         }
     }
 
-    public void waitForOpponent()
+    public void waitForOpponent_nothost()
     {
         try
         {
-            String message = (String)in.readObject();
-            System.out.println(message); //should be connection successful, shold only print when BOTH are connected   
+            System.out.println("blocking in nothost");
+            String msg = (String)in.readObject();
+            System.out.println(msg); //should be connection successful, shold only print when BOTH are connected   
+        }
+        catch(IOException e)
+        {
+           //System.out.println("IOexception in waiting for opponent");
+            e.printStackTrace();
+        }
+        catch(ClassNotFoundException e)
+        {
+            //System.out.println("class not found in waiting for opponent");
+            e.printStackTrace();
+        }
+    }
+    
+    public void waitForOpponent_host()
+    {
+        try
+        {
+             //****put the quit window here**
+            System.out.println("blocking in host didyouquit");
+            String msg = (String)in.readObject(); //should be didyouquit
+            System.out.println(msg);
+            
+            if(iquit)
+            {
+                out.writeObject("yes");
+                
+                return; //you quit so no reason to continue
+            }
+            else
+            {
+                out.writeObject("no");
+            }
+            
+            System.out.println("blocking in host for game start");
+            msg = (String)in.readObject();
+            System.out.println(msg); //should be connection successful, shold only print when BOTH are connected   
         }
         catch(IOException e)
         {
@@ -254,28 +341,35 @@ public class SolitaireGui extends javax.swing.JFrame {
         try
         {
             System.out.println("Waiting for move");
-            message = "nothing";
-            while(message.equals("nothing"))
+            String msg = (String)in.readObject();
+            System.out.println("Message received: "+msg);
+            
+            if(msg.equals("quit"))
             {
-                //System.out.println("Message still nothing");
-                
-                message = (String)in.readObject();
-                System.out.println("Message received: "+message);
-                if(message.equals("quit"))
-                {
-                    this.dispose();
-                    return;
-                }
-                SolitaireMove otherPlayerMove = getMoveFromString(message);
-                b.make_move(otherPlayerMove);
-                
-                firstChoice = buts.get((-otherPlayerMove.src.y)+3).get((otherPlayerMove.src.x)+3);
-                middleButton = buts.get((-otherPlayerMove.middle.y)+3).get((otherPlayerMove.middle.x)+3);
-                JButton clicked = buts.get((-otherPlayerMove.dest.y)+3).get((otherPlayerMove.dest.x)+3);
-                apply_move_to_graphics(clicked);
-                myTurn = true;
+                final JFrame quit_window = new JFrame("Your opponent has quit");
+                JButton accept = new JButton("OK");
+                accept.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        quit_window.dispose();
+
+                    }
+                });
+                quit_window.add(accept);
+                quit_window.setLocation(300, 300);
+                quit_window.setSize(400, 200);
+                quit_window.setVisible(true);
+                this.dispose();
+                return;
             }
-            System.out.println(message);
+            SolitaireMove otherPlayerMove = getMoveFromString(msg);
+            b.make_move(otherPlayerMove);
+
+            firstChoice = buts.get((-otherPlayerMove.src.y)+3).get((otherPlayerMove.src.x)+3);
+            middleButton = buts.get((-otherPlayerMove.middle.y)+3).get((otherPlayerMove.middle.x)+3);
+            JButton clicked = buts.get((-otherPlayerMove.dest.y)+3).get((otherPlayerMove.dest.x)+3);
+            apply_move_to_graphics(clicked);
+            myTurn = true;
         }
         catch(ClassNotFoundException classNot)
         {
@@ -312,7 +406,7 @@ public class SolitaireGui extends javax.swing.JFrame {
         SolitaireMove otherPlayerMove = new SolitaireMove(src,dest,mid);
         return otherPlayerMove;
     }
-    //end of online functions**************************************************
+    //end2 for online play******************************************************************************************************
     
     
     /**
@@ -794,6 +888,7 @@ public class SolitaireGui extends javax.swing.JFrame {
         class MyTask extends TimerTask
         {
             private int times = 0;
+            @Override
             public void run()
             {
                 disable_buttons = true;
@@ -831,18 +926,6 @@ public class SolitaireGui extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jButtonHint_Clicked
 
-    void kill_all_children(Thread current_thread) throws InterruptedException
-    {
-        for(Thread t : outerThreads)
-        {
-            if(!t.equals(current_thread))
-            {
-                System.out.println("killing thread: "+t.getName());
-                t.interrupt();
-                
-            }
-        }
-    }
     
     private void jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonActionPerformed
         // TODO add your handling code here:
@@ -900,7 +983,7 @@ public class SolitaireGui extends javax.swing.JFrame {
                             move_counter++;
                             moves_textbox.setText("Number of Moves: "+move_counter.toString());
                             
-                            //add for online play***************************************************************
+                            //start3 for online play******************************************************************************************************
                             if(isOnline)
                             {
                                myTurn = false;
@@ -919,6 +1002,7 @@ public class SolitaireGui extends javax.swing.JFrame {
                                 t.start();
 
                             }
+                            //end3 for online play******************************************************************************************************
                         }
                     }
                 }
@@ -944,87 +1028,18 @@ public class SolitaireGui extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButtonActionPerformed
 
+    //start4 for online play******************************************************************************************************
     private void quit_buttonClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quit_buttonClicked
         // TODO add your handling code here:
         
         //send message to other player that you quit (it should sit in their queue if it is currently their turn and theyll get it when they make a move
-        sendMessage("quit");
+        if(isOnline)
+        {
+            sendMessage("quit");
+        }
         this.dispose();
     }//GEN-LAST:event_quit_buttonClicked
-
-    
-    /*boolean find_proper_move(SolitaireBoard b_clone)
-    {
-        //System.out.println(x);
-        ArrayList<SolitaireMove> moves = b_clone.get_all_possible_moves();
-        ArrayList<Thread> innerThreads = new ArrayList<>();
-        returnVal = false;
-
-        if (moves.isEmpty() && b_clone.win())
-        {
-            System.out.println("WIN found");
-            return true;
-        }
-        else if (moves.isEmpty())
-        {
-            System.out.println("Loss: backtracking");
-            return false;
-        }
-
-        for(SolitaireMove m : moves)
-        {
-            b_clone.make_move(m);
-            
-            //possibly put all of these recursive calls in their own threads as well to see if it helps
-                //again, as they finish, check for a "solved == true" and when it finds one, kill the ones still running
-            
-            class InnerThread implements Runnable 
-            {
-                SolitaireMove move;
-                InnerThread(SolitaireMove m) 
-                {
-                    move = m;
-                }
-
-                @Override
-                public void run()
-                {
-                    //if the "kill all threads" variable is set, then do Thread.currentThread().interrupt();
-                    if(!Thread.currentThread().isInterrupted())
-                    {
-                        SolitaireBoard b_clone = new SolitaireBoard(b);
-                        b_clone.make_move(move);
-
-                        boolean solution_move = find_proper_move(b_clone);
-                        if(solution_move)
-                        {
-                            returnTrue();
-                            //Thread.currentThread().interrupt();
-                        }
-                        b_clone.un_make_move(move);
-                    }
-                }
-
-                    private synchronized void returnTrue()
-                    {
-                        returnVal = true;
-                    }
-                }
-            
-            InnerThread r = new InnerThread(m);
-            Thread t = new Thread(r);
-            innerThreads.add(t);
-        }
-        
-        for(Thread t : innerThreads)
-        {
-            System.out.println("Thread starting: " + t.getName());
-            t.start();
-        }
-        System.out.println("-----------" + returnVal);
-        return returnVal;
-    }
-    */
+    //end4 for online play******************************************************************************************************
     
     private int getX(JButton r)
     {
