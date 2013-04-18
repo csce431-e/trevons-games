@@ -68,7 +68,7 @@ public class SolitaireGuiTest {
     public void testWaitForOpponent() {
         System.out.println("waitForOpponent");
         SolitaireGui instance = null;
-        instance.waitForOpponent();
+        instance.waitForOpponent_host();
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
@@ -96,19 +96,6 @@ public class SolitaireGuiTest {
         SolitaireMove expResult = null;
         SolitaireMove result = instance.getMoveFromString(s);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of kill_all_children method, of class SolitaireGui.
-     */
-    @Test
-    public void testKill_all_children() throws Exception {
-        System.out.println("kill_all_children");
-        Thread current_thread = null;
-        SolitaireGui instance = null;
-        instance.kill_all_children(current_thread);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
