@@ -9,8 +9,9 @@ import boardgames.BattleShip.*;
 import boardgames.checkers.*;
 import boardgames.Mancala.*;
 import boardgames.connectfour.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import boardgames.tictactoe.*;
+import java.awt.*;;
+import java.awt.event.*;
 
 import java.util.*;
 import javax.swing.*;
@@ -49,7 +50,7 @@ public class MainMenu extends javax.swing.JPanel {
                 }
             }
             ip.add(Integer.parseInt(temp_s));
-            if(ip.size() != 3)
+            if(ip.size() != 4)
             {
                 throw new NumberFormatException();
             }
@@ -74,6 +75,22 @@ public class MainMenu extends javax.swing.JPanel {
             return null;
         }
     }
+    
+    public void removeMinMaxClose(Component comp)  
+    {  
+        if(comp instanceof AbstractButton)  
+        {  
+            comp.getParent().remove(comp);  
+        }  
+        if(comp instanceof Container)  
+        {  
+            Component[] comps = ((Container)comp).getComponents();  
+            for(int x = 0, y = comps.length; x < y; x++)  
+            {  
+                removeMinMaxClose(comps[x]);  
+            }  
+        }  
+    }  
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -95,6 +112,7 @@ public class MainMenu extends javax.swing.JPanel {
         ip_input_box = new javax.swing.JTextField();
         locally_radiob = new javax.swing.JRadioButton();
         online_radiob = new javax.swing.JRadioButton();
+        jButton7 = new javax.swing.JButton();
 
         jButton1.setText("Peg Solitaire");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -170,6 +188,13 @@ public class MainMenu extends javax.swing.JPanel {
             }
         });
 
+        jButton7.setText("TicTacToe");
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tictactoe_clicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -180,7 +205,9 @@ public class MainMenu extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(20, 20, 20)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(10, 10, 10)
+                        .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(20, 20, 20)
@@ -201,10 +228,12 @@ public class MainMenu extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(20, 20, 20)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(20, 20, 20)
@@ -239,6 +268,7 @@ public class MainMenu extends javax.swing.JPanel {
                     SolitaireGui game = new SolitaireGui(false, new byte[] {}); //2 params, whether or not it's online and the ip addr
                     game.setVisible(true);
                     game.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    game.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
                 }
             });
         }
@@ -251,6 +281,7 @@ public class MainMenu extends javax.swing.JPanel {
                 {
                     final SolitaireGui game = new SolitaireGui(true, get_ip_array(ip_input_box.getText()));
                     game.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    game.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
                     
                     class Waiting_handler implements Runnable
                     {
@@ -345,6 +376,67 @@ public class MainMenu extends javax.swing.JPanel {
         ip_input_box.setText("Server IP here");
     }//GEN-LAST:event_local_radioClicked
 
+    private void tictactoe_clicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tictactoe_clicked
+        // TODO add your handling code here:
+        if(locally_radiob.isSelected())  //local play
+        {
+            java.awt.EventQueue.invokeLater(new Runnable() 
+            {
+                @Override
+                public void run() 
+                {
+                    TicTacToeGui game = new TicTacToeGui(false, new byte[] {}); //2 params, whether or not it's online and the ip addr
+                    game.setVisible(true);
+                    game.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    game.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+                }
+            });
+        }
+        else //online play
+        {
+            java.awt.EventQueue.invokeLater(new Runnable() 
+            {
+                @Override
+                public void run() 
+                {
+                    final TicTacToeGui game = new TicTacToeGui(true, get_ip_array(ip_input_box.getText()));
+                    game.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    game.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+                    
+                    class Waiting_handler implements Runnable
+                    {
+                        @Override
+                        public void run()
+                        {
+                            
+                            if(game.myTurn)
+                            {
+                                game.waitForOpponent_host();// put in thread
+                                game.wait_window.dispose();
+                                if(game.iquit)
+                                {
+                                    return;
+                                }
+                                game.setVisible(true);//put in thread
+                            }
+                            else
+                            {
+                                game.waitForOpponent_nothost();// put in thread
+                                game.wait_window.dispose();
+                                game.paintAll(game.getGraphics()); //makes sure to draw the board before triggering the block
+                                game.setVisible(true);//put in thread
+                                System.out.println("waiting for opponents first move");
+                                game.waitForMove();
+                            }
+                        }
+                    }
+                    Thread t = new Thread(new Waiting_handler());
+                    t.start();
+                }
+            });
+        }
+    }//GEN-LAST:event_tictactoe_clicked
+
     private void make_pretty()
     {
         try {
@@ -375,6 +467,7 @@ public class MainMenu extends javax.swing.JPanel {
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
+    private javax.swing.JButton jButton7;
     private javax.swing.JRadioButton locally_radiob;
     private javax.swing.JRadioButton online_radiob;
     private javax.swing.JButton server_button;
