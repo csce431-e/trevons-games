@@ -4,6 +4,7 @@
  */
 package boardgames.tictactoe;
 
+import java.awt.Color;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
@@ -20,8 +21,10 @@ public class TicTacToeGui extends javax.swing.JFrame {
      * Creates new form TicTacToeGui
      */
     TicTacToeGame game;
-    Integer turnCount;
     ArrayList<JButton> buttons;
+    int my_piece;
+    int opponent_piece;
+    int turnCount;
     
      //start0 for online play******************************************************************************************************
     boolean isOnline;
@@ -50,7 +53,6 @@ public class TicTacToeGui extends javax.swing.JFrame {
         buttons.add(jButton7);
         buttons.add(jButton8);
         buttons.add(jButton9);
-        
         //start1 for online play******************************************************************************************************
         isOnline = online;
         if(isOnline)
@@ -58,6 +60,16 @@ public class TicTacToeGui extends javax.swing.JFrame {
             serverIP = ip;
             iquit = false;
             setup_client_socket();
+        }
+        if(myTurn)
+        {
+            my_piece = 0;
+            opponent_piece = 1;
+        }
+        else
+        {
+            opponent_piece = 0;
+            my_piece = 1;
         }
         //end1 for online play*****************************************************************************************
     }
@@ -261,9 +273,8 @@ public class TicTacToeGui extends javax.swing.JFrame {
                 return;
             }
             JButton but = getMoveFromString(msg);
-            make_move(but);
-
             myTurn = true;
+            make_move(but, opponent_piece);
         }
         catch(ClassNotFoundException classNot)
         {
@@ -278,8 +289,8 @@ public class TicTacToeGui extends javax.swing.JFrame {
     //theirs will have to be completely different: some way to parse a string into any possible move
     JButton getMoveFromString(String s)
     {
-        int xpos = Integer.parseInt(s.substring(0, 1));
-        int ypos = Integer.parseInt(s.substring(1, 2));
+        int ypos = Integer.parseInt(s.substring(0, 1));
+        int xpos = Integer.parseInt(s.substring(1, 2));
         
         return get_button(xpos,ypos);
     }
@@ -331,169 +342,85 @@ public class TicTacToeGui extends javax.swing.JFrame {
         return new Coordinate(-1,-1);
     }
     
-    boolean check_win(JButton but, int player)
+    void make_red(JButton one, JButton two, JButton three)
     {
-        Coordinate c = get_coordinate(but);
-        int xpos = c.x;
-        int ypos = c.y;
-        int count = 0;
-        System.out.println(""+c.x + c.y);
+        one.setBackground(Color.red);
+        two.setBackground(Color.red);
+        three.setBackground(Color.red);
+    }
+    
+    boolean check_win()
+    {
+        int xpos = 0;
+        int ypos = 0;
         
-        //horizontal - left  ========================================
-        while(is_valid(xpos,ypos))
+        //horizontal win
+        for(int i = 0; i<TicTacToeGame.BOARDSIZE; i++, ypos++)
         {
-            if(game.board.get(xpos).get(ypos).equals(player))
+            if(is_valid(xpos+1,ypos) && game.board.get(ypos).get(xpos).equals(game.board.get(ypos).get(xpos+1)))
             {
-                xpos--;
-                count++;
-            }
-            else
-            {
-                break;
+                if(is_valid(xpos+2,ypos) && game.board.get(ypos).get(xpos).equals(game.board.get(ypos).get(xpos+2)))
+                {
+                    if(!game.board.get(ypos).get(xpos).equals(-1))
+                    {
+                        make_red(get_button(xpos, ypos), get_button(xpos+1, ypos), get_button(xpos+2, ypos));
+                        return true; 
+                    }
+                }
             }
         }
-        xpos = c.x;
-        ypos = c.y;
-        count--;
-        //horizontal - right
-        while(is_valid(xpos,ypos))
+        
+        xpos = 0;
+        ypos = 0;
+        //vertical win
+        for(int i = 0; i<TicTacToeGame.BOARDSIZE; i++, xpos++)
         {
-            if(game.board.get(xpos).get(ypos).equals(player))
+            if(is_valid(xpos,ypos+1) && game.board.get(ypos).get(xpos).equals(game.board.get(ypos+1).get(xpos)))
             {
-                xpos++;
-                count++;
-            }
-            else
-            {
-                break;
+                if(is_valid(xpos,ypos+2) && game.board.get(ypos).get(xpos).equals(game.board.get(ypos+2).get(xpos)))
+                {
+                    if(!game.board.get(ypos).get(xpos).equals(-1))
+                    {
+                        make_red(get_button(xpos, ypos), get_button(xpos, ypos+1), get_button(xpos, ypos+2));
+                        return true; 
+                    }
+                }
             }
         }
-        if(count >= 3)
+        
+        xpos = 0;
+        ypos = 0;
+        //diagonal from topleft
+        if(is_valid(xpos+1,ypos+1) && game.board.get(ypos).get(xpos).equals(game.board.get(ypos+1).get(xpos+1)))
         {
-            System.err.println("horizontal");
-            return true;
-        }
-            
-        //vertical - up  ========================================
-        xpos = c.x;
-        ypos = c.y;
-        count = 0;
-        while(is_valid(xpos,ypos))
-        {
-            if(game.board.get(xpos).get(ypos).equals(player))
+            if(is_valid(xpos+2,ypos+2) && game.board.get(ypos).get(xpos).equals(game.board.get(ypos+2).get(xpos+2)))
             {
-                ypos--;
-                count++;
-            }
-            else
-            {
-                break;
+                if(!game.board.get(ypos).get(xpos).equals(-1))
+                {
+                    make_red(get_button(xpos, ypos), get_button(xpos+1, ypos+1), get_button(xpos+2, ypos+2));
+                    return true; 
+                }
             }
         }
-        //vertical - dwn
-        xpos = c.x;
-        ypos = c.y;
-        count--;
-        while(is_valid(xpos,ypos))
+        
+        xpos = 2;
+        ypos = 0;
+        //diagonal from topright
+        if(is_valid(xpos-1,ypos+1) && game.board.get(ypos).get(xpos).equals(game.board.get(ypos+1).get(xpos-1)))
         {
-            if(game.board.get(xpos).get(ypos).equals(player))
+            if(is_valid(xpos-2,ypos+2) && game.board.get(ypos).get(xpos).equals(game.board.get(ypos+2).get(xpos-2)))
             {
-                ypos++;;
-                count++;
+                if(!game.board.get(ypos).get(xpos).equals(-1))
+                {
+                    make_red(get_button(xpos, ypos), get_button(xpos-1, ypos+1), get_button(xpos-2, ypos+2));
+                    return true; 
+                }
             }
-            else
-            {
-                break;
-            }
-        }
-        if(count >= 3)
-        {
-            System.err.println("vertical");
-            return true;
-        }
-            
-        //upright  ========================================
-        xpos = c.x;
-        ypos = c.y;
-        count = 0;
-        while(is_valid(xpos,ypos))
-        {
-            if(game.board.get(xpos).get(ypos).equals(player))
-            {
-                xpos++;
-                ypos--;
-                count++;
-            }
-            else
-            {
-                break;
-            }
-        }
-        //downleft
-        xpos = c.x;
-        ypos = c.y;
-        count--;
-        while(is_valid(xpos,ypos))
-        {
-            if(game.board.get(xpos).get(ypos).equals(player))
-            {
-                xpos--;
-                ypos++;
-                count++;
-            }
-            else
-            {
-                break;
-            }
-        }
-        if(count >= 3)
-        {
-            System.err.println("upright");
-            return true;
-        }
-            
-        //upleft  ========================================
-        xpos = c.x;
-        ypos = c.y;
-         count = 0;
-        while(is_valid(xpos,ypos))
-        {
-            if(game.board.get(xpos).get(ypos).equals(player))
-            {
-                xpos--;
-                ypos--;
-                count++;
-            }
-            else
-            {
-                break;
-            }
-        }
-        //downright
-        xpos = c.x;
-        ypos = c.y;
-        count--;
-        while(is_valid(xpos,ypos))
-        {
-            if(game.board.get(xpos).get(ypos).equals(player))
-            {
-                xpos++;
-                ypos++;
-                count++;
-            }
-            else
-            {
-                break;
-            }
-        }
-        if(count >= 3)
-        {
-            System.err.println("downright");
-            return true;
         }
         
         return false;
     }
+    
     
     boolean is_valid(int x, int y)
     {
@@ -512,44 +439,32 @@ public class TicTacToeGui extends javax.swing.JFrame {
         }
     }
     
-    void make_move(JButton but)
+    Coordinate make_move(JButton but, int piece)
     {
+        Coordinate c = get_coordinate(but);
+        //make internal move
+        game.make_move(c.x, c.y, piece);
         
-        if((isOnline && myTurn) || (!isOnline))
+        //update graphics
+        if(piece == 0)
         {
-            Coordinate c = get_coordinate(but);
-            game.make_move(c.x, c.y, turnCount%2);
-            if(turnCount%2 == 0)
-            {
-                but.setText("O");
-                game.board.get(c.x).set(c.y, 0);
-            }
-            else
-            {
-                but.setText("X");
-                game.board.get(c.x).set(c.y, 1);
-            }
-            but.setEnabled(false);
-            //System.out.println(game.board.toString());
-
-            if(check_win(but, turnCount%2))
-            {
-                this.setTitle("WIN!!!");
-                disable_buttons();
-                //this.dispose();
-            }
-
-            turnCount++;
-        }
-        else if(!myTurn)
-        {
-            System.out.println("Waiting for opponent to make a move");
-            
+            but.setText("O");
         }
         else
         {
-            System.out.println("Game is over");
+            but.setText("X");
         }
+        but.setEnabled(false);
+
+        //make sure game is not over
+        if(check_win())
+        {
+            this.setTitle("WIN!!!");
+            disable_buttons();
+            //this.dispose();
+        }
+        turnCount++;
+        return c;
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -573,63 +488,63 @@ public class TicTacToeGui extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton1.setText("1");
+        jButton1.setFont(new java.awt.Font("Tahoma", 0, 60)); // NOI18N
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_clicked(evt);
             }
         });
 
-        jButton2.setText("1");
+        jButton2.setFont(new java.awt.Font("Tahoma", 0, 60)); // NOI18N
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_clicked(evt);
             }
         });
 
-        jButton3.setText("1");
+        jButton3.setFont(new java.awt.Font("Tahoma", 0, 60)); // NOI18N
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_clicked(evt);
             }
         });
 
-        jButton4.setText("1");
+        jButton4.setFont(new java.awt.Font("Tahoma", 0, 60)); // NOI18N
         jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_clicked(evt);
             }
         });
 
-        jButton5.setText("1");
+        jButton5.setFont(new java.awt.Font("Tahoma", 0, 60)); // NOI18N
         jButton5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_clicked(evt);
             }
         });
 
-        jButton6.setText("1");
+        jButton6.setFont(new java.awt.Font("Tahoma", 0, 60)); // NOI18N
         jButton6.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_clicked(evt);
             }
         });
 
-        jButton7.setText("1");
+        jButton7.setFont(new java.awt.Font("Tahoma", 0, 60)); // NOI18N
         jButton7.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_clicked(evt);
             }
         });
 
-        jButton8.setText("1");
+        jButton8.setFont(new java.awt.Font("Tahoma", 0, 60)); // NOI18N
         jButton8.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_clicked(evt);
             }
         });
 
-        jButton9.setText("1");
+        jButton9.setFont(new java.awt.Font("Tahoma", 0, 60)); // NOI18N
         jButton9.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 button_clicked(evt);
@@ -700,9 +615,52 @@ public class TicTacToeGui extends javax.swing.JFrame {
     private void button_clicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_clicked
         // TODO add your handling code here:
         
-        JButton but = (JButton)evt.getSource();
-        
-        make_move(but);
+        if(!isOnline)
+        {
+            JButton but = (JButton)evt.getSource();
+            if(turnCount%2==0)
+            {
+                make_move(but, my_piece);
+            }
+            else
+            {
+                make_move(but, opponent_piece);   
+            }
+        }
+        else if(isOnline && myTurn)
+        {
+            JButton but = (JButton)evt.getSource();
+            Coordinate c;
+            
+            c = make_move(but, my_piece);
+
+            //start3 for online play******************************************************************************************************
+            myTurn = false;
+            sendMessage(""+c.x+c.y);
+
+            class Waiting_for_replay_thread implements Runnable
+             {
+                 @Override
+                 public void run()
+                 {
+                     System.err.println("waiting for opponent now");
+                     waitForMove();
+                     System.err.println("Message recieved");
+                 }
+             }
+             Thread t = new Thread(new Waiting_for_replay_thread());
+             t.start();
+            //end3 for online play******************************************************************************************************
+        }
+        else if(!myTurn)
+        {
+            System.out.println("Waiting for opponent to make a move");
+            
+        }
+        else
+        {
+            System.out.println("Game is over");
+        }
     }//GEN-LAST:event_button_clicked
 
     private void quit_clicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_quit_clicked
