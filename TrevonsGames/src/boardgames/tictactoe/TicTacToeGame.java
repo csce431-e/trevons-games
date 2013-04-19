@@ -20,6 +20,21 @@ public class TicTacToeGame
         set_up_board();
     }
     
+    TicTacToeGame(TicTacToeGame g)
+    {
+        board = new ArrayList<>();
+        set_up_board();
+        
+        for(int i = 0; i< BOARDSIZE; i++)
+        {
+            for(int j = 0; j<BOARDSIZE; j++)
+            {
+                board.get(i).set(j,g.board.get(i).get(j));
+            }   
+        }
+    }
+            
+    
     final void set_up_board()
     {
         for(int i = 0; i< BOARDSIZE; i++)
@@ -33,9 +48,9 @@ public class TicTacToeGame
         }
     }
     
-    void make_move(int x, int y, int player)
+    void make_move(int y, int x, int player)
     {
-        board.get(x).set(y, player);
+        board.get(y).set(x, player);
     }
     
     void unmake_move(int y, int x)
