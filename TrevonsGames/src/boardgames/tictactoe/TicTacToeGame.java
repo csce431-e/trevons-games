@@ -38,6 +38,11 @@ public class TicTacToeGame
         board.get(x).set(y, player);
     }
     
+    void unmake_move(int y, int x)
+    {
+        board.get(y).set(x, -1);
+    }
+    
     @Override
     public String toString()
     {

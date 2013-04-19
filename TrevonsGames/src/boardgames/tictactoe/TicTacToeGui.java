@@ -25,6 +25,8 @@ public class TicTacToeGui extends javax.swing.JFrame {
     int my_piece;
     int opponent_piece;
     int turnCount;
+    int local_opponent;
+    Random rand;
     
      //start0 for online play******************************************************************************************************
     boolean isOnline;
@@ -70,6 +72,26 @@ public class TicTacToeGui extends javax.swing.JFrame {
         {
             opponent_piece = 0;
             my_piece = 1;
+            //disable_buttons();
+            rand = new Random();
+            
+            JButton human = new JButton("VS HUMAN");
+            JButton ai = new JButton("VS COMPUTER");
+            JButton watson = new JButton("VS WATSON");
+            
+            human.setSize(47, 116);
+            ai.setSize(47, 116);
+            watson.setSize(47, 116);
+            
+            human.setLocation(63, 412);
+            ai.setLocation(63, 462);
+            watson.setLocation(63, 512);
+            
+            this.add(human);
+            human.setVisible(true);
+            
+            local_opponent = 2; //will actually be set in the callback of the button "VS WATSON" when it exists
+            //remember to re-enable buttons in all three callbacks and delete all three buttons (and the instruction text that I still need to add)
         }
         //end1 for online play*****************************************************************************************
     }
@@ -431,7 +453,7 @@ public class TicTacToeGui extends javax.swing.JFrame {
         return false;
     }
     
-    void disable_buttons()
+    final void disable_buttons()
     {
         for(int i = 0; i<buttons.size(); i++)
         {
@@ -464,7 +486,166 @@ public class TicTacToeGui extends javax.swing.JFrame {
             //this.dispose();
         }
         turnCount++;
+        get_AI_move();
         return c;
+    }
+    
+    boolean fork_exists(int piece)
+    {
+        int win_count = 0;
+        
+        for(int ypos = 0; ypos<TicTacToeGame.BOARDSIZE; ypos++)
+        {
+            for(int xpos = 0; xpos<TicTacToeGame.BOARDSIZE; xpos++)
+            {
+                if(game.board.get(ypos).get(xpos).equals(-1)) //if open
+                {
+                    //System.err.println("open at: " + xpos+ypos);
+                    game.make_move(ypos, xpos, opponent_piece);
+                    if(check_win())
+                    {
+                        win_count++;
+                        if(win_count >= 2)
+                        {
+                            return true;
+                        }
+                    }
+                    game.unmake_move(ypos, xpos);
+                }
+            }
+        }
+        
+        return false;
+    }
+    
+    Coordinate get_AI_move()
+    {
+        /*Win: If the player has two in a row, they can place a third to get three in a row.
+        Block: If the [opponent] has two in a row, the player must play the third themself to block the opponent.
+        Fork: Creation of an opportunity where the player has two threats to win (two non-blocked lines of 2).
+        Blocking an opponent's fork:
+        Option 1: The player should create two in a row to force the opponent into defending, as long as it doesn't result in them creating a fork. For example, if "X" has a corner, "O" has the center, and "X" has the opposite corner as well, "O" must not play a corner in order to win. (Playing a corner in this scenario creates a fork for "X" to win.)
+        Option 2: If there is a configuration where the opponent can fork, the player should block that fork.
+        Center: A player marks the center. (If it is the first move of the game, playing on a corner gives "O" more opportunities to make a mistake and may therefore be the better choice; however, it makes no difference between perfect players.)
+        Opposite corner: If the opponent is in the corner, the player plays the opposite corner.
+        Empty corner: The player plays in a corner square.
+        Empty side: The player plays in a middle square on any of the 4 sides.*/
+        
+        //iterate through the open spaces checking if placing a piece there would cause me to win
+        for(int ypos = 0; ypos<TicTacToeGame.BOARDSIZE; ypos++)
+        {
+            for(int xpos = 0; xpos<TicTacToeGame.BOARDSIZE; xpos++)
+            {
+                if(game.board.get(ypos).get(xpos).equals(-1)) //if open
+                {
+                    //System.err.println("open at: " + xpos+ypos);
+                    game.make_move(ypos, xpos, opponent_piece);
+                    if(check_win())
+                    {
+                        return new Coordinate(xpos, ypos);
+                    }
+                    game.unmake_move(ypos, xpos);
+                }
+            }
+        }
+        
+        //iterate through open spaces again looking if opponent would win
+        for(int ypos = 0; ypos<TicTacToeGame.BOARDSIZE; ypos++)
+        {
+            for(int xpos = 0; xpos<TicTacToeGame.BOARDSIZE; xpos++)
+            {
+                if(game.board.get(ypos).get(xpos).equals(-1)) //if open
+                {
+                    game.make_move(ypos, xpos, my_piece);
+                    if(check_win())
+                    {
+                        game.unmake_move(ypos, xpos);
+                        return new Coordinate(xpos, ypos);
+                    }
+                    game.unmake_move(ypos, xpos);
+                }
+            }
+        }
+        
+        //iterate through open spaces checking for a fork for me
+        for(int ypos = 0; ypos<TicTacToeGame.BOARDSIZE; ypos++)
+        {
+            for(int xpos = 0; xpos<TicTacToeGame.BOARDSIZE; xpos++)
+            {
+                if(game.board.get(ypos).get(xpos).equals(-1)) //if open
+                {
+                    game.make_move(ypos, xpos, opponent_piece);
+                    if(fork_exists(opponent_piece))
+                    {
+                        game.unmake_move(ypos, xpos);
+                        return new Coordinate(ypos, xpos);
+                    }
+                    game.unmake_move(ypos, xpos);
+                }
+            }
+        }
+        //iterate through open spaces looking for opponent fork of human and doing either option 1 or 2
+        for(int ypos = 0; ypos<TicTacToeGame.BOARDSIZE; ypos++)
+        {
+            for(int xpos = 0; xpos<TicTacToeGame.BOARDSIZE; xpos++)
+            {
+                if(game.board.get(ypos).get(xpos).equals(-1)) //if open
+                {
+                   game.make_move(ypos, xpos, opponent_piece);
+                    if(fork_exists(my_piece))
+                    {
+                        game.unmake_move(ypos, xpos);
+                        return new Coordinate(ypos, xpos);
+                    }
+                    game.unmake_move(ypos, xpos);
+                }
+            }
+        }
+        
+        //play center if free
+        if(game.board.get(1).get(1).equals(-1))
+        {
+            return new Coordinate(1, 1);
+        }
+        
+        //pick an open corner opposite an opponent
+        if(game.board.get(0).get(0).equals(my_piece) && game.board.get(2).get(2).equals(-1))
+        {
+            return new Coordinate(2, 2);
+        }
+        else if(game.board.get(2).get(2).equals(my_piece) && game.board.get(0).get(0).equals(-1))
+        {
+            return new Coordinate(0, 0);
+        }
+        
+        else if(game.board.get(2).get(0).equals(my_piece) && game.board.get(0).get(2).equals(-1))
+        {
+            return new Coordinate(0, 2);
+        }
+        else if(game.board.get(0).get(2).equals(my_piece) && game.board.get(2).get(0).equals(-1))
+        {
+            return new Coordinate(2, 0);
+        }
+        
+        //pick any open corner
+        for(int i = 0; i<buttons.size(); i++)
+        {
+            if(i%2 == 0) //evens are the corners and mid but already checked mid
+            {
+                return get_coordinate(buttons.get(i));
+            }
+        }
+        
+        //pick any open side
+        for(int i = 0; i<buttons.size(); i++)
+        {
+            if(i%2 == 1) //odds are the edges
+            {
+                return get_coordinate(buttons.get(i));
+            }
+        }
+        
+        return new Coordinate(0,0);
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -565,48 +746,48 @@ public class TicTacToeGui extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, 0)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, 0)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, 0)
-                                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, 0)
-                                .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, 0)
-                                .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, 0)
-                                .addComponent(jButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, 0)
+                        .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, 0)
+                        .addComponent(jButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addGap(15, 15, 15))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, 0)
+                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, 0)
+                        .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, 0)
+                        .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                    .addComponent(jButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(42, 42, 42)
+                        .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
 
         pack();
@@ -617,14 +798,46 @@ public class TicTacToeGui extends javax.swing.JFrame {
         
         if(!isOnline)
         {
-            JButton but = (JButton)evt.getSource();
-            if(turnCount%2==0)
+            if(local_opponent==0) //human opponent
             {
-                make_move(but, my_piece);
+                JButton but = (JButton)evt.getSource();
+                if(turnCount%2==0)
+                {
+                    make_move(but, my_piece);
+                }
+                else
+                {
+                    make_move(but, opponent_piece);   
+                }
+            }
+            else if(local_opponent==1) //random AI
+            {
+                JButton but = (JButton)evt.getSource();
+                if(turnCount%2==0)
+                {
+                    make_move(but, my_piece);
+                }
+                else
+                {
+                    make_move(buttons.get(rand.nextInt(buttons.size())), opponent_piece);  
+                }
+            }
+            else if(local_opponent==2) //watson!!
+            {
+                JButton but = (JButton)evt.getSource();
+                if(turnCount%2==0)
+                {
+                    make_move(but, my_piece);
+                }
+                else
+                {
+                    Coordinate ai_move = get_AI_move();
+                    make_move(get_button(ai_move.x, ai_move.y), opponent_piece); 
+                }
             }
             else
             {
-                make_move(but, opponent_piece);   
+                System.err.println("err: local opponent not recognized");
             }
         }
         else if(isOnline && myTurn)
@@ -655,7 +868,6 @@ public class TicTacToeGui extends javax.swing.JFrame {
         else if(!myTurn)
         {
             System.out.println("Waiting for opponent to make a move");
-            
         }
         else
         {
