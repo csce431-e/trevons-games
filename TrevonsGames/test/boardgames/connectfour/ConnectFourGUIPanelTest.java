@@ -37,13 +37,65 @@ public class ConnectFourGUIPanelTest {
     }
 
     /**
-     * Test of playConnect method, of class ConnectFourGUIPanel.
+     * Test of sendMessage method, of class ConnectFourGUIPanel.
      */
     @Test
-    public void testPlayConnect() {
-        System.out.println("playConnect");
-        ConnectFourGUIPanel instance = new ConnectFourGUIPanel();
-        instance.playConnect();
+    public void testSendMessage() {
+        System.out.println("sendMessage");
+        String msg = "";
+        ConnectFourGUIPanel instance = null;
+        instance.sendMessage(msg);
+        // TODO review the generated test code and remove the default call to fail.
+        //fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of waitForOpponent_nothost method, of class ConnectFourGUIPanel.
+     */
+    @Test
+    public void testWaitForOpponent_nothost() {
+        System.out.println("waitForOpponent_nothost");
+        ConnectFourGUIPanel instance = null;
+        instance.waitForOpponent_nothost();
+        // TODO review the generated test code and remove the default call to fail.
+        //fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of waitForOpponent_host method, of class ConnectFourGUIPanel.
+     */
+    @Test
+    public void testWaitForOpponent_host() {
+        System.out.println("waitForOpponent_host");
+        ConnectFourGUIPanel instance = null;
+        instance.waitForOpponent_host();
+        // TODO review the generated test code and remove the default call to fail.
+        //fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of waitForMove method, of class ConnectFourGUIPanel.
+     */
+    @Test
+    public void testWaitForMove() {
+        System.out.println("waitForMove");
+        ConnectFourGUIPanel instance = null;
+        instance.waitForMove();
+        // TODO review the generated test code and remove the default call to fail.
+        //fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of getMoveFromString method, of class ConnectFourGUIPanel.
+     */
+    @Test
+    public void testGetMoveFromString() {
+        System.out.println("getMoveFromString");
+        String s = "";
+        ConnectFourGUIPanel instance = null;
+        int expResult = 0;
+        int result = instance.getMoveFromString(s);
+        assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");
     }
