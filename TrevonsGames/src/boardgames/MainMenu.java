@@ -424,8 +424,63 @@ public class MainMenu extends javax.swing.JPanel {
 
     private void BattleshipClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BattleshipClicked
         // TODO add your handling code here:
-        BattleShipGUI b = new BattleShipGUI();
-        b.playGame();
+        if(locally_radiob.isSelected())  //local play
+        {
+            java.awt.EventQueue.invokeLater(new Runnable() 
+            {
+                @Override
+                public void run() 
+                {
+                    BattleShipGUI game = new BattleShipGUI(false, new byte[] {}); //2 params, whether or not it's online and the ip addr
+                    game.setVisible(true);
+                    game.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    game.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+                }
+            });
+        }
+        else //online play
+        {
+            java.awt.EventQueue.invokeLater(new Runnable() 
+            {
+                @Override
+                public void run() 
+                {
+                    final BattleShipGUI game = new BattleShipGUI(true, get_ip_array(ip_input_box.getText()));
+                    game.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    game.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+                    
+                    class Waiting_handler implements Runnable
+                    {
+                        @Override
+                        public void run()
+                        {
+                            
+                            if(game.myTurn)
+                            {
+                                game.waitForOpponent_host();// put in thread
+                                game.wait_window.dispose();
+                                if(game.iquit)
+                                {
+                                    return;
+                                }
+                                game.setVisible(true);//put in thread
+                            }
+                            else
+                            {
+                                game.waitForOpponent_nothost();// put in thread
+                                game.wait_window.dispose();
+                                game.paintAll(game.getGraphics()); //makes sure to draw the board before triggering the block
+                                game.setVisible(true);//put in thread
+                                System.out.println("waiting for opponents first move");
+                                game.waitForMove();
+                            }
+                        }
+                    }
+                    Thread t = new Thread(new Waiting_handler());
+                    t.start();
+                }
+            });
+        }
     }//GEN-LAST:event_BattleshipClicked
 
     private void serverClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_serverClicked
