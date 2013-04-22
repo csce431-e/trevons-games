@@ -75,22 +75,7 @@ public class MainMenu extends javax.swing.JPanel {
             return null;
         }
     }
-    
-    public void removeMinMaxClose(Component comp)  
-    {  
-        if(comp instanceof AbstractButton)  
-        {  
-            comp.getParent().remove(comp);  
-        }  
-        if(comp instanceof Container)  
-        {  
-            Component[] comps = ((Container)comp).getComponents();  
-            for(int x = 0, y = comps.length; x < y; x++)  
-            {  
-                removeMinMaxClose(comps[x]);  
-            }  
-        }  
-    }  
+   
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -356,6 +341,7 @@ public class MainMenu extends javax.swing.JPanel {
                     ConnectFourGUIPanel game = new ConnectFourGUIPanel(false, new byte[] {}); //2 params, whether or not it's online and the ip addr
                     game.setVisible(true);
                     game.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    game.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
                 }
             });
         }
@@ -368,6 +354,7 @@ public class MainMenu extends javax.swing.JPanel {
                 {
                     final ConnectFourGUIPanel game = new ConnectFourGUIPanel(true, get_ip_array(ip_input_box.getText()));
                     game.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    game.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
                     
                     class Waiting_handler implements Runnable
                     {
