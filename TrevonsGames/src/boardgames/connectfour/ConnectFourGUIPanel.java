@@ -276,11 +276,36 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 this.dispose();
                 return;
             }
+            
             Integer otherPlayerMove = getMoveFromString(msg);
-            cfBoard.move(otherPlayerMove, cfBoard.getTurn());
+            cfBoard.move(cfBoard.getTurn(), otherPlayerMove);
 
-            updateBoard(otherPlayerMove, cfBoard.getTurn());
+            System.out.println("Turn number: " + cfBoard.getTurn());
+            
+            updateBoard(otherPlayerMove, cfBoard.getTurn()+1);
+            
+            winner = cfBoard.win();
+            if(winner==1) {
+                winnerButton.setBackground(Color.BLACK);
+                jTextField1.setText("Game Over! Black won!");
+                System.out.println("Game Over! Black won!");
+                gameIsOver = disableButtons = true;
+            }
+            if(winner==2) {
+                winnerButton.setBackground(Color.RED);
+                jTextField1.setText("Game over! Red won!");
+                System.out.println("Game over! Red won!");
+                gameIsOver = disableButtons = true;
+            }
+            
+            if(cfBoard.checkFull()) {
+                jTextField1.setText("Game over! Tie game!");
+                System.out.println("Game over! No moves left! It's a tie!");
+                gameIsOver = disableButtons = true;
+            }
+            
             myTurn = true;
+            
         }
         catch(ClassNotFoundException classNot)
         {
@@ -1195,13 +1220,13 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
 
     private void col1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_col1ActionPerformed
         // TODO add your handling code here:
-        if(!gameIsOver && !disableButtons) {
+        if(!gameIsOver && !disableButtons && (isOnline && myTurn) || !isOnline) {
             column = 1;
             int turn = cfBoard.getTurn();
             cfBoard.move(turn, column);
             updateBoard(column, turn);
         
-                        //start3 for online play******************************************************************************************************
+            //start3 for online play******************************************************************************************************
             if(isOnline)
             {
                 myTurn = false;
@@ -1246,7 +1271,7 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
 
     private void col2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_col2ActionPerformed
         // TODO add your handling code here:
-        if(!gameIsOver && !disableButtons) {
+        if(!gameIsOver && !disableButtons && (isOnline && myTurn) || !isOnline) {
             column = 2;
             int turn = cfBoard.getTurn();
             cfBoard.move(turn, column);
@@ -1298,7 +1323,7 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
 
     private void col3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_col3ActionPerformed
         // TODO add your handling code here:
-        if(!gameIsOver && !disableButtons) {
+        if(!gameIsOver && !disableButtons && (isOnline && myTurn) || !isOnline) {
             column = 3;
             int turn = cfBoard.getTurn();
             cfBoard.move(turn, column);
@@ -1350,7 +1375,7 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
 
     private void col4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_col4ActionPerformed
         // TODO add your handling code here:
-        if(!gameIsOver && !disableButtons) {
+        if(!gameIsOver && !disableButtons && (isOnline && myTurn) || !isOnline) {
             column = 4;
             int turn = cfBoard.getTurn();
             cfBoard.move(turn, column);
@@ -1402,7 +1427,7 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
 
     private void col5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_col5ActionPerformed
         // TODO add your handling code here:
-        if(!gameIsOver && !disableButtons) {
+        if(!gameIsOver && !disableButtons && (isOnline && myTurn) || !isOnline) {
             column = 5;
             int turn = cfBoard.getTurn();
             cfBoard.move(turn, column);
@@ -1454,7 +1479,7 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
 
     private void col6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_col6ActionPerformed
         // TODO add your handling code here:
-        if(!gameIsOver && !disableButtons) {
+        if(!gameIsOver && !disableButtons && (isOnline && myTurn) || !isOnline) {
             column = 6;
             int turn = cfBoard.getTurn();
             cfBoard.move(turn, column);
@@ -1507,7 +1532,7 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
 
     private void col7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_col7ActionPerformed
         // TODO add your handling code here:
-        if(!gameIsOver && !disableButtons) {
+        if(!gameIsOver && !disableButtons && (isOnline && myTurn) || !isOnline) {
             column = 7;
             int turn = cfBoard.getTurn();
             cfBoard.move(turn, column);
