@@ -277,6 +277,7 @@ public class CheckersGUI extends javax.swing.JFrame {
 
                 myTurn = true;
                 System.out.println("its my turn");
+                statusTextArea.setText("its my turn");
             }
             else
             {
@@ -284,6 +285,7 @@ public class CheckersGUI extends javax.swing.JFrame {
                 disableButtons = true;
                 myTurn = false; 
                 System.out.println("its NOT my turn");
+                statusTextArea.setText("its NOT my turn");
             }
         }
         catch(ConnectException ce)
@@ -409,9 +411,13 @@ public class CheckersGUI extends javax.swing.JFrame {
         //wait for your turn, continuously ask for msg from in till you get it
         try
         {
+            
+            disableButtons = true;
+            //removeActionListenerFromButtons();
             System.out.println("Waiting for move");
             String msg = (String)in.readObject();
             System.out.println("Message received: "+msg);
+            
             
             if(msg.equals("quit"))
             {
@@ -419,7 +425,7 @@ public class CheckersGUI extends javax.swing.JFrame {
                 JButton accept = new JButton("OK");
                 accept.addActionListener(new ActionListener() {
                     @Override
-                    public void actionPerformed(ActionEvent e) {
+                    public void actionPerformed(ActionEvent e) { 
                         quit_window.dispose();
 
                     }
@@ -434,8 +440,10 @@ public class CheckersGUI extends javax.swing.JFrame {
             
             CheckersMove otherPlayerMove = getMoveFromString(msg);
             game.b.makeMove(otherPlayerMove);
+            //addActionListenerToButtons();
             updateBoard();
             game.turn = game.turn.opposite();
+            //setTurnButton();
             myTurn = true;
             disableButtons = false;
         }
@@ -518,6 +526,23 @@ public class CheckersGUI extends javax.swing.JFrame {
                         actionHandler(evt);
                     }
                 });
+            }
+        }
+    }
+    
+    void removeActionListenerFromButtons()
+    {
+        //Start button
+        startButton.removeActionListener(startButton.getActionListeners()[0]);
+        //ShowMoves button
+        showMovesButton.removeActionListener(showMovesButton.getActionListeners()[0]);
+        
+        //CheckersBoard buttons
+        for(ArrayList<JButton> row: guiBoard)
+        {
+            for(JButton j: row)
+            {
+                j.removeActionListener(j.getActionListeners()[0]);
             }
         }
     }
@@ -761,6 +786,17 @@ public class CheckersGUI extends javax.swing.JFrame {
         }
     }
     
+    public void setTurnButton()
+    {
+        if(game.turn == Owner.PLAYER1)
+        {
+            jButton65.setBackground(Color.BLACK);
+        }
+        else if(game.turn == Owner.PLAYER2)
+        {
+            jButton65.setBackground(Color.RED);
+        }
+    }
   
     
     public void switchTurns(CheckersMove moveToSend)
@@ -769,14 +805,7 @@ public class CheckersGUI extends javax.swing.JFrame {
         {
             game.turn = game.turn.opposite();
             game.turnCompleted = false;
-            if(game.turn == Owner.PLAYER1)
-            {
-                jButton65.setBackground(Color.BLACK);
-            }
-            else if(game.turn == Owner.PLAYER2)
-            {
-                jButton65.setBackground(Color.RED);
-            }
+            setTurnButton();
             //start3 for online play******************************************************************************************************
             if(isOnline)
             {
