@@ -947,11 +947,19 @@ public class TicTacToeGui extends javax.swing.JFrame {
             {
                 JButton but = (JButton)evt.getSource();
                 make_move(but, my_piece);
-                    if(turnCount >= 8)
-                    {
-                        return;
-                    }
-                    make_move(buttons.get(rand.nextInt(buttons.size())), opponent_piece);  
+                if(turnCount >= 8)
+                {
+                    return;
+                }
+                
+                int i = rand.nextInt(buttons.size());
+                Coordinate c = get_coordinate(buttons.get(i));
+                while(!game.board.get(c.x).get(c.y).equals(-1))
+                {
+                    i = rand.nextInt(buttons.size());
+                    c = get_coordinate(buttons.get(i));
+                }
+                make_move(buttons.get(i), opponent_piece);  
             }
             else if(local_opponent==2) //watson!!
             {
