@@ -277,9 +277,31 @@ public class ConnectFourGUIPanel extends javax.swing.JFrame {
                 return;
             }
             Integer otherPlayerMove = getMoveFromString(msg);
-            cfBoard.move(otherPlayerMove, cfBoard.getTurn());
+            cfBoard.move(cfBoard.getTurn(), otherPlayerMove);
 
-            updateBoard(otherPlayerMove, cfBoard.getTurn());
+            System.out.println("Turn number: " + cfBoard.getTurn());
+            
+            updateBoard(otherPlayerMove, cfBoard.getTurn()+1);
+            
+            winner = cfBoard.win();
+            if(winner==1) {
+                winnerButton.setBackground(Color.BLACK);
+                jTextField1.setText("Game Over! Black won!");
+                System.out.println("Game Over! Black won!");
+                gameIsOver = disableButtons = true;
+            }
+            if(winner==2) {
+                winnerButton.setBackground(Color.RED);
+                jTextField1.setText("Game over! Red won!");
+                System.out.println("Game over! Red won!");
+                gameIsOver = disableButtons = true;
+            }
+            
+            if(cfBoard.checkFull()) {
+                jTextField1.setText("Game over! Tie game!");
+                System.out.println("Game over! No moves left! It's a tie!");
+                gameIsOver = disableButtons = true;
+            }
             myTurn = true;
         }
         catch(ClassNotFoundException classNot)
