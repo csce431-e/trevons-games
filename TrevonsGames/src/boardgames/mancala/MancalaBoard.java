@@ -48,6 +48,10 @@ public class MancalaBoard {
         }
     }
     
+    public int play(MancalaMove) {
+        
+    }
+    
     public int play(int p, int c, int r) {
         int validMove = 0;
         int i=c;
