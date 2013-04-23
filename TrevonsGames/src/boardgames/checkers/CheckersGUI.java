@@ -99,6 +99,18 @@ public class CheckersGUI extends javax.swing.JFrame {
         game.initCheckers(true);
         guiBoard = new ArrayList<ArrayList<JButton>>();
         
+        BOARDSIZE = 8;
+        firstSelection = true;
+        game.turn = Owner.PLAYER2;
+        game.turnCompleted = false;
+        game.AI = false;
+        disableButtons = true;
+        gameStarted = false;
+        showMoves = false;
+        startButton.requestFocus();
+        init_buttons();
+        updateBoard();
+        
         //start1 for online play******************************************************************************************************
         isOnline = online;
         if(isOnline)
@@ -109,17 +121,7 @@ public class CheckersGUI extends javax.swing.JFrame {
         }
         //end1 for online play******************************************************************************************************
         
-        BOARDSIZE = 8;
-        firstSelection = true;
-        game.turn = Owner.PLAYER1;
-        game.turnCompleted = false;
-        game.AI = false;
-        disableButtons = true;
-        gameStarted = false;
-        showMoves = false;
-        startButton.requestFocus();
-        init_buttons();
-        updateBoard();
+        
     }
      
     public CheckersGUI()
@@ -248,6 +250,8 @@ public class CheckersGUI extends javax.swing.JFrame {
 
             if(msg.equals("waiting"))
             {
+                game.turn = Owner.PLAYER1;
+                
                 System.out.println("waiting for \"starting\"");
 
                 //create window
@@ -276,6 +280,8 @@ public class CheckersGUI extends javax.swing.JFrame {
             }
             else
             {
+                game.turn = Owner.PLAYER1;
+                disableButtons = true;
                 myTurn = false; 
                 System.out.println("its NOT my turn");
             }
@@ -425,10 +431,13 @@ public class CheckersGUI extends javax.swing.JFrame {
                 this.dispose();
                 return;
             }
+            
             CheckersMove otherPlayerMove = getMoveFromString(msg);
             game.b.makeMove(otherPlayerMove);
             updateBoard();
+            game.turn = game.turn.opposite();
             myTurn = true;
+            disableButtons = false;
         }
         catch(ClassNotFoundException classNot)
         {
@@ -656,9 +665,19 @@ public class CheckersGUI extends javax.swing.JFrame {
     
     private void startHandler(java.awt.event.ActionEvent evt)
     {
-        disableButtons = false;
+        if(!isOnline || game.turn == Owner.PLAYER1)
+        {
+            disableButtons = false;
+        }
         statusThread = new StatusUpdate();
-        jButton65.setBackground(Color.BLACK);
+        if(game.turn == Owner.PLAYER1)
+        {
+            jButton65.setBackground(Color.BLACK);
+        }
+        else if(game.turn == Owner.PLAYER2)
+        {
+            jButton65.setBackground(Color.RED);
+        }
         (new Thread(statusThread)).start();
     }
     
@@ -740,7 +759,6 @@ public class CheckersGUI extends javax.swing.JFrame {
                 firstSelection = true;
             }
         }
-        
     }
     
   
@@ -763,7 +781,7 @@ public class CheckersGUI extends javax.swing.JFrame {
             if(isOnline)
             {
                myTurn = false;
-              
+               disableButtons = true;
                sendMessage(moveToSend.toString());
 
                class Waiting_for_replay_thread implements Runnable
