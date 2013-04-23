@@ -34,7 +34,7 @@ public class Ship {
     };
     
     static class point{
-        int x, y;
+        Integer x, y;
         
         public point(){
             x=0;
