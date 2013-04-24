@@ -21,6 +21,34 @@ public class CheckersBoard {
     public CheckersGame currentGame;
     public boolean anotherJump;
     public boolean gameOver;
+    public ArrayList<CheckersCell> p1Pieces;
+    public ArrayList<CheckersCell> p2Pieces;
+    
+    public void storePlayerPieces()
+    {
+        p1Pieces = Owner.PLAYER1.pieces;
+        p2Pieces = Owner.PLAYER2.pieces;
+    }
+    
+    public void clearPlayerPieces()
+    {
+        Owner.PLAYER1.pieces.clear();
+        Owner.PLAYER2.pieces.clear();
+    }
+    
+    public void loadPlayerPieces()
+    {
+        Owner.PLAYER1.pieces = new ArrayList<CheckersCell>(Owner.PLAYER1.pieces.size());
+        Owner.PLAYER2.pieces = new ArrayList<CheckersCell>(Owner.PLAYER2.pieces.size());
+        if(p1Pieces!=null)
+        {
+            Owner.PLAYER1.pieces = p1Pieces;
+        }
+        if(p2Pieces!=null)
+        {
+            Owner.PLAYER2.pieces = p1Pieces;
+        }
+    }
     
     public CheckersBoard()
     {

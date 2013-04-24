@@ -392,6 +392,7 @@ public class MainMenu extends javax.swing.JPanel {
 
     private void CheckersClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckersClicked
         
+        make_pretty();
         if(locally_radiob.isSelected())  //local play
         {
             java.awt.EventQueue.invokeLater(new Runnable() 
@@ -399,7 +400,8 @@ public class MainMenu extends javax.swing.JPanel {
                 @Override
                 public void run() 
                 {
-                    CheckersGUI game = new CheckersGUI(false, new byte[] {}); //2 params, whether or not it's online and the ip addr
+                    //CheckersGUI game = new CheckersGUI(false, new byte[] {}); //2 params, whether or not it's online and the ip addr
+                    CheckersGUI game = new CheckersGUI();
                     game.setVisible(true);
                     game.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 }

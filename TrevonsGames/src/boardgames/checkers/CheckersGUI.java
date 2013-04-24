@@ -275,6 +275,7 @@ public class CheckersGUI extends javax.swing.JFrame {
                 wait_window.paintAll(wait_window.getGraphics());
                 //window done
 
+                disableButtons = false;
                 myTurn = true;
                 System.out.println("its my turn");
                 statusTextArea.setText("its my turn");
@@ -418,7 +419,6 @@ public class CheckersGUI extends javax.swing.JFrame {
             String msg = (String)in.readObject();
             System.out.println("Message received: "+msg);
             
-            
             if(msg.equals("quit"))
             {
                 final JFrame quit_window = new JFrame("Your opponent has quit");
@@ -439,6 +439,7 @@ public class CheckersGUI extends javax.swing.JFrame {
             }
             
             CheckersMove otherPlayerMove = getMoveFromString(msg);
+            game.b.loadPlayerPieces();
             game.b.makeMove(otherPlayerMove);
             //addActionListenerToButtons();
             updateBoard();
@@ -690,7 +691,7 @@ public class CheckersGUI extends javax.swing.JFrame {
     
     private void startHandler(java.awt.event.ActionEvent evt)
     {
-        if(!isOnline || game.turn == Owner.PLAYER1)
+        if(!isOnline)
         {
             disableButtons = false;
         }
@@ -723,7 +724,6 @@ public class CheckersGUI extends javax.swing.JFrame {
             {
                 source = destination;
                 firstSelection = false;
-                
             }
 
             if(firstSelection && c.getOwner() != Owner.EMPTY)
@@ -804,8 +804,10 @@ public class CheckersGUI extends javax.swing.JFrame {
         if(game.turnCompleted)
         {
             game.turn = game.turn.opposite();
+            game.b.storePlayerPieces();
+            //game.b.clearPlayerPieces();
             game.turnCompleted = false;
-            setTurnButton();
+            //setTurnButton();
             //start3 for online play******************************************************************************************************
             if(isOnline)
             {
