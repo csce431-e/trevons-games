@@ -11,6 +11,8 @@ import java.io.*;
 import java.net.*;
 import javax.swing.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 //import java.net.ConnectException;
 
@@ -34,6 +36,7 @@ public class MancalaGUI extends javax.swing.JFrame {
     boolean isOnline;
     byte [] serverIP;
     public boolean myTurn;
+    public int myPlayerNum;
     Socket requestSocket;
     ObjectOutputStream out;
     ObjectInputStream in;
@@ -80,7 +83,7 @@ public class MancalaGUI extends javax.swing.JFrame {
         turnOver = 0;
 
         disableButtons();
-        updateBoard();
+        //updateBoard();
         
         //start1 for online play******************************************************************************************************
         isOnline = online;
@@ -112,7 +115,7 @@ public class MancalaGUI extends javax.swing.JFrame {
             out.writeObject("man");
             System.out.println("waiting for response from server");
             String msg = (String)in.readObject(); //waiting or starting
-            System.out.println("readin: "+ msg);
+            System.out.println("reading: "+ msg);
 
             if(msg.equals("waiting"))
             {
@@ -140,13 +143,19 @@ public class MancalaGUI extends javax.swing.JFrame {
                 //window done
 
                 myTurn = true;
+                jTextField1.setText("it's my turn");
+                myPlayerNum = 1;
                 System.out.println("its my turn");
             }
             else
             {
-                myTurn = false; 
+                myTurn = false;
+                jTextField1.setText("it's NOT my turn");
+                myPlayerNum = 2;
                 System.out.println("its NOT my turn");
             }
+            updateBoard();
+            jTextField2.setText("You are player "+myPlayerNum);
         }
         catch(ConnectException ce)
         {
@@ -296,10 +305,10 @@ public class MancalaGUI extends javax.swing.JFrame {
             MancalaMove otherPlayerMove = getMoveFromString(msg);
             board.play(otherPlayerMove);
 
-            firstChoice = buts.get((-otherPlayerMove.src.y)+3).get((otherPlayerMove.src.x)+3);
+            /*firstChoice = buts.get((-otherPlayerMove.src.y)+3).get((otherPlayerMove.src.x)+3);
             middleButton = buts.get((-otherPlayerMove.middle.y)+3).get((otherPlayerMove.middle.x)+3);
             JButton clicked = buts.get((-otherPlayerMove.dest.y)+3).get((otherPlayerMove.dest.x)+3);
-            apply_move_to_graphics(clicked);
+            apply_move_to_graphics(clicked);*/
             myTurn = true;
         }
         catch(ClassNotFoundException classNot)
@@ -316,29 +325,16 @@ public class MancalaGUI extends javax.swing.JFrame {
     MancalaMove getMoveFromString(String s)
     {
         int pfromstring = Integer.parseInt(s.substring(0,1));
-        int cfromstring = Integer.parseInt(s.substring(0,1));
-        int rfromstring = Integer.parseInt(s.substring(0,1));
-        int srcx = Integer.parseInt(s.substring(0, 2));
-        int srcy = Integer.parseInt(s.substring(2, 4));
-        int destx = Integer.parseInt(s.substring(4, 6));
-        int desty = Integer.parseInt(s.substring(6, 8));
-        int midx = Integer.parseInt(s.substring(8, 10));
-        int midy = Integer.parseInt(s.substring(10, 12));
-        //handle negative numbers
-        srcx-=20;
-        srcy-=20;
-        destx-=20;
-        desty-=20;
-        midx-=20;
-        midy-=20;
+        int cfromstring = Integer.parseInt(s.substring(1,2));
+        int rfromstring = Integer.parseInt(s.substring(2,3));
         
         //break the string into the 3 coordinates
-        SolitaireCoordinate src = new SolitaireCoordinate(srcx,srcy,true,true);
+        /*SolitaireCoordinate src = new SolitaireCoordinate(srcx,srcy,true,true);
         SolitaireCoordinate dest = new SolitaireCoordinate(destx,desty,true,true);
         SolitaireCoordinate mid = new SolitaireCoordinate(midx,midy,true,true);
         //set the parts of a local move to the 3 coordinates
-        SolitaireMove otherPlayerMove = new SolitaireMove(src,dest,mid);
-        return otherPlayerMove;
+        SolitaireMove otherPlayerMove = new SolitaireMove(src,dest,mid);*/
+        return new MancalaMove(pfromstring,cfromstring,rfromstring);//otherPlayerMove;
     }
     //end2 for online play******************************************************************************************************
     

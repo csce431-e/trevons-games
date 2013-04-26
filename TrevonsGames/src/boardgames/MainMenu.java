@@ -423,7 +423,7 @@ public class MainMenu extends javax.swing.JPanel {
                 public void run() 
                 {
                     final MancalaGUI game = new MancalaGUI(true, get_ip_array(ip_input_box.getText()));
-                    g.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    game.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                     
                     class Waiting_handler implements Runnable
                     {
