@@ -439,7 +439,7 @@ public class CheckersGUI extends javax.swing.JFrame {
             }
             
             CheckersMove otherPlayerMove = getMoveFromString(msg);
-            game.b.loadPlayerPieces();
+            //game.b.loadPlayerPieces();
             game.b.makeMove(otherPlayerMove);
             //addActionListenerToButtons();
             updateBoard();
@@ -804,7 +804,7 @@ public class CheckersGUI extends javax.swing.JFrame {
         if(game.turnCompleted)
         {
             game.turn = game.turn.opposite();
-            game.b.storePlayerPieces();
+            //game.b.storePlayerPieces();
             //game.b.clearPlayerPieces();
             game.turnCompleted = false;
             //setTurnButton();
