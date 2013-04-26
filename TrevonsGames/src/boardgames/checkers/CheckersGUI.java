@@ -4,12 +4,24 @@
  */
 package boardgames.checkers;
 
+import boardgames.pegSolitaire.SolitaireCoordinate;
+import boardgames.pegSolitaire.SolitaireMove;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.ConnectException;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 
 
 /**
@@ -21,6 +33,17 @@ public class CheckersGUI extends javax.swing.JFrame {
     /**
      * Creates new form CheckersGUI
      */
+    
+    //start0 for online play******************************************************************************************************
+    boolean isOnline;
+    byte [] serverIP;
+    public boolean myTurn;
+    Socket requestSocket;
+    ObjectOutputStream out;
+    ObjectInputStream in;
+    public boolean iquit;
+    public final JFrame wait_window = new JFrame("Waiting for an opponent");
+    //end0 for online play******************************************************************************************************
     
     CheckersGame game;
     int BOARDSIZE;
@@ -69,17 +92,50 @@ public class CheckersGUI extends javax.swing.JFrame {
         
     }
     
+     public CheckersGUI(boolean online, byte[] ip)
+    {
+        initComponents();
+        game = new CheckersGame();
+        game.initCheckers(true);
+        guiBoard = new ArrayList<ArrayList<JButton>>();
+        
+        BOARDSIZE = 8;
+        firstSelection = true;
+        game.turn = Owner.PLAYER2;
+        game.turnCompleted = false;
+        game.AI = false;
+        disableButtons = true;
+        gameStarted = false;
+        showMoves = false;
+        startButton.requestFocus();
+        init_buttons();
+        updateBoard();
+        
+        //start1 for online play******************************************************************************************************
+        isOnline = online;
+        if(isOnline)
+        {
+            serverIP = ip;
+            iquit = false;
+            setup_client_socket();
+        }
+        //end1 for online play******************************************************************************************************
+        
+        
+    }
+     
     public CheckersGUI()
     {
         initComponents();
         game = new CheckersGame();
         game.initCheckers(true);
         guiBoard = new ArrayList<ArrayList<JButton>>();
+        
         BOARDSIZE = 8;
         firstSelection = true;
         game.turn = Owner.PLAYER1;
         game.turnCompleted = false;
-        game.AI = true;
+        game.AI = false;
         disableButtons = true;
         gameStarted = false;
         showMoves = false;
@@ -172,6 +228,271 @@ public class CheckersGUI extends javax.swing.JFrame {
         addActionListenerToButtons();
     }
     
+    
+    //start2 for online play******************************************************************************************************
+    private void setup_client_socket()
+    {
+        try
+        {
+            System.out.println("Setting up client socket");
+            final InetAddress addr = InetAddress.getByAddress(serverIP);
+            //if you request a socket to a nonexistent addr, then
+            requestSocket = new Socket(addr, 2008);
+            
+            out = new ObjectOutputStream(requestSocket.getOutputStream());
+            out.flush();
+            in = new ObjectInputStream(requestSocket.getInputStream());
+            
+            out.writeObject("checkers");
+            System.out.println("waiting for response from server");
+            String msg = (String)in.readObject(); //waiting or starting
+            System.out.println("readin: "+ msg);
+
+            if(msg.equals("waiting"))
+            {
+                game.turn = Owner.PLAYER1;
+                
+                System.out.println("waiting for \"starting\"");
+
+                //create window
+
+                wait_window.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+                JButton accept = new JButton("CANCEL");
+
+                accept.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) 
+                    {
+                        iquit = true;
+                        wait_window.dispose();
+                    }
+                });
+
+                wait_window.add(accept);
+                wait_window.setLocation(300, 300);
+                wait_window.setSize(400, 200);
+                wait_window.setVisible(true);
+                wait_window.paintAll(wait_window.getGraphics());
+                //window done
+
+                disableButtons = false;
+                myTurn = true;
+                System.out.println("its my turn");
+                statusTextArea.setText("its my turn");
+            }
+            else
+            {
+                game.turn = Owner.PLAYER1;
+                disableButtons = true;
+                myTurn = false; 
+                System.out.println("its NOT my turn");
+                statusTextArea.setText("its NOT my turn");
+            }
+        }
+        catch(ConnectException ce)
+        {
+            System.err.println("Connection timed out - invalid ip most like");
+            final JFrame quit_window = new JFrame("Unable to connect to given IP");
+            JButton accept = new JButton("OK");
+            accept.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    quit_window.dispose();
+
+                }
+            });
+            quit_window.add(accept);
+            quit_window.setLocation(300, 300);
+            quit_window.setSize(400, 200);
+            quit_window.setVisible(true);
+            this.dispose();
+        }
+        catch(ClassNotFoundException classNot)
+        { 
+            System.err.println("data received in unknown format"); 
+        }
+        catch(UnknownHostException unknownHost)
+        {
+            System.err.println("You are trying to connect to an unknown host!");
+            final JFrame quit_window = new JFrame("Unable to connect to given IP - Unknown Host");
+            JButton accept = new JButton("OK");
+            accept.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    quit_window.dispose();
+
+                }
+            });
+            quit_window.add(accept);
+            quit_window.setLocation(300, 300);
+            quit_window.setSize(400, 200);
+            quit_window.setVisible(true);
+            this.dispose();
+        }
+        catch(IOException ioException)
+        {
+            ioException.printStackTrace();
+        }
+    }
+    
+    //copy directly
+    void sendMessage(String msg)
+    {
+        try
+        {
+            out.writeObject(msg);
+            out.flush();
+            System.out.println("client>" + msg);
+        }
+        catch(IOException ioException)
+        {
+            ioException.printStackTrace();
+        }
+    }
+
+    public void waitForOpponent_nothost()
+    {
+        try
+        {
+            System.out.println("blocking in nothost");
+            String msg = (String)in.readObject();
+            System.out.println(msg); //should be connection successful, shold only print when BOTH are connected   
+        }
+        catch(IOException e)
+        {
+           //System.out.println("IOexception in waiting for opponent");
+            e.printStackTrace();
+        }
+        catch(ClassNotFoundException e)
+        {
+            //System.out.println("class not found in waiting for opponent");
+            e.printStackTrace();
+        }
+    }
+    
+    public void waitForOpponent_host()
+    {
+        try
+        {
+             //****put the quit window here**
+            System.out.println("blocking in host didyouquit");
+            String msg = (String)in.readObject(); //should be didyouquit
+            System.out.println(msg);
+            
+            if(iquit)
+            {
+                out.writeObject("yes");
+                
+                return; //you quit so no reason to continue
+            }
+            else
+            {
+                out.writeObject("no");
+            }
+            
+            System.out.println("blocking in host for game start");
+            msg = (String)in.readObject();
+            System.out.println(msg); //should be connection successful, shold only print when BOTH are connected   
+        }
+        catch(IOException e)
+        {
+           //System.out.println("IOexception in waiting for opponent");
+            e.printStackTrace();
+        }
+        catch(ClassNotFoundException e)
+        {
+            //System.out.println("class not found in waiting for opponent");
+            e.printStackTrace();
+        }
+    }
+    
+    //only difference is how to actually make the move received and apply to graphics
+    public void waitForMove()
+    {
+        //wait for your turn, continuously ask for msg from in till you get it
+        try
+        {
+            
+            disableButtons = true;
+            //removeActionListenerFromButtons();
+            System.out.println("Waiting for move");
+            String msg = (String)in.readObject();
+            System.out.println("Message received: "+msg);
+            
+            if(msg.equals("quit"))
+            {
+                final JFrame quit_window = new JFrame("Your opponent has quit");
+                JButton accept = new JButton("OK");
+                accept.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) { 
+                        quit_window.dispose();
+
+                    }
+                });
+                quit_window.add(accept);
+                quit_window.setLocation(300, 300);
+                quit_window.setSize(400, 200);
+                quit_window.setVisible(true);
+                this.dispose();
+                return;
+            }
+            
+            CheckersMove otherPlayerMove = getMoveFromString(msg);
+            //game.b.loadPlayerPieces();
+            game.b.makeMove(otherPlayerMove);
+            //addActionListenerToButtons();
+            updateBoard();
+            game.turn = game.turn.opposite();
+            //setTurnButton();
+            myTurn = true;
+            disableButtons = false;
+        }
+        catch(ClassNotFoundException classNot)
+        {
+            System.err.println("data received in unknown format");
+        } 
+        catch (IOException ex) 
+        {
+            ex.printStackTrace();
+        }   
+    }
+    
+    //theirs will have to be completely different: some way to parse a string into any possible move
+    CheckersMove getMoveFromString(String s)
+    {
+        int srcx = Integer.parseInt(s.substring(0, 1));
+        int srcy = Integer.parseInt(s.substring(1, 2));
+        int destx = Integer.parseInt(s.substring(2, 3));
+        int desty = Integer.parseInt(s.substring(3, 4));
+
+        int midx;
+        int midy;
+        
+        CheckersCell source = game.b.board.get(srcx).get(srcy);
+        CheckersCell mid;
+        CheckersCell dest = game.b.board.get(destx).get(desty);
+        
+        CheckersMove otherPlayerMove = new CheckersMove(source,dest,game.b);
+        if(s.length() > 4)
+        {
+            midx = destx;
+            midy = desty;
+                    
+            destx = Integer.parseInt(s.substring(4, 5));
+            desty = Integer.parseInt(s.substring(5, 6));
+            
+            mid = game.b.board.get(midx).get(midy);
+            dest = game.b.board.get(destx).get(desty);
+                      
+            otherPlayerMove = new CheckersJump(source,mid,dest,game.b);
+        }
+        
+        return otherPlayerMove;
+    }
+    //end2 for online play******************************************************************************************************
+    
+    
     void addActionListenerToButtons()
     {
         //Start button
@@ -183,7 +504,7 @@ public class CheckersGUI extends javax.swing.JFrame {
                         startHandler(evt);
                     }
                 });
-        
+        //ShowMoves button
         showMovesButton.addActionListener(new java.awt.event.ActionListener()
                 {
                     @Override
@@ -206,6 +527,23 @@ public class CheckersGUI extends javax.swing.JFrame {
                         actionHandler(evt);
                     }
                 });
+            }
+        }
+    }
+    
+    void removeActionListenerFromButtons()
+    {
+        //Start button
+        startButton.removeActionListener(startButton.getActionListeners()[0]);
+        //ShowMoves button
+        showMovesButton.removeActionListener(showMovesButton.getActionListeners()[0]);
+        
+        //CheckersBoard buttons
+        for(ArrayList<JButton> row: guiBoard)
+        {
+            for(JButton j: row)
+            {
+                j.removeActionListener(j.getActionListeners()[0]);
             }
         }
     }
@@ -353,9 +691,19 @@ public class CheckersGUI extends javax.swing.JFrame {
     
     private void startHandler(java.awt.event.ActionEvent evt)
     {
-        disableButtons = false;
+        if(!isOnline)
+        {
+            disableButtons = false;
+        }
         statusThread = new StatusUpdate();
-        jButton65.setBackground(Color.BLACK);
+        if(game.turn == Owner.PLAYER1)
+        {
+            jButton65.setBackground(Color.BLACK);
+        }
+        else if(game.turn == Owner.PLAYER2)
+        {
+            jButton65.setBackground(Color.RED);
+        }
         (new Thread(statusThread)).start();
     }
     
@@ -371,12 +719,11 @@ public class CheckersGUI extends javax.swing.JFrame {
             {
                 firstSelection = true;
             }
-
+            //allow double jumps without a reclick of jumping piece
             if(game.b.anotherJump)
             {
                 source = destination;
                 firstSelection = false;
-                
             }
 
             if(firstSelection && c.getOwner() != Owner.EMPTY)
@@ -405,16 +752,16 @@ public class CheckersGUI extends javax.swing.JFrame {
                 {
                     game.turnCompleted = true;
                     
-                    switchTurns();
+                    switchTurns(currentMove);
                     if(game.AI && game.turn == Owner.PLAYER2)
                     {
                         do
                         {
-                            game.sendAIMove();
+                            CheckersMove aiMove = game.sendAIMove();
                             if(!game.b.anotherJump)
                             {
                                 game.turnCompleted = true;
-                                switchTurns();
+                                switchTurns(aiMove);
                             }
                         }while(game.b.anotherJump);
                     }
@@ -437,27 +784,66 @@ public class CheckersGUI extends javax.swing.JFrame {
                 firstSelection = true;
             }
         }
-        
     }
     
+    public void setTurnButton()
+    {
+        if(game.turn == Owner.PLAYER1)
+        {
+            jButton65.setBackground(Color.BLACK);
+        }
+        else if(game.turn == Owner.PLAYER2)
+        {
+            jButton65.setBackground(Color.RED);
+        }
+    }
   
     
-    public void switchTurns()
+    public void switchTurns(CheckersMove moveToSend)
     {
         if(game.turnCompleted)
         {
             game.turn = game.turn.opposite();
+            //game.b.storePlayerPieces();
+            //game.b.clearPlayerPieces();
             game.turnCompleted = false;
-            if(game.turn == Owner.PLAYER1)
+            //setTurnButton();
+            //start3 for online play******************************************************************************************************
+            if(isOnline)
             {
-                jButton65.setBackground(Color.BLACK);
+               myTurn = false;
+               disableButtons = true;
+               sendMessage(moveToSend.toString());
+
+               class Waiting_for_replay_thread implements Runnable
+                {
+                    @Override
+                    public void run()
+                    {
+                        waitForMove();
+                    }
+                }
+                Thread t = new Thread(new Waiting_for_replay_thread());
+                t.start();
+
             }
-            else if(game.turn == Owner.PLAYER2)
-            {
-                jButton65.setBackground(Color.RED);
-            }
+            //end3 for online play******************************************************************************************************
+
         }
     }
+    
+    //start4 for online play******************************************************************************************************
+    private void quit_buttonClicked(java.awt.event.ActionEvent evt) {                                    
+        // TODO add your handling code here:
+        
+        //send message to other player that you quit (it should sit in their queue if it is currently their turn and theyll get it when they make a move
+        if(isOnline)
+        {
+            sendMessage("quit");
+        }
+        this.dispose();
+    }                                   
+    //end4 for online play******************************************************************************************************
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

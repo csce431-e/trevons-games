@@ -21,74 +21,121 @@ public class CheckersBoard {
     public CheckersGame currentGame;
     public boolean anotherJump;
     public boolean gameOver;
+    public ArrayList<CheckersCell> p1Pieces;
+    public ArrayList<CheckersCell> p2Pieces;
+    
+    public void storePlayerPieces()
+    {
+        p1Pieces = Owner.PLAYER1.pieces;
+        p2Pieces = Owner.PLAYER2.pieces;
+    }
+    
+    public void clearPlayerPieces()
+    {
+        Owner.PLAYER1.pieces.clear();
+        Owner.PLAYER2.pieces.clear();
+    }
+    
+    public void loadPlayerPieces()
+    {
+        CheckersCell temp = new CheckersCell(Owner.PLAYER1, -1, -1, this); 
+        ArrayList<CheckersCell> tempContainer = new ArrayList<CheckersCell>();
+        tempContainer.add(temp);
+        
+        Owner.PLAYER1.pieces.add(temp);
+        Owner.PLAYER1.pieces.retainAll(tempContainer);
+
+        Owner.PLAYER2.pieces.add(temp);
+        Owner.PLAYER2.pieces.retainAll(tempContainer);
+        
+        if(p1Pieces!=null)
+        {
+            Owner.PLAYER1.pieces = p1Pieces;
+        }
+        if(p2Pieces!=null)
+        {
+            Owner.PLAYER2.pieces = p1Pieces;
+        }
+    }
     
     public CheckersBoard()
     {
         board.clear();
-        //Create nxn board
-        for(int i = 0; i < BOARDSIZE; i++)
+        if(Owner.PLAYER1.pieces.size() == 0)
         {
-            ArrayList<CheckersCell> currentRow = new ArrayList<>();
-            for(int j =0; j< BOARDSIZE; j++) 
+                //Create nxn board
+            for(int i = 0; i < BOARDSIZE; i++)
             {
-                currentRow.add(new CheckersCell(Owner.EMPTY,i,j,this));
-            }
-            
-            board.add(currentRow);
-        }
-        
-        //Place 12 pieces on board for player 1
-        for(int i = 0; i<3; i++)
-        {
-            boolean playerCell;
-            
-            if(i%2==0)
-            {
-                playerCell = false;
-            }
-            else
-            {
-                playerCell = true;
-            }
-            
-            for(CheckersCell cell: board.get(i))
-            {
-                if(playerCell) 
+                ArrayList<CheckersCell> currentRow = new ArrayList<>();
+                for(int j =0; j< BOARDSIZE; j++) 
                 {
-                    cell.setOwner(Owner.PLAYER2);
-                    Owner.PLAYER2.pieces.add(cell);
+                    currentRow.add(new CheckersCell(Owner.EMPTY,i,j,this));
                 }
-                playerCell ^= true;
+
+                board.add(currentRow);
             }
-        }
-        
-        //Place 12 pieces on board for player 2
-        for(int i = 5; i<8; i++)
-        {
-            boolean playerCell;
-            
-            if(i%2==0)
+
+            //Place 12 pieces on board for player 1
+            for(int i = 0; i<3; i++)
             {
-                playerCell = false;
-            }
-            else
-            {
-                playerCell = true;
-            }
-            
-            for(CheckersCell cell: board.get(i))
-            {
-                if(playerCell) 
+                boolean playerCell;
+
+                if(i%2==0)
                 {
-                    cell.setOwner(Owner.PLAYER1);
-                    Owner.PLAYER1.pieces.add(cell);
+                    playerCell = false;
                 }
-                playerCell ^= true;
+                else
+                {
+                    playerCell = true;
+                }
+
+                for(CheckersCell cell: board.get(i))
+                {
+                    if(playerCell) 
+                    {
+                        cell.setOwner(Owner.PLAYER2);
+                        Owner.PLAYER2.pieces.add(cell);
+                    }
+                    playerCell ^= true;
+                }
             }
+
+            //Place 12 pieces on board for player 2
+            for(int i = 5; i<8; i++)
+            {
+                boolean playerCell;
+
+                if(i%2==0)
+                {
+                    playerCell = false;
+                }
+                else
+                {
+                    playerCell = true;
+                }
+
+                for(CheckersCell cell: board.get(i))
+                {
+                    if(playerCell) 
+                    {
+                        cell.setOwner(Owner.PLAYER1);
+                        Owner.PLAYER1.pieces.add(cell);
+                    }
+                    playerCell ^= true;
+                }
+            }
+
+            anotherJump = false;
+            p1Pieces = Owner.PLAYER1.pieces;
+            p2Pieces = Owner.PLAYER2.pieces;
+            Owner.PLAYER1.setBoard(this);
+            Owner.PLAYER2.setBoard(this);
+            //printBoard();
         }
-        
-        anotherJump = false;
-        //printBoard();
+        else
+        {
+            board = Owner.PLAYER1.gameBoard.board;
+        }
     }
     
     public void initGame(CheckersGame g)

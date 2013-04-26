@@ -133,9 +133,12 @@ public class CheckersJump extends CheckersMove {
     @Override
     public String toString()
     {
+        /*
         String s = source.x + "," + source.y;
         String m = middle.x + "," + middle.y;
         String d = dest.x + "," + dest.y;
         return s + " over " + m + " to " + d;
+         */
+        return "" + source.x + source.y + middle.x + middle.y + dest.x + dest.y;
     }
 }
