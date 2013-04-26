@@ -171,7 +171,7 @@ public class Server
             caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
             
             JScrollPane scroll_pane = new JScrollPane(server_info_terminal);
-            scroll_pane.setSize(436, 303);
+            scroll_pane.setSize(393, 378);
             menu.add(scroll_pane);
             menu.paintAll(menu.getGraphics());
         }
