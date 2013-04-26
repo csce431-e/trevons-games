@@ -391,10 +391,71 @@ public class MainMenu extends javax.swing.JPanel {
     }//GEN-LAST:event_ConnectFourClicked
 
     private void CheckersClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckersClicked
-        // TODO add your handling code here:
+        
         make_pretty();
+        if(locally_radiob.isSelected())  //local play
+        {
+            java.awt.EventQueue.invokeLater(new Runnable() 
+            {
+                @Override
+                public void run() 
+                {
+                    //CheckersGUI game = new CheckersGUI(false, new byte[] {}); //2 params, whether or not it's online and the ip addr
+                    CheckersGUI game = new CheckersGUI();
+                    game.setVisible(true);
+                    game.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                }
+            });
+        }
+        else //online play
+        {
+            java.awt.EventQueue.invokeLater(new Runnable() 
+            {
+                @Override
+                public void run() 
+                {
+                    final CheckersGUI game = new CheckersGUI(true, get_ip_array(ip_input_box.getText()));
+                    game.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    
+                    class Waiting_handler implements Runnable
+                    {
+                        @Override
+                        public void run()
+                        {
+                            
+                            if(game.myTurn)
+                            {
+                                game.waitForOpponent_host();// put in thread
+                                game.wait_window.dispose();
+                                if(game.iquit)
+                                {
+                                    return;
+                                }
+                                game.setVisible(true);//put in thread
+                            }
+                            else
+                            {
+                                game.waitForOpponent_nothost();// put in thread
+                                game.wait_window.dispose();
+                                game.paintAll(game.getGraphics()); //makes sure to draw the board before triggering the block
+                                game.setVisible(true);//put in thread
+                                System.out.println("waiting for opponents first move");
+                                game.waitForMove();
+                            }
+                        }
+                    }
+                    Thread t = new Thread(new Waiting_handler());
+                    t.start();
+                }
+            });
+        }
+        
+        
+        
+        // TODO add your handling code here:
+        /*make_pretty();
         CheckersGUI g = new CheckersGUI();
-        g.setVisible(true);
+        g.setVisible(true);*/
     }//GEN-LAST:event_CheckersClicked
 
     private void GomokuClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GomokuClicked

@@ -219,8 +219,11 @@ public class CheckersMove {
     @Override
     public String toString()
     {
+        /*
         String s = source.x + "," + source.y;
         String d = dest.x + "," + dest.y;
-        return s + " to " + d;
+        return s + " to " + d;*/
+        
+        return "" + source.x + source.y +dest.x + dest.y;
     }
 }
