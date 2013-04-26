@@ -548,12 +548,20 @@ public class MainMenu extends javax.swing.JPanel {
         ip_input_box.setEnabled(true);
         ip_input_box.requestFocusInWindow();
         ip_input_box.setText("");
+        if(online_radiob.isSelected())
+        {
+            jButton1.setEnabled(false);
+        }
     }//GEN-LAST:event_online_radioClicked
 
     private void local_radioClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_local_radioClicked
         // TODO add your handling code here:
         ip_input_box.setEnabled(false);
         ip_input_box.setText("Server IP here");
+        if(locally_radiob.isSelected())
+        {
+            jButton1.setEnabled(true);
+        }
     }//GEN-LAST:event_local_radioClicked
 
     private void tictactoe_clicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tictactoe_clicked
