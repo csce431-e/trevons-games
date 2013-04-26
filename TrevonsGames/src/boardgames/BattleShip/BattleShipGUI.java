@@ -37,6 +37,7 @@ public class BattleShipGUI extends javax.swing.JFrame {
     private boolean game = true;
     static int currentShip=0;
     BattleShip p1, p2;
+    String send = "";
     
     //start0 for online play******************************************************************************************************
      boolean isOnline;
@@ -99,6 +100,7 @@ public class BattleShipGUI extends javax.swing.JFrame {
         }
         //end1 for online play******************************************************************************************************
         init();
+        this.setVisible(true);
         //myTurn=myTurn;
     }
     
@@ -299,26 +301,115 @@ public class BattleShipGUI extends javax.swing.JFrame {
                 this.dispose();
                 return;
             }
-            Ship.point move = getMoveFromString(msg);            
-            p1.attackSpot(move.x, move.y);
-            
-            /*SolitaireMove otherPlayerMove = getMoveFromString(msg);
-            b.make_move(otherPlayerMove);
+            if(placeShips){
+                System.out.println("Waiting for move");
 
-            firstChoice = buts.get((-otherPlayerMove.src.y)+3).get((otherPlayerMove.src.x)+3);
-            middleButton = buts.get((-otherPlayerMove.middle.y)+3).get((otherPlayerMove.middle.x)+3);
-            JButton clicked = buts.get((-otherPlayerMove.dest.y)+3).get((otherPlayerMove.dest.x)+3);
-            apply_move_to_graphics(clicked);*/
-            myTurn = true;
-        }
-        catch(ClassNotFoundException classNot)
-        {
-            System.err.println("data received in unknown format");
-        } 
-        catch (IOException ex) 
-        {
-            ex.printStackTrace();
-        }   
+                    //msg = (String)in.readObject();
+                    //IIS IIS IIS IIS IIS
+                    System.out.println("Message received: "+msg);
+                    if(msg.equals("Connection successful")){
+                        waitForMove();
+                    }
+                    else if(msg.equals("quit"))
+                    {
+                        final JFrame quit_window = new JFrame("Your opponent has quit");
+                        JButton accept = new JButton("OK");
+                        accept.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                quit_window.dispose();
+
+                            }
+                        });
+                        quit_window.add(accept);
+                        quit_window.setLocation(300, 300);
+                        quit_window.setSize(400, 200);
+                        quit_window.setVisible(true);
+                        this.dispose();
+                        return;
+                    }
+                    else{
+                        int x = Integer.parseInt(msg.substring(0,1));
+                        int y = Integer.parseInt(msg.substring(1,2));
+                        String orientation = msg.substring(2,3);
+                        switch(orientation.charAt(0)){
+                            case 'N': orientation = "NORTH"; break;
+                            case 'E': orientation = "EAST"; break;
+                            case 'S': orientation = "SOUTH"; break;
+                            case 'W': orientation = "WEST"; break;
+                        }
+                        p2.placeShips(new Ship.point(x,y),currentShip,orientation);
+                        currentShip++;
+
+                        x = Integer.parseInt(msg.substring(4,5));
+                        y = Integer.parseInt(msg.substring(5,6));
+                        orientation = msg.substring(6,7);
+                        switch(orientation.charAt(0)){
+                            case 'N': orientation = "NORTH"; break;
+                            case 'E': orientation = "EAST"; break;
+                            case 'S': orientation = "SOUTH"; break;
+                            case 'W': orientation = "WEST"; break;
+                        }
+                        p2.placeShips(new Ship.point(x,y),currentShip,orientation);
+                        currentShip++;
+
+                        x = Integer.parseInt(msg.substring(8,9));
+                        y = Integer.parseInt(msg.substring(9,10));
+                        orientation = msg.substring(10,11);
+                        switch(orientation.charAt(0)){
+                            case 'N': orientation = "NORTH"; break;
+                            case 'E': orientation = "EAST"; break;
+                            case 'S': orientation = "SOUTH"; break;
+                            case 'W': orientation = "WEST"; break;
+                        }
+                        p2.placeShips(new Ship.point(x,y),currentShip,orientation);
+                        currentShip++;
+
+                        x = Integer.parseInt(msg.substring(12,13));
+                        y = Integer.parseInt(msg.substring(13,14));
+                        orientation = msg.substring(14,15);
+                        switch(orientation.charAt(0)){
+                            case 'N': orientation = "NORTH"; break;
+                            case 'E': orientation = "EAST"; break;
+                            case 'S': orientation = "SOUTH"; break;
+                            case 'W': orientation = "WEST"; break;
+                        }
+                        p2.placeShips(new Ship.point(x,y),currentShip,orientation);
+                        currentShip++;
+
+                        x = Integer.parseInt(msg.substring(16,17));
+                        y = Integer.parseInt(msg.substring(17,18));
+                        orientation = msg.substring(18,19);
+                        switch(orientation.charAt(0)){
+                            case 'N': orientation = "NORTH"; break;
+                            case 'E': orientation = "EAST"; break;
+                            case 'S': orientation = "SOUTH"; break;
+                            case 'W': orientation = "WEST"; break;
+                        }
+                        p2.placeShips(new Ship.point(x,y),currentShip,orientation);
+                        currentShip++;
+                        
+                    }
+                
+                p2PlacedShips=true;
+                currentShip=0;
+                myTurn=true;
+                }
+                else{
+                Ship.point move = getMoveFromString(msg);            
+                p1.attackSpot(move.x, move.y);
+                updateP1Board();
+                myTurn = true; 
+                }
+            }
+            catch(ClassNotFoundException classNot)
+            {
+                System.err.println("data received in unknown format");
+            } 
+            catch (IOException ex) 
+            {
+                ex.printStackTrace();
+            }
     }
     
     //theirs will have to be completely different: some way to parse a string into any possible move
@@ -562,51 +653,6 @@ public class BattleShipGUI extends javax.swing.JFrame {
         
         
         disableP2();
-        if(isOnline && !myTurn){
-            try
-                {
-                    System.out.println("Waiting for move");
-                    for(int i =0; i<5; i++){
-                        String msg = (String)in.readObject();
-                        System.out.println("Message received: "+msg);
-
-                        if(msg.equals("quit"))
-                        {
-                            final JFrame quit_window = new JFrame("Your opponent has quit");
-                            JButton accept = new JButton("OK");
-                            accept.addActionListener(new ActionListener() {
-                                @Override
-                                public void actionPerformed(ActionEvent e) {
-                                    quit_window.dispose();
-
-                                }
-                            });
-                            quit_window.add(accept);
-                            quit_window.setLocation(300, 300);
-                            quit_window.setSize(400, 200);
-                            quit_window.setVisible(true);
-                            this.dispose();
-                            return;
-                        }
-                        else{
-                            int x = Integer.parseInt(msg.substring(0,1));
-                            int y = Integer.parseInt(msg.substring(1,2));
-                            String orientation = msg.substring(3,msg.length()-1);
-                            p2.placeShips(new Ship.point(x,y),currentShip,orientation);
-                            currentShip++;
-                        }
-                    }
-                    p2PlacedShips=true;
-                }
-                catch(ClassNotFoundException classNot)
-                {
-                    System.err.println("data received in unknown format");
-                } 
-                catch (IOException ex) 
-                {
-                    ex.printStackTrace();
-                }
-        }
         updateEmptyBoard();     
     }
     
@@ -2947,11 +2993,11 @@ public class BattleShipGUI extends javax.swing.JFrame {
         }
         
         Ship.point p;
-        if((myTurn && placeShips) || (!myTurn && !placeShips) || isOnline){
+        if((myTurn && placeShips) || (!myTurn && !placeShips)){
             p = getCoordsp1(b);
             System.out.println(p.x + " " + p.y);
         }
-        else if((!myTurn && placeShips) || (myTurn && !placeShips)){
+        else if((!myTurn && placeShips) || (myTurn && !placeShips) || isOnline){
             p=getCoordsp2(b);
             System.out.println(p.x + " " + p.y);
         }else{
@@ -2993,62 +3039,26 @@ public class BattleShipGUI extends javax.swing.JFrame {
                 }
             }
             else if(myTurn && isOnline){
+                //send = "";
                 if(p1.placeShips(p, currentShip, orientation) != -1){
                     updateP1Board();
                     currentShip++;
-                    sendMessage(p.x.toString() + p.y.toString() + " " + orientation);
+                    send += p.x.toString() + p.y.toString() + orientation.charAt(0) + " ";
                     System.out.println("player 1 placed ship " + currentShip + " at location " + p.x + ' ' + p.y);
                     if(currentShip==5){
+                        System.out.println(send);
+                        sendMessage(send);
                         currentShip=0;
+                        p1PlacedShips = true;
                         if(!p2PlacedShips){
-                            try
-                            {
-                                System.out.println("Waiting for move");
-                                for(int i =0; i<5; i++){
-                                    String msg = (String)in.readObject();
-                                    System.out.println("Message received: "+msg);
-
-                                    if(msg.equals("quit"))
-                                    {
-                                        final JFrame quit_window = new JFrame("Your opponent has quit");
-                                        JButton accept = new JButton("OK");
-                                        accept.addActionListener(new ActionListener() {
-                                            @Override
-                                            public void actionPerformed(ActionEvent e) {
-                                                quit_window.dispose();
-
-                                            }
-                                        });
-                                        quit_window.add(accept);
-                                        quit_window.setLocation(300, 300);
-                                        quit_window.setSize(400, 200);
-                                        quit_window.setVisible(true);
-                                        this.dispose();
-                                        return;
-                                    }
-                                    else{
-                                        int x = Integer.parseInt(msg.substring(0,1));
-                                        int y = Integer.parseInt(msg.substring(1,2));
-                                        orientation = msg.substring(3,msg.length()-1);
-                                        p2.placeShips(new Ship.point(x,y),currentShip,orientation);
-                                        currentShip++;
-                                    }
-                                }
-                                p2PlacedShips=true;
-                                p1PlacedShips=true;
-                            }
-                            catch(ClassNotFoundException classNot)
-                            {
-                                System.err.println("data received in unknown format");
-                            } 
-                            catch (IOException ex) 
-                            {
-                                ex.printStackTrace();
-                            }
+                            waitForMove();
+                            myTurn=true;
                         }
                         else{
-                            p1PlacedShips = true;
+                            myTurn=false;
                         }
+                        enableP2();
+                        //myTurn=true;
                     }
                 }
             }
@@ -3086,6 +3096,7 @@ public class BattleShipGUI extends javax.swing.JFrame {
                     jRadioButton2.setVisible(false);
                     jRadioButton3.setVisible(false);
                     jRadioButton4.setVisible(false);
+                    //if(!myTurn)waitForMove();
              }
             
         }// SETUP DONE
