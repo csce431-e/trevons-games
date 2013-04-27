@@ -35,7 +35,7 @@ public class BattleShipGUI extends javax.swing.JFrame {
     private boolean p2PlacedShips=false;
     private boolean placeShips=true;
     private boolean game = true;
-    static int currentShip=0;
+    private int currentShip=0;
     BattleShip p1, p2;
     String send = "";
     
@@ -100,7 +100,7 @@ public class BattleShipGUI extends javax.swing.JFrame {
         }
         //end1 for online play******************************************************************************************************
         init();
-        this.setVisible(true);
+        //this.setVisible(true);
         //myTurn=myTurn;
     }
     
@@ -300,6 +300,11 @@ public class BattleShipGUI extends javax.swing.JFrame {
                 quit_window.setVisible(true);
                 this.dispose();
                 return;
+            }
+            if(msg.equals("WIN")){
+                game=false;
+                jLabel1.setText("You Lose");
+                jLabel2.setText("You Lose");
             }
             if(placeShips){
                 System.out.println("Waiting for move");
@@ -797,6 +802,7 @@ public class BattleShipGUI extends javax.swing.JFrame {
         turnSwap=true;
         jDialog1.setVisible(true);
         updateEmptyBoard();
+        //myTurn=!myTurn;
     }
          
     /**
@@ -1021,6 +1027,7 @@ public class BattleShipGUI extends javax.swing.JFrame {
         jRadioButton2 = new javax.swing.JRadioButton();
         jRadioButton3 = new javax.swing.JRadioButton();
         jRadioButton4 = new javax.swing.JRadioButton();
+        jButton202 = new javax.swing.JButton();
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -1035,7 +1042,6 @@ public class BattleShipGUI extends javax.swing.JFrame {
 
         jDialog1.setAlwaysOnTop(true);
         jDialog1.setMinimumSize(new java.awt.Dimension(400, 400));
-        jDialog1.setPreferredSize(new java.awt.Dimension(400, 400));
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel3.setText(" Switching turns");
@@ -2918,6 +2924,14 @@ public class BattleShipGUI extends javax.swing.JFrame {
             }
         });
 
+        jButton202.setText("QUIT");
+        jButton202.setPreferredSize(new java.awt.Dimension(60, 60));
+        jButton202.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton202ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -2925,23 +2939,30 @@ public class BattleShipGUI extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(p1Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(69, 69, 69)
-                        .addComponent(jLabel2)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(20, 20, 20)
+                        .addComponent(p1Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jRadioButton1)
-                            .addComponent(jRadioButton4)
-                            .addComponent(jRadioButton2, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jRadioButton3, javax.swing.GroupLayout.Alignment.LEADING))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
-                        .addComponent(p2Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(69, 69, 69)
+                                .addComponent(jLabel2)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jRadioButton1)
+                                    .addComponent(jRadioButton4)
+                                    .addComponent(jRadioButton2, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jRadioButton3, javax.swing.GroupLayout.Alignment.LEADING))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                                .addComponent(p2Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap())))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(0, 0, Short.MAX_VALUE))))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton202, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(544, 544, 544))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2952,13 +2973,7 @@ public class BattleShipGUI extends javax.swing.JFrame {
                     .addComponent(jLabel2))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(p1Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(p2Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(25, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 278, Short.MAX_VALUE)
                         .addComponent(jRadioButton1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jRadioButton2)
@@ -2966,7 +2981,14 @@ public class BattleShipGUI extends javax.swing.JFrame {
                         .addComponent(jRadioButton3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jRadioButton4)
-                        .addGap(230, 230, 230))))
+                        .addGap(229, 229, 229))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(p1Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(p2Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addComponent(jButton202, javax.swing.GroupLayout.DEFAULT_SIZE, 63, Short.MAX_VALUE)
+                .addGap(20, 20, 20))
         );
 
         pack();
@@ -3020,6 +3042,7 @@ public class BattleShipGUI extends javax.swing.JFrame {
                     currentShip++;
                     System.out.println("player 1 placed ship " + currentShip + " at location " + p.x + ' ' + p.y);
                     if(currentShip==5){
+                        this.paintAll(this.getGraphics());
                         myTurn=false;
                         currentShip=0;
                         p1PlacedShips=true;
@@ -3045,6 +3068,7 @@ public class BattleShipGUI extends javax.swing.JFrame {
                     currentShip++;
                     send += p.x.toString() + p.y.toString() + orientation.charAt(0) + " ";
                     System.out.println("player 1 placed ship " + currentShip + " at location " + p.x + ' ' + p.y);
+                    this.paintAll(this.getGraphics());
                     if(currentShip==5){
                         System.out.println(send);
                         sendMessage(send);
@@ -3054,10 +3078,13 @@ public class BattleShipGUI extends javax.swing.JFrame {
                             waitForMove();
                             myTurn=true;
                         }
-                        else{
+                        else{ 
+                            enableP2();
                             myTurn=false;
+                            placeShips=false;
+                            waitForMove();
                         }
-                        enableP2();
+                       
                         //myTurn=true;
                     }
                 }
@@ -3096,6 +3123,7 @@ public class BattleShipGUI extends javax.swing.JFrame {
                     jRadioButton2.setVisible(false);
                     jRadioButton3.setVisible(false);
                     jRadioButton4.setVisible(false);
+                    if(isOnline){enableP2();}
                     //if(!myTurn)waitForMove();
              }
             
@@ -3104,7 +3132,11 @@ public class BattleShipGUI extends javax.swing.JFrame {
             if(myTurn){
                 jLabel2.setText("Player 1 attacked spot " + p.x + ' ' + p.y);
                 jLabel1.setText("Player 2 make move");
+                if(isOnline){
+                    jLabel1.setText("Waiting for Opponent");
+                }
                 if(!p2.attackSpot(p.x,p.y).equals("X")){
+                    this.paintAll(this.getGraphics());
                     if(!isOnline) enableP1();
                     if(p2.checkWin()){
                         System.out.println("Player 1 wins!");
@@ -3112,12 +3144,16 @@ public class BattleShipGUI extends javax.swing.JFrame {
                         jLabel2.setText("Player 1 wins!");
                         game=false;
                         disableP1();
+                        sendMessage("WIN");
                     }
                     myTurn=false;
                     if(isOnline){
+                        updateP1Board();
+                        this.paintAll(this.getGraphics());
                         sendMessage(p.x.toString() + p.y.toString());
                         waitForMove();
-                        disableP1();
+                        //disableP1();
+                        //myTurn=false;
                     }
                     else{
                         playerChange();
@@ -3130,6 +3166,9 @@ public class BattleShipGUI extends javax.swing.JFrame {
                     jLabel2.setText("Spot " + p.x + ' ' + p.y + " has already been attacked.  Pick another.");
                 }
                 
+            }
+            else if(!myTurn && isOnline){
+                return;
             }
             else{
                 jLabel1.setText("Player 2 attacked spot " + p.x + ' ' + p.y);
@@ -3986,6 +4025,14 @@ public class BattleShipGUI extends javax.swing.JFrame {
             updateP2Board();
         }
     }//GEN-LAST:event_jButton201ActionPerformed
+
+    private void jButton202ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton202ActionPerformed
+        if(isOnline)
+        {
+            sendMessage("quit");
+        }
+        this.dispose();        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton202ActionPerformed
   
     /**
      * @param args the command line arguments
@@ -4117,6 +4164,7 @@ public class BattleShipGUI extends javax.swing.JFrame {
     private javax.swing.JButton jButton20;
     private javax.swing.JButton jButton200;
     private javax.swing.JButton jButton201;
+    private javax.swing.JButton jButton202;
     private javax.swing.JButton jButton21;
     private javax.swing.JButton jButton22;
     private javax.swing.JButton jButton23;
