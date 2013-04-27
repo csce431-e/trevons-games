@@ -17,79 +17,130 @@ public class CheckersBoard {
      * The indexing starts at the top and Player1 is at the bottom. 
      */
     public static int BOARDSIZE = 8;
-    public static ArrayList< ArrayList<CheckersCell> > board = new ArrayList<>();
+    public ArrayList< ArrayList<CheckersCell> > board = new ArrayList<>();
     public CheckersGame currentGame;
     public boolean anotherJump;
     public boolean gameOver;
+    public ArrayList<CheckersCell> p1Pieces;
+    public ArrayList<CheckersCell> p2Pieces;
     
-    public CheckersBoard(CheckersGame g)
+    public void storePlayerPieces()
+    {
+        p1Pieces = Owner.PLAYER1.pieces;
+        p2Pieces = Owner.PLAYER2.pieces;
+    }
+    
+    public void clearPlayerPieces()
+    {
+        Owner.PLAYER1.pieces.clear();
+        Owner.PLAYER2.pieces.clear();
+    }
+    
+    public void loadPlayerPieces()
+    {
+        CheckersCell temp = new CheckersCell(Owner.PLAYER1, -1, -1, this); 
+        ArrayList<CheckersCell> tempContainer = new ArrayList<CheckersCell>();
+        tempContainer.add(temp);
+        
+        Owner.PLAYER1.pieces.add(temp);
+        Owner.PLAYER1.pieces.retainAll(tempContainer);
+
+        Owner.PLAYER2.pieces.add(temp);
+        Owner.PLAYER2.pieces.retainAll(tempContainer);
+        
+        if(p1Pieces!=null)
+        {
+            Owner.PLAYER1.pieces = p1Pieces;
+        }
+        if(p2Pieces!=null)
+        {
+            Owner.PLAYER2.pieces = p1Pieces;
+        }
+    }
+    
+    public CheckersBoard()
+    {
+        board.clear();
+        if(Owner.PLAYER1.pieces.size() == 0)
+        {
+                //Create nxn board
+            for(int i = 0; i < BOARDSIZE; i++)
+            {
+                ArrayList<CheckersCell> currentRow = new ArrayList<>();
+                for(int j =0; j< BOARDSIZE; j++) 
+                {
+                    currentRow.add(new CheckersCell(Owner.EMPTY,i,j,this));
+                }
+
+                board.add(currentRow);
+            }
+
+            //Place 12 pieces on board for player 1
+            for(int i = 0; i<3; i++)
+            {
+                boolean playerCell;
+
+                if(i%2==0)
+                {
+                    playerCell = false;
+                }
+                else
+                {
+                    playerCell = true;
+                }
+
+                for(CheckersCell cell: board.get(i))
+                {
+                    if(playerCell) 
+                    {
+                        cell.setOwner(Owner.PLAYER2);
+                        Owner.PLAYER2.pieces.add(cell);
+                    }
+                    playerCell ^= true;
+                }
+            }
+
+            //Place 12 pieces on board for player 2
+            for(int i = 5; i<8; i++)
+            {
+                boolean playerCell;
+
+                if(i%2==0)
+                {
+                    playerCell = false;
+                }
+                else
+                {
+                    playerCell = true;
+                }
+
+                for(CheckersCell cell: board.get(i))
+                {
+                    if(playerCell) 
+                    {
+                        cell.setOwner(Owner.PLAYER1);
+                        Owner.PLAYER1.pieces.add(cell);
+                    }
+                    playerCell ^= true;
+                }
+            }
+
+            anotherJump = false;
+            p1Pieces = Owner.PLAYER1.pieces;
+            p2Pieces = Owner.PLAYER2.pieces;
+            Owner.PLAYER1.setBoard(this);
+            Owner.PLAYER2.setBoard(this);
+            //printBoard();
+        }
+        else
+        {
+            board = Owner.PLAYER1.gameBoard.board;
+        }
+    }
+    
+    public void initGame(CheckersGame g)
     {
         currentGame = g;
-        board.clear();
-        //Create nxn board
-        for(int i = 0; i < BOARDSIZE; i++)
-        {
-            ArrayList<CheckersCell> currentRow = new ArrayList<>();
-            for(int j =0; j< BOARDSIZE; j++) 
-            {
-                currentRow.add(new CheckersCell(Owner.EMPTY,i,j));
-            }
-            
-            board.add(currentRow);
-        }
-        
-        //Place 12 pieces on board for player 1
-        for(int i = 0; i<3; i++)
-        {
-            boolean playerCell;
-            
-            if(i%2==0)
-            {
-                playerCell = false;
-            }
-            else
-            {
-                playerCell = true;
-            }
-            
-            for(CheckersCell cell: board.get(i))
-            {
-                if(playerCell) 
-                {
-                    cell.setOwner(Owner.PLAYER2);
-                    Owner.PLAYER2.pieces.add(cell);
-                }
-                playerCell ^= true;
-            }
-        }
-        
-        //Place 12 pieces on board for player 2
-        for(int i = 5; i<8; i++)
-        {
-            boolean playerCell;
-            
-            if(i%2==0)
-            {
-                playerCell = false;
-            }
-            else
-            {
-                playerCell = true;
-            }
-            
-            for(CheckersCell cell: board.get(i))
-            {
-                if(playerCell) 
-                {
-                    cell.setOwner(Owner.PLAYER1);
-                    Owner.PLAYER1.pieces.add(cell);
-                }
-                playerCell ^= true;
-            }
-        }
-        
-        anotherJump = false;
-        //printBoard();
     }
     
     public void printBoard()
@@ -184,7 +235,6 @@ public class CheckersBoard {
     
     public boolean makeMove(CheckersMove m)
     {
-        CheckersMove.testBoard();
         Owner currentOwner = m.source.getOwner();
         if(currentOwner == Owner.EMPTY)
         {
@@ -201,8 +251,7 @@ public class CheckersBoard {
             currentGame.setStatus("Invalid Move");
             return false;
         }
-        
-        CheckersMove.testBoard();
+
         ArrayList<CheckersJump> jumps = getJumpMoves();
         //@TODO double jump logic is off. check recursion conditions
         if(jumps.size() > 0)
@@ -242,8 +291,8 @@ public class CheckersBoard {
             }    */
             //return true;
         }
-        CheckersMove.testBoard();
-        if(m.updateBoard(this))
+        
+        if(m.updateBoard())
         {
             int destRow = m.dest.x;
             if(m.dest.getJumps().isEmpty() || destRow == CheckersMove.BOTOFBOARD
@@ -287,11 +336,6 @@ public class CheckersBoard {
         }
       
         return Owner.EMPTY;
-    }
-    
-    public boolean jump(CheckersCell source, CheckersCell dest)
-    {
-        return true;
     }
     
    /* public static void main(String[] args) 

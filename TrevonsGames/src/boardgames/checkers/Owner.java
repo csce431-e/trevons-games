@@ -13,12 +13,18 @@ import java.util.ArrayList;
 public enum Owner {
  
     PLAYER1, PLAYER2, EMPTY;   
-        
+    
+    public CheckersBoard gameBoard;    
     public ArrayList<CheckersCell> pieces;
     
     Owner()
     {
         pieces = new ArrayList();
+    }
+    
+    public void setBoard(CheckersBoard b)
+    {
+        gameBoard = b;
     }
     
     public Owner opposite()

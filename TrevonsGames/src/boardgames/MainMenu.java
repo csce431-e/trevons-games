@@ -9,6 +9,9 @@ import boardgames.BattleShip.*;
 import boardgames.checkers.*;
 import boardgames.Mancala.*;
 import boardgames.connectfour.*;
+import boardgames.tictactoe.*;
+import java.awt.*;;
+import java.awt.event.*;
 
 import java.util.*;
 import javax.swing.*;
@@ -30,24 +33,49 @@ public class MainMenu extends javax.swing.JPanel {
     byte[] get_ip_array(String ip_box_str)
     {
         //return new byte[] {127,0,0,1};
-        ArrayList<Integer> ip = new ArrayList<>();
-        String temp_s = "";
-        for(int i = 0; i<ip_box_str.length(); i++)
+        try
         {
-            if(ip_box_str.charAt(i) == '.')
+            ArrayList<Integer> ip = new ArrayList<>();
+            String temp_s = "";
+            for(int i = 0; i<ip_box_str.length(); i++)
             {
-                ip.add(Integer.parseInt(temp_s));
-                temp_s = "";
+                if(ip_box_str.charAt(i) == '.')
+                {
+                    ip.add(Integer.parseInt(temp_s));
+                    temp_s = "";
+                }
+                else
+                {
+                    temp_s += ip_box_str.charAt(i);
+                }
             }
-            else
+            ip.add(Integer.parseInt(temp_s));
+            if(ip.size() != 4)
             {
-                temp_s += ip_box_str.charAt(i);
+                throw new NumberFormatException();
             }
+            return new byte[] {(byte)ip.get(0).intValue(),(byte)ip.get(1).intValue(),(byte)ip.get(2).intValue(),(byte)ip.get(3).intValue()}; 
+    
         }
-        ip.add(Integer.parseInt(temp_s));
-        return new byte[] {(byte)ip.get(0).intValue(),(byte)ip.get(1).intValue(),(byte)ip.get(2).intValue(),(byte)ip.get(3).intValue()}; 
+        catch(NumberFormatException n)
+        {
+            System.err.println("Invalid IPv4 Address");
+            final JFrame quit_window = new JFrame("Invalid IPv4 Address");
+            JButton accept = new JButton("OK");
+            accept.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    quit_window.dispose();
+                }
+            });
+            quit_window.add(accept);
+            quit_window.setLocation(300, 300);
+            quit_window.setSize(400, 200);
+            quit_window.setVisible(true);
+            return null;
+        }
     }
-
+   
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -69,56 +97,56 @@ public class MainMenu extends javax.swing.JPanel {
         ip_input_box = new javax.swing.JTextField();
         locally_radiob = new javax.swing.JRadioButton();
         online_radiob = new javax.swing.JRadioButton();
+        jButton7 = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
 
-        setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-
+        jButton1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jButton1.setText("Peg Solitaire");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 solitaireClicked(evt);
             }
         });
-        add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, 150, 80));
 
+        jButton2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jButton2.setText("Connect 4");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ConnectFourClicked(evt);
             }
         });
-        add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 0, 150, 80));
 
+        jButton3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jButton3.setText("Checkers");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 CheckersClicked(evt);
             }
         });
-        add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, 150, 80));
 
+        jButton4.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jButton4.setText("Gomoku");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 GomokuClicked(evt);
             }
         });
-        add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 100, 150, 80));
 
+        jButton5.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jButton5.setText("Mancala");
         jButton5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 MancalaClicked(evt);
             }
         });
-        add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 220, 150, 80));
 
+        jButton6.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jButton6.setText("Battleship");
         jButton6.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BattleshipClicked(evt);
             }
         });
-        add(jButton6, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 200, 150, 80));
 
         server_button.setText("Server");
         server_button.addActionListener(new java.awt.event.ActionListener() {
@@ -126,7 +154,6 @@ public class MainMenu extends javax.swing.JPanel {
                 serverClicked(evt);
             }
         });
-        add(server_button, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 270, -1, -1));
 
         ip_input_box.setText("Server IP here");
         ip_input_box.setEnabled(false);
@@ -135,7 +162,6 @@ public class MainMenu extends javax.swing.JPanel {
                 serverIpBoxClicked(evt);
             }
         });
-        add(ip_input_box, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 160, 81, -1));
 
         buttonGroup1.add(locally_radiob);
         locally_radiob.setSelected(true);
@@ -145,7 +171,6 @@ public class MainMenu extends javax.swing.JPanel {
                 local_radioClicked(evt);
             }
         });
-        add(locally_radiob, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 100, -1, -1));
 
         buttonGroup1.add(online_radiob);
         online_radiob.setText("Play Online");
@@ -154,7 +179,89 @@ public class MainMenu extends javax.swing.JPanel {
                 online_radioClicked(evt);
             }
         });
-        add(online_radiob, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 130, -1, -1));
+        online_radiob.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                online_radiobActionPerformed(evt);
+            }
+        });
+
+        jButton7.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jButton7.setText("TicTacToe");
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tictactoe_clicked(evt);
+            }
+        });
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 36)); // NOI18N
+        jLabel1.setText("Trevon's Games!");
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+        this.setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(37, 37, 37)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(locally_radiob)
+                                    .addComponent(online_radiob))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(ip_input_box, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(3, 3, 3)
+                        .addComponent(server_button)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel1)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(server_button))
+                .addGap(20, 20, 20)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(locally_radiob)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(online_radiob)
+                            .addComponent(ip_input_box, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(30, Short.MAX_VALUE))
+        );
     }// </editor-fold>//GEN-END:initComponents
 
     private void solitaireClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_solitaireClicked
@@ -169,6 +276,7 @@ public class MainMenu extends javax.swing.JPanel {
                     SolitaireGui game = new SolitaireGui(false, new byte[] {}); //2 params, whether or not it's online and the ip addr
                     game.setVisible(true);
                     game.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    game.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
                 }
             });
         }
@@ -179,16 +287,39 @@ public class MainMenu extends javax.swing.JPanel {
                 @Override
                 public void run() 
                 {
-                    SolitaireGui game = new SolitaireGui(true, get_ip_array(ip_input_box.getText()));
-                    game.setVisible(true);
+                    final SolitaireGui game = new SolitaireGui(true, get_ip_array(ip_input_box.getText()));
                     game.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                    game.waitForOpponent();
-
-                    if(!game.myTurn)
+                    game.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+                    
+                    class Waiting_handler implements Runnable
                     {
-                        game.paintAll(game.getGraphics()); //makes sure to draw the board before triggering the block
-                        game.waitForMove();
+                        @Override
+                        public void run()
+                        {
+                            
+                            if(game.myTurn)
+                            {
+                                game.waitForOpponent_host();// put in thread
+                                game.wait_window.dispose();
+                                if(game.iquit)
+                                {
+                                    return;
+                                }
+                                game.setVisible(true);//put in thread
+                            }
+                            else
+                            {
+                                game.waitForOpponent_nothost();// put in thread
+                                game.wait_window.dispose();
+                                game.paintAll(game.getGraphics()); //makes sure to draw the board before triggering the block
+                                game.setVisible(true);//put in thread
+                                System.out.println("waiting for opponents first move");
+                                game.waitForMove();
+                            }
+                        }
                     }
+                    Thread t = new Thread(new Waiting_handler());
+                    t.start();
                 }
             });
         }
@@ -197,15 +328,134 @@ public class MainMenu extends javax.swing.JPanel {
     
     private void ConnectFourClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConnectFourClicked
         // TODO add your handling code here:
-        ConnectFourGUIPanel g = new ConnectFourGUIPanel();
-        g.playConnect();
+        //ConnectFourGUIPanel g = new ConnectFourGUIPanel();
+        //g.playConnect();
+        
+         if(locally_radiob.isSelected())  //local play
+        {
+            java.awt.EventQueue.invokeLater(new Runnable() 
+            {
+                @Override
+                public void run() 
+                {
+                    ConnectFourGUIPanel game = new ConnectFourGUIPanel(false, new byte[] {}); //2 params, whether or not it's online and the ip addr
+                    game.setVisible(true);
+                    game.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    game.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+                }
+            });
+        }
+        else //online play
+        {
+            java.awt.EventQueue.invokeLater(new Runnable() 
+            {
+                @Override
+                public void run() 
+                {
+                    final ConnectFourGUIPanel game = new ConnectFourGUIPanel(true, get_ip_array(ip_input_box.getText()));
+                    game.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    game.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+                    
+                    class Waiting_handler implements Runnable
+                    {
+                        @Override
+                        public void run()
+                        {
+                            
+                            if(game.myTurn)
+                            {
+                                game.waitForOpponent_host();// put in thread
+                                game.wait_window.dispose();
+                                if(game.iquit)
+                                {
+                                    return;
+                                }
+                                game.setVisible(true);//put in thread
+                            }
+                            else
+                            {
+                                game.waitForOpponent_nothost();// put in thread
+                                game.wait_window.dispose();
+                                game.paintAll(game.getGraphics()); //makes sure to draw the board before triggering the block
+                                game.setVisible(true);//put in thread
+                                System.out.println("waiting for opponents first move");
+                                game.waitForMove();
+                            }
+                        }
+                    }
+                    Thread t = new Thread(new Waiting_handler());
+                    t.start();
+                }
+            });
+         }
     }//GEN-LAST:event_ConnectFourClicked
 
     private void CheckersClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckersClicked
-        // TODO add your handling code here:
+        
         make_pretty();
+        if(locally_radiob.isSelected())  //local play
+        {
+            java.awt.EventQueue.invokeLater(new Runnable() 
+            {
+                @Override
+                public void run() 
+                {
+                    //CheckersGUI game = new CheckersGUI(false, new byte[] {}); //2 params, whether or not it's online and the ip addr
+                    CheckersGUI game = new CheckersGUI();
+                    game.setVisible(true);
+                    game.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                }
+            });
+        }
+        else //online play
+        {
+            java.awt.EventQueue.invokeLater(new Runnable() 
+            {
+                @Override
+                public void run() 
+                {
+                    final CheckersGUI game = new CheckersGUI(true, get_ip_array(ip_input_box.getText()));
+                    game.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    
+                    class Waiting_handler implements Runnable
+                    {
+                        @Override
+                        public void run()
+                        {
+                            
+                            if(game.myTurn)
+                            {
+                                game.waitForOpponent_host();// put in thread
+                                game.wait_window.dispose();
+                                if(game.iquit)
+                                {
+                                    return;
+                                }
+                                game.setVisible(true);//put in thread
+                            }
+                            else
+                            {
+                                game.waitForOpponent_nothost();// put in thread
+                                game.wait_window.dispose();
+                                game.paintAll(game.getGraphics()); //makes sure to draw the board before triggering the block
+                                game.setVisible(true);//put in thread
+                                System.out.println("waiting for opponents first move");
+                                game.waitForMove();
+                            }
+                        }
+                    }
+                    Thread t = new Thread(new Waiting_handler());
+                    t.start();
+                }
+            });
+        }
+        
+        
+        
+        // TODO add your handling code here:
+        /*make_pretty();
         CheckersGUI g = new CheckersGUI();
-        g.setVisible(true);
+        g.setVisible(true);*/
     }//GEN-LAST:event_CheckersClicked
 
     private void GomokuClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GomokuClicked
@@ -222,8 +472,63 @@ public class MainMenu extends javax.swing.JPanel {
 
     private void BattleshipClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BattleshipClicked
         // TODO add your handling code here:
-        BattleShipGUI b = new BattleShipGUI();
-        b.playGame();
+        if(locally_radiob.isSelected())  //local play
+        {
+            java.awt.EventQueue.invokeLater(new Runnable() 
+            {
+                @Override
+                public void run() 
+                {
+                    BattleShipGUI game = new BattleShipGUI(false, new byte[] {}); //2 params, whether or not it's online and the ip addr
+                    game.setVisible(true);
+                    game.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    game.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+                }
+            });
+        }
+        else //online play
+        {
+            java.awt.EventQueue.invokeLater(new Runnable() 
+            {
+                @Override
+                public void run() 
+                {
+                    final BattleShipGUI game = new BattleShipGUI(true, get_ip_array(ip_input_box.getText()));
+                    game.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    game.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+                    
+                    class Waiting_handler implements Runnable
+                    {
+                        @Override
+                        public void run()
+                        {
+                            
+                            if(game.myTurn)
+                            {
+                                game.waitForOpponent_host();// put in thread
+                                game.wait_window.dispose();
+                                if(game.iquit)
+                                {
+                                    return;
+                                }
+                                game.setVisible(true);//put in thread
+                            }
+                            else
+                            {
+                                game.waitForOpponent_nothost();// put in thread
+                                game.wait_window.dispose();
+                                game.paintAll(game.getGraphics()); //makes sure to draw the board before triggering the block
+                                game.setVisible(true);//put in thread
+                                System.out.println("waiting for opponents first move");
+                                game.waitForMove();
+                            }
+                        }
+                    }
+                    Thread t = new Thread(new Waiting_handler());
+                    t.start();
+                }
+            });
+        }
     }//GEN-LAST:event_BattleshipClicked
 
     private void serverClicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_serverClicked
@@ -231,7 +536,7 @@ public class MainMenu extends javax.swing.JPanel {
         server_button.setEnabled(false);
         
         Server s = new Server();
-        s.start();
+        s.start(this);
     }//GEN-LAST:event_serverClicked
 
     private void serverIpBoxClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_serverIpBoxClicked
@@ -245,13 +550,86 @@ public class MainMenu extends javax.swing.JPanel {
         ip_input_box.setEnabled(true);
         ip_input_box.requestFocusInWindow();
         ip_input_box.setText("");
+        if(online_radiob.isSelected())
+        {
+            jButton1.setEnabled(false);
+        }
     }//GEN-LAST:event_online_radioClicked
 
     private void local_radioClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_local_radioClicked
         // TODO add your handling code here:
         ip_input_box.setEnabled(false);
         ip_input_box.setText("Server IP here");
+        if(locally_radiob.isSelected())
+        {
+            jButton1.setEnabled(true);
+        }
     }//GEN-LAST:event_local_radioClicked
+
+    private void tictactoe_clicked(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tictactoe_clicked
+        // TODO add your handling code here:
+        if(locally_radiob.isSelected())  //local play
+        {
+            java.awt.EventQueue.invokeLater(new Runnable() 
+            {
+                @Override
+                public void run() 
+                {
+                    TicTacToeGui game = new TicTacToeGui(false, new byte[] {}); //2 params, whether or not it's online and the ip addr
+                    game.setVisible(true);
+                    game.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    game.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+                }
+            });
+        }
+        else //online play
+        {
+            java.awt.EventQueue.invokeLater(new Runnable() 
+            {
+                @Override
+                public void run() 
+                {
+                    final TicTacToeGui game = new TicTacToeGui(true, get_ip_array(ip_input_box.getText()));
+                    game.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    game.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+                    
+                    class Waiting_handler implements Runnable
+                    {
+                        @Override
+                        public void run()
+                        {
+                            
+                            if(game.myTurn)
+                            {
+                                game.waitForOpponent_host();// put in thread
+                                game.wait_window.dispose();
+                                if(game.iquit)
+                                {
+                                    return;
+                                }
+                                game.setVisible(true);//put in thread
+                            }
+                            else
+                            {
+                                game.waitForOpponent_nothost();// put in thread
+                                game.wait_window.dispose();
+                                game.paintAll(game.getGraphics()); //makes sure to draw the board before triggering the block
+                                game.setVisible(true);//put in thread
+                                System.out.println("waiting for opponents first move");
+                                game.waitForMove();
+                            }
+                        }
+                    }
+                    Thread t = new Thread(new Waiting_handler());
+                    t.start();
+                }
+            });
+        }
+    }//GEN-LAST:event_tictactoe_clicked
+
+    private void online_radiobActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_online_radiobActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_online_radiobActionPerformed
 
     private void make_pretty()
     {
@@ -283,6 +661,8 @@ public class MainMenu extends javax.swing.JPanel {
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
+    private javax.swing.JButton jButton7;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JRadioButton locally_radiob;
     private javax.swing.JRadioButton online_radiob;
     private javax.swing.JButton server_button;

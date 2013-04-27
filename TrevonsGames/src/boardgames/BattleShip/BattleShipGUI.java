@@ -4,12 +4,24 @@
  */
 package boardgames.BattleShip;
 
+import boardgames.pegSolitaire.SolitaireCoordinate;
+import boardgames.pegSolitaire.SolitaireMove;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
+import java.net.ConnectException;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 
 /**
  *
@@ -17,7 +29,7 @@ import javax.swing.JButton;
  */
 public class BattleShipGUI extends javax.swing.JFrame {
     
-    private boolean p1Turn=true;
+    //private boolean myTurn=true;
     private boolean turnSwap = false;
     private boolean p1PlacedShips=false;
     private boolean p2PlacedShips=false;
@@ -25,6 +37,18 @@ public class BattleShipGUI extends javax.swing.JFrame {
     private boolean game = true;
     static int currentShip=0;
     BattleShip p1, p2;
+    String send = "";
+    
+    //start0 for online play******************************************************************************************************
+     boolean isOnline;
+     byte [] serverIP;
+     public boolean myTurn;
+     Socket requestSocket;
+     ObjectOutputStream out;
+     ObjectInputStream in;
+     public boolean iquit;
+     public final JFrame wait_window = new JFrame("Waiting for an opponent");
+     //end0 for online play******************************************************************************************************
     
     ArrayList<ArrayList<JButton>> p1button;
     ArrayList<ArrayList<JButton>> p2button;
@@ -46,7 +70,357 @@ public class BattleShipGUI extends javax.swing.JFrame {
         }
         
         init();
+        isOnline = false;
     }
+    
+    public BattleShipGUI(boolean online, byte[] ip){
+        initComponents();
+        p1button = new ArrayList<ArrayList<JButton>>();
+        p2button = new ArrayList<ArrayList<JButton>>();
+        
+        p1 = new BattleShip();
+        p2 = new BattleShip();
+        
+        for(int x=0;x<10;x++){
+            p1button.add(new ArrayList<JButton>());
+            p2button.add(new ArrayList<JButton>());
+        }
+        
+        
+        
+        //start1 for online play******************************************************************************************************
+        isOnline = online;
+        if(!online) myTurn=true;
+        else myTurn=false;
+        if(isOnline)
+        {
+            serverIP = ip;
+            iquit = false;
+            setup_client_socket();
+        }
+        //end1 for online play******************************************************************************************************
+        init();
+        this.setVisible(true);
+        //myTurn=myTurn;
+    }
+    
+    private void setup_client_socket()
+    {
+        try
+        {
+            System.out.println("Setting up client socket");
+            final InetAddress addr = InetAddress.getByAddress(serverIP);
+            //if you request a socket to a nonexistent addr, then
+            requestSocket = new Socket(addr, 2008);
+            
+            out = new ObjectOutputStream(requestSocket.getOutputStream());
+            out.flush();
+            in = new ObjectInputStream(requestSocket.getInputStream());
+            
+            out.writeObject("battle");
+            System.out.println("waiting for response from server");
+            String msg = (String)in.readObject(); //waiting or starting
+            System.out.println("readin: "+ msg);
+
+            if(msg.equals("waiting"))
+            {
+                System.out.println("waiting for \"starting\"");
+
+                //create window
+
+                wait_window.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+                JButton accept = new JButton("CANCEL");
+
+                accept.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) 
+                    {
+                        iquit = true;
+                        wait_window.dispose();
+                    }
+                });
+
+                wait_window.add(accept);
+                wait_window.setLocation(300, 300);
+                wait_window.setSize(400, 200);
+                wait_window.setVisible(true);
+                wait_window.paintAll(wait_window.getGraphics());
+                //window done
+
+                myTurn = true;
+                System.out.println("its my turn");
+            }
+            else
+            {
+                myTurn = false; 
+                System.out.println("its NOT my turn");
+            }
+        }
+        catch(ConnectException ce)
+        {
+            System.err.println("Connection timed out - invalid ip most like");
+            final JFrame quit_window = new JFrame("Unable to connect to given IP");
+            JButton accept = new JButton("OK");
+            accept.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    quit_window.dispose();
+
+                }
+            });
+            quit_window.add(accept);
+            quit_window.setLocation(300, 300);
+            quit_window.setSize(400, 200);
+            quit_window.setVisible(true);
+            this.dispose();
+        }
+        catch(ClassNotFoundException classNot)
+        { 
+            System.err.println("data received in unknown format"); 
+        }
+        catch(UnknownHostException unknownHost)
+        {
+            System.err.println("You are trying to connect to an unknown host!");
+            final JFrame quit_window = new JFrame("Unable to connect to given IP - Unknown Host");
+            JButton accept = new JButton("OK");
+            accept.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    quit_window.dispose();
+
+                }
+            });
+            quit_window.add(accept);
+            quit_window.setLocation(300, 300);
+            quit_window.setSize(400, 200);
+            quit_window.setVisible(true);
+            this.dispose();
+        }
+        catch(IOException ioException)
+        {
+            ioException.printStackTrace();
+        }
+    }
+    
+    //copy directly
+    void sendMessage(String msg)
+    {
+        try
+        {
+            out.writeObject(msg);
+            out.flush();
+            System.out.println("client>" + msg);
+        }
+        catch(IOException ioException)
+        {
+            ioException.printStackTrace();
+        }
+    }
+
+    public void waitForOpponent_nothost()
+    {
+        try
+        {
+            System.out.println("blocking in nothost");
+            String msg = (String)in.readObject();
+            System.out.println(msg); //should be connection successful, shold only print when BOTH are connected   
+        }
+        catch(IOException e)
+        {
+           //System.out.println("IOexception in waiting for opponent");
+            e.printStackTrace();
+        }
+        catch(ClassNotFoundException e)
+        {
+            //System.out.println("class not found in waiting for opponent");
+            e.printStackTrace();
+        }
+    }
+    
+    public void waitForOpponent_host()
+    {
+        try
+        {
+             //****put the quit window here**
+            System.out.println("blocking in host didyouquit");
+            String msg = (String)in.readObject(); //should be didyouquit
+            System.out.println(msg);
+            
+            if(iquit)
+            {
+                out.writeObject("yes");
+                
+                return; //you quit so no reason to continue
+            }
+            else
+            {
+                out.writeObject("no");
+            }
+            
+            System.out.println("blocking in host for game start");
+            msg = (String)in.readObject();
+            System.out.println(msg); //should be connection successful, shold only print when BOTH are connected   
+        }
+        catch(IOException e)
+        {
+           //System.out.println("IOexception in waiting for opponent");
+            e.printStackTrace();
+        }
+        catch(ClassNotFoundException e)
+        {
+            //System.out.println("class not found in waiting for opponent");
+            e.printStackTrace();
+        }
+    }
+    
+    //only difference is how to actually make the move received and apply to graphics
+    public void waitForMove()
+    {
+        //wait for your turn, continuously ask for msg from in till you get it
+        try
+        {
+            System.out.println("Waiting for move");
+            String msg = (String)in.readObject();
+            System.out.println("Message received: "+msg);
+            
+            if(msg.equals("quit"))
+            {
+                final JFrame quit_window = new JFrame("Your opponent has quit");
+                JButton accept = new JButton("OK");
+                accept.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        quit_window.dispose();
+
+                    }
+                });
+                quit_window.add(accept);
+                quit_window.setLocation(300, 300);
+                quit_window.setSize(400, 200);
+                quit_window.setVisible(true);
+                this.dispose();
+                return;
+            }
+            if(placeShips){
+                System.out.println("Waiting for move");
+
+                    //msg = (String)in.readObject();
+                    //IIS IIS IIS IIS IIS
+                    System.out.println("Message received: "+msg);
+                    if(msg.equals("Connection successful")){
+                        waitForMove();
+                    }
+                    else if(msg.equals("quit"))
+                    {
+                        final JFrame quit_window = new JFrame("Your opponent has quit");
+                        JButton accept = new JButton("OK");
+                        accept.addActionListener(new ActionListener() {
+                            @Override
+                            public void actionPerformed(ActionEvent e) {
+                                quit_window.dispose();
+
+                            }
+                        });
+                        quit_window.add(accept);
+                        quit_window.setLocation(300, 300);
+                        quit_window.setSize(400, 200);
+                        quit_window.setVisible(true);
+                        this.dispose();
+                        return;
+                    }
+                    else{
+                        int x = Integer.parseInt(msg.substring(0,1));
+                        int y = Integer.parseInt(msg.substring(1,2));
+                        String orientation = msg.substring(2,3);
+                        switch(orientation.charAt(0)){
+                            case 'N': orientation = "NORTH"; break;
+                            case 'E': orientation = "EAST"; break;
+                            case 'S': orientation = "SOUTH"; break;
+                            case 'W': orientation = "WEST"; break;
+                        }
+                        p2.placeShips(new Ship.point(x,y),currentShip,orientation);
+                        currentShip++;
+
+                        x = Integer.parseInt(msg.substring(4,5));
+                        y = Integer.parseInt(msg.substring(5,6));
+                        orientation = msg.substring(6,7);
+                        switch(orientation.charAt(0)){
+                            case 'N': orientation = "NORTH"; break;
+                            case 'E': orientation = "EAST"; break;
+                            case 'S': orientation = "SOUTH"; break;
+                            case 'W': orientation = "WEST"; break;
+                        }
+                        p2.placeShips(new Ship.point(x,y),currentShip,orientation);
+                        currentShip++;
+
+                        x = Integer.parseInt(msg.substring(8,9));
+                        y = Integer.parseInt(msg.substring(9,10));
+                        orientation = msg.substring(10,11);
+                        switch(orientation.charAt(0)){
+                            case 'N': orientation = "NORTH"; break;
+                            case 'E': orientation = "EAST"; break;
+                            case 'S': orientation = "SOUTH"; break;
+                            case 'W': orientation = "WEST"; break;
+                        }
+                        p2.placeShips(new Ship.point(x,y),currentShip,orientation);
+                        currentShip++;
+
+                        x = Integer.parseInt(msg.substring(12,13));
+                        y = Integer.parseInt(msg.substring(13,14));
+                        orientation = msg.substring(14,15);
+                        switch(orientation.charAt(0)){
+                            case 'N': orientation = "NORTH"; break;
+                            case 'E': orientation = "EAST"; break;
+                            case 'S': orientation = "SOUTH"; break;
+                            case 'W': orientation = "WEST"; break;
+                        }
+                        p2.placeShips(new Ship.point(x,y),currentShip,orientation);
+                        currentShip++;
+
+                        x = Integer.parseInt(msg.substring(16,17));
+                        y = Integer.parseInt(msg.substring(17,18));
+                        orientation = msg.substring(18,19);
+                        switch(orientation.charAt(0)){
+                            case 'N': orientation = "NORTH"; break;
+                            case 'E': orientation = "EAST"; break;
+                            case 'S': orientation = "SOUTH"; break;
+                            case 'W': orientation = "WEST"; break;
+                        }
+                        p2.placeShips(new Ship.point(x,y),currentShip,orientation);
+                        currentShip++;
+                        
+                    }
+                
+                p2PlacedShips=true;
+                currentShip=0;
+                myTurn=true;
+                }
+                else{
+                Ship.point move = getMoveFromString(msg);            
+                p1.attackSpot(move.x, move.y);
+                updateP1Board();
+                myTurn = true; 
+                }
+            }
+            catch(ClassNotFoundException classNot)
+            {
+                System.err.println("data received in unknown format");
+            } 
+            catch (IOException ex) 
+            {
+                ex.printStackTrace();
+            }
+    }
+    
+    //theirs will have to be completely different: some way to parse a string into any possible move
+    Ship.point getMoveFromString(String s)
+    {
+        int x = Integer.parseInt(s.substring(0, 1));
+        int y = Integer.parseInt(s.substring(1, 2));
+        
+        return new Ship.point(x,y);
+    }
+    //end2 for online play******************************************************************************************************
     
     //don't question this, just hope it works
     public void init(){
@@ -279,12 +653,7 @@ public class BattleShipGUI extends javax.swing.JFrame {
         
         
         disableP2();
-        updateEmptyBoard();
-        
-        
-        
-        
-        
+        updateEmptyBoard();     
     }
     
     Ship.point getCoordsp1(JButton b){
@@ -2624,11 +2993,11 @@ public class BattleShipGUI extends javax.swing.JFrame {
         }
         
         Ship.point p;
-        if((p1Turn && placeShips) || (!p1Turn && !placeShips)){
+        if((myTurn && placeShips) || (!myTurn && !placeShips)){
             p = getCoordsp1(b);
             System.out.println(p.x + " " + p.y);
         }
-        else if((!p1Turn && placeShips) || (p1Turn && !placeShips)){
+        else if((!myTurn && placeShips) || (myTurn && !placeShips) || isOnline){
             p=getCoordsp2(b);
             System.out.println(p.x + " " + p.y);
         }else{
@@ -2636,7 +3005,7 @@ public class BattleShipGUI extends javax.swing.JFrame {
         }
          
         if(placeShips && game ){
-            if(p1Turn){
+            if(myTurn && !isOnline){
                 if(currentShip +2 < 6){
                     jLabel1.setText("Player 1 place ship " + (currentShip+2));
                     jLabel2.setText("");
@@ -2651,7 +3020,7 @@ public class BattleShipGUI extends javax.swing.JFrame {
                     currentShip++;
                     System.out.println("player 1 placed ship " + currentShip + " at location " + p.x + ' ' + p.y);
                     if(currentShip==5){
-                        p1Turn=false;
+                        myTurn=false;
                         currentShip=0;
                         p1PlacedShips=true;
                         jRadioButton1.setSelected(true);
@@ -2669,7 +3038,31 @@ public class BattleShipGUI extends javax.swing.JFrame {
                     System.out.print("Error placing ship");
                 }
             }
-            else{
+            else if(myTurn && isOnline){
+                //send = "";
+                if(p1.placeShips(p, currentShip, orientation) != -1){
+                    updateP1Board();
+                    currentShip++;
+                    send += p.x.toString() + p.y.toString() + orientation.charAt(0) + " ";
+                    System.out.println("player 1 placed ship " + currentShip + " at location " + p.x + ' ' + p.y);
+                    if(currentShip==5){
+                        System.out.println(send);
+                        sendMessage(send);
+                        currentShip=0;
+                        p1PlacedShips = true;
+                        if(!p2PlacedShips){
+                            waitForMove();
+                            myTurn=true;
+                        }
+                        else{
+                            myTurn=false;
+                        }
+                        enableP2();
+                        //myTurn=true;
+                    }
+                }
+            }
+            else if(!isOnline && !myTurn){
                 jLabel1.setText("");
                 if(currentShip+2<6){
                     jLabel2.setText("Player 2 place ship " + (currentShip+2));
@@ -2685,7 +3078,7 @@ public class BattleShipGUI extends javax.swing.JFrame {
                     updateP2Board();
 
                     if(currentShip==5){
-                        p1Turn=true;
+                        myTurn=true;
                         currentShip=0;
                         p2PlacedShips=true;
                         
@@ -2697,20 +3090,22 @@ public class BattleShipGUI extends javax.swing.JFrame {
                     System.out.println("Error placing ship");
                 }
             }
-            if(p1PlacedShips && p2PlacedShips){
-                placeShips=false;
-                jRadioButton1.setVisible(false);
-                jRadioButton2.setVisible(false);
-                jRadioButton3.setVisible(false);
-                jRadioButton4.setVisible(false);
-            }
-        }
+             if(p1PlacedShips && p2PlacedShips){
+                    placeShips=false;
+                    jRadioButton1.setVisible(false);
+                    jRadioButton2.setVisible(false);
+                    jRadioButton3.setVisible(false);
+                    jRadioButton4.setVisible(false);
+                    //if(!myTurn)waitForMove();
+             }
+            
+        }// SETUP DONE
         else{
-            if(p1Turn){
+            if(myTurn){
                 jLabel2.setText("Player 1 attacked spot " + p.x + ' ' + p.y);
                 jLabel1.setText("Player 2 make move");
                 if(!p2.attackSpot(p.x,p.y).equals("X")){
-                    enableP1();
+                    if(!isOnline) enableP1();
                     if(p2.checkWin()){
                         System.out.println("Player 1 wins!");
                         jLabel1.setText("Player 1 wins!");
@@ -2718,10 +3113,17 @@ public class BattleShipGUI extends javax.swing.JFrame {
                         game=false;
                         disableP1();
                     }
-                    p1Turn=false;
-                    playerChange();
-                    //updateP2Board();
-                    disableP2();
+                    myTurn=false;
+                    if(isOnline){
+                        sendMessage(p.x.toString() + p.y.toString());
+                        waitForMove();
+                        disableP1();
+                    }
+                    else{
+                        playerChange();
+                        //updateP2Board();
+                        disableP2();
+                    }
                     
                 }
                 else{
@@ -2741,7 +3143,7 @@ public class BattleShipGUI extends javax.swing.JFrame {
                         game=false;
                         disableP2();
                     }
-                    p1Turn=true;
+                    myTurn=true;
                     playerChange();
                     disableP1();
                     //updateP1Board();
@@ -2751,6 +3153,7 @@ public class BattleShipGUI extends javax.swing.JFrame {
                 }
             }
         }
+        
     }//GEN-LAST:event_p2ActionHandler
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -3577,7 +3980,7 @@ public class BattleShipGUI extends javax.swing.JFrame {
     private void jButton201ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton201ActionPerformed
         turnSwap =false;
         jDialog1.setVisible(false);
-        if(p1Turn){
+        if(myTurn){
             updateP1Board();
         }else{
             updateP2Board();
