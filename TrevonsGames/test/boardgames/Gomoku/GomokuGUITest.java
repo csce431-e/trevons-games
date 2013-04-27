@@ -4,7 +4,7 @@
  */
 package boardgames.Gomoku;
 
-import boardgames.Gomoku.GomokuGUI.point;
+import boardgames.Gomoku.GomokuGUI.Point;
 import javax.swing.JButton;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -58,8 +58,8 @@ public class GomokuGUITest {
         System.out.println("getMove");
         JButton b = null;
         GomokuGUI instance = new GomokuGUI();
-        point expResult = null;
-        point result = instance.getMove(b);
+        Point expResult = null;
+        Point result = instance.getMove(b);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         //fail("The test case is a prototype.");
