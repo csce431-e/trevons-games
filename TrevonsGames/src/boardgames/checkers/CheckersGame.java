@@ -214,23 +214,24 @@ public class CheckersGame {
         return m;
                     //m = (CheckersMove)j;
     }
-    public void sendAIMove()
+    public CheckersMove sendAIMove()
     {
        
         ArrayList<CheckersMove> l = b.getAllMoves();
   
         Random generator = new Random();
-        
+        CheckersMove m = new CheckersMove();
         boolean moveMade = false;
         if(!l.isEmpty())
         {
             while(!moveMade)
             {
                 int index = generator.nextInt(l.size());
-                CheckersMove m = l.get(index);
+                m = l.get(index);
                 moveMade = b.makeMove(m);
             }
         }
+        return m;
         /*Iterator<CheckersMove> il = l.iterator();
         CheckersMove m = il.next();
         
