@@ -230,7 +230,6 @@ public class Gomoku
                         }
 			
 		}
-
 	if(Up+Down >= 4) {return true;}
 	else if(Left+Right >= 4) {return true;}
 	else if(UpperLeft+LowerRight >= 4) {return true;}
