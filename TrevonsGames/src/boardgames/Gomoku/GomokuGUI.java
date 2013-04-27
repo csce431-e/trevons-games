@@ -6,8 +6,17 @@ package boardgames.Gomoku;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.ConnectException;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.UIManager;
 
 /**
@@ -18,25 +27,76 @@ public class GomokuGUI extends javax.swing.JFrame
 {
     Gomoku g = new Gomoku();
     ArrayList<ArrayList<JButton>> buttonArray;
-    point coords = new point(-1,-1);
+    Point coords = new Point(-1,-1);
    
-    static class point{
+    static class Point{
         int x, y;
         
-        public point(int xCoord, int yCoord){
+        public Point(int xCoord, int yCoord){
             x=xCoord;
             y=yCoord;
         }
-        
+           
         int getX(){return x;}
         
         int getY(){return y;}
     }
     
+        //ONLINE PLAY
+        boolean isOnline;
+        byte [] serverIP;
+        public boolean myTurn;
+        Socket requestSocket;
+        ObjectOutputStream out;
+        ObjectInputStream in;
+        public boolean iquit;
+        public final JFrame wait_window = new JFrame("Waiting for an opponent");
+        //ONLINE PLAY
+        
     /**
      * Creates new form GomokuGUI
      */
-    public GomokuGUI() 
+    public GomokuGUI()
+    {
+        try 
+         {
+             UIManager.setLookAndFeel( UIManager.getCrossPlatformLookAndFeelClassName() );
+         } catch (Exception e) {
+            e.printStackTrace();
+         }
+        
+        initComponents();
+     
+        buttonArray = new ArrayList<ArrayList<JButton>>();
+             buttonArray.ensureCapacity(16);
+             
+             for(int i=0;i<16;++i)
+             {
+                buttonArray.add(new ArrayList<JButton>());
+             }
+             
+             init();
+        
+        //add ActionListener to buttons
+        for(int y=0;y<16;++y)
+        {
+            for(int x=0;x<16;++x)
+            {
+                buttonArray.get(y).get(x).addActionListener(new java.awt.event.ActionListener() 
+                {
+                    @Override
+                    public void actionPerformed(ActionEvent e) 
+                    { 
+                        action(e);
+                    }
+                });
+            }
+        }
+        
+        isOnline = false;
+    }
+        
+    public GomokuGUI(boolean online,byte[] ip) 
     {
          //required to see colors with OSX
          try 
@@ -55,7 +115,38 @@ public class GomokuGUI extends javax.swing.JFrame
              {
                 buttonArray.add(new ArrayList<JButton>());
              }
+             
+        //ONLINE PLAY     
+        isOnline = online;
+        if(isOnline)
+        {
+            serverIP = ip;
+            iquit = false;
+            setup_client_socket();
+        }
+        //ONLINE PLAY
         
+        init();
+        
+        //add ActionListener to buttons
+        for(int y=0;y<16;++y)
+        {
+            for(int x=0;x<16;++x)
+            {
+                buttonArray.get(y).get(x).addActionListener(new java.awt.event.ActionListener() 
+                {
+                    @Override
+                    public void actionPerformed(ActionEvent e) 
+                    { 
+                        action(e);
+                    }
+                });
+            }
+        }
+    }
+    
+    private void init()
+    {
         buttonArray.get(0).add(jButton1);
         buttonArray.get(0).add(jButton2);
         buttonArray.get(0).add(jButton3);
@@ -328,18 +419,11 @@ public class GomokuGUI extends javax.swing.JFrame
         buttonArray.get(15).add(jButton254);
         buttonArray.get(15).add(jButton255);
         buttonArray.get(15).add(jButton256);
-        
-        //add ActionListener to buttons
-        for(int y=0;y<16;++y)
-        {
-            for(int x=0;x<16;++x)
-            {
-                buttonArray.get(y).get(x).addActionListener(new java.awt.event.ActionListener() 
-                {
-                    @Override
-                    public void actionPerformed(ActionEvent e) 
-                    { 
-                        int row, col;
+    }
+    
+    private void action(ActionEvent e)
+    {
+        int row, col;
                         char clr;
                         
                         JButton b = (JButton)e.getSource();
@@ -373,7 +457,26 @@ public class GomokuGUI extends javax.swing.JFrame
                             updateBoard();
                             //buttonArray.get(row).get(col).paintImmediately();
                                 
-                            g.gameOver = g.checkWin(row,col,clr); //Y U NO WORK?
+                            g.gameOver = g.checkWin(row,col,clr); 
+                            
+                            //start3 for online play******************************************************************************************************
+                            if(isOnline)
+                            {
+                               myTurn = false;
+                               sendMessage(playToString(col,row));
+                               
+                               class Waiting_for_replay_thread implements Runnable
+                                {
+                                    @Override
+                                    public void run()
+                                    {
+                                        waitForMove();
+                                    }
+                                }
+                                Thread t = new Thread(new Waiting_for_replay_thread());
+                                t.start();
+
+                            }
                             
                             int c = (char) (g.turnCounter + 1);
                             jTextPane4.setText(String.valueOf(c));
@@ -385,10 +488,268 @@ public class GomokuGUI extends javax.swing.JFrame
                             {
                                 quitGame();
                             }
+    }
+    
+    
+    String playToString(int col, int row)
+    {
+        String move = "";
+        
+        move += Integer.toString(col+10);
+        move += Integer.toString(row+10);
+        
+        return move; 
+    }
+    private void quit_buttonClicked(java.awt.event.ActionEvent evt) {                                    
+        // TODO add your handling code here:
+        
+        //send message to other player that you quit (it should sit in their queue if it is currently their turn and theyll get it when they make a move
+        if(isOnline)
+        {
+            sendMessage("quit");
+        }
+        this.dispose();
+    }
+    
+    private void setup_client_socket()
+    {
+        try
+        {
+            System.out.println("Setting up client socket");
+            final InetAddress addr = InetAddress.getByAddress(serverIP);
+            //if you request a socket to a nonexistent addr, then
+            requestSocket = new Socket(addr, 2008);
+            
+            out = new ObjectOutputStream(requestSocket.getOutputStream());
+            out.flush();
+            in = new ObjectInputStream(requestSocket.getInputStream());
+            
+            out.writeObject("sol");
+            System.out.println("waiting for response from server");
+            String msg = (String)in.readObject(); //waiting or starting
+            System.out.println("readin: "+ msg);
+
+            if(msg.equals("waiting"))
+            {
+                System.out.println("waiting for \"starting\"");
+
+                //create window
+
+                wait_window.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+                JButton accept = new JButton("CANCEL");
+
+                accept.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) 
+                    {
+                        iquit = true;
+                        wait_window.dispose();
                     }
                 });
+
+                wait_window.add(accept);
+                wait_window.setLocation(300, 300);
+                wait_window.setSize(400, 200);
+                wait_window.setVisible(true);
+                wait_window.paintAll(wait_window.getGraphics());
+                //window done
+
+                myTurn = true;
+                System.out.println("its my turn");
+            }
+            else
+            {
+                myTurn = false; 
+                System.out.println("its NOT my turn");
             }
         }
+        catch(ConnectException ce)
+        {
+            System.err.println("Connection timed out - invalid ip most like");
+            final JFrame quit_window = new JFrame("Unable to connect to given IP");
+            JButton accept = new JButton("OK");
+            accept.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    quit_window.dispose();
+
+                }
+            });
+            quit_window.add(accept);
+            quit_window.setLocation(300, 300);
+            quit_window.setSize(400, 200);
+            quit_window.setVisible(true);
+            this.dispose();
+        }
+        catch(ClassNotFoundException classNot)
+        { 
+            System.err.println("data received in unknown format"); 
+        }
+        catch(UnknownHostException unknownHost)
+        {
+            System.err.println("You are trying to connect to an unknown host!");
+            final JFrame quit_window = new JFrame("Unable to connect to given IP - Unknown Host");
+            JButton accept = new JButton("OK");
+            accept.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    quit_window.dispose();
+
+                }
+            });
+            quit_window.add(accept);
+            quit_window.setLocation(300, 300);
+            quit_window.setSize(400, 200);
+            quit_window.setVisible(true);
+            this.dispose();
+        }
+        catch(IOException ioException)
+        {
+            ioException.printStackTrace();
+        }
+    }
+    
+    //copy directly
+    void sendMessage(String msg)
+    {
+        try
+        {
+            out.writeObject(msg);
+            out.flush();
+            System.out.println("client>" + msg);
+        }
+        catch(IOException ioException)
+        {
+            ioException.printStackTrace();
+        }
+    }
+
+    public void waitForOpponent_nothost()
+    {
+        try
+        {
+            System.out.println("blocking in nothost");
+            String msg = (String)in.readObject();
+            System.out.println(msg); //should be connection successful, shold only print when BOTH are connected   
+        }
+        catch(IOException e)
+        {
+           //System.out.println("IOexception in waiting for opponent");
+            e.printStackTrace();
+        }
+        catch(ClassNotFoundException e)
+        {
+            //System.out.println("class not found in waiting for opponent");
+            e.printStackTrace();
+        }
+    }
+    
+    public void waitForOpponent_host()
+    {
+        try
+        {
+             //****put the quit window here**
+            System.out.println("blocking in host didyouquit");
+            String msg = (String)in.readObject(); //should be didyouquit
+            System.out.println(msg);
+            
+            if(iquit)
+            {
+                out.writeObject("yes");
+                
+                return; //you quit so no reason to continue
+            }
+            else
+            {
+                out.writeObject("no");
+            }
+            
+            System.out.println("blocking in host for game start");
+            msg = (String)in.readObject();
+            System.out.println(msg); //should be connection successful, should only print when BOTH are connected   
+        }
+        catch(IOException e)
+        {
+           //System.out.println("IOexception in waiting for opponent");
+            e.printStackTrace();
+        }
+        catch(ClassNotFoundException e)
+        {
+            //System.out.println("class not found in waiting for opponent");
+            e.printStackTrace();
+        }
+    }
+    
+    //only difference is how to actually make the move received and apply to graphics
+    public void waitForMove()
+    {
+        //wait for your turn, continuously ask for msg from in till you get it
+        try
+        {
+            System.out.println("Waiting for move");
+            String msg = (String)in.readObject();
+            System.out.println("Message received: "+msg);
+            
+            if(msg.equals("quit"))
+            {
+                final JFrame quit_window = new JFrame("Your opponent has quit");
+                JButton accept = new JButton("OK");
+                accept.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        quit_window.dispose();
+
+                    }
+                });
+                quit_window.add(accept);
+                quit_window.setLocation(300, 300);
+                quit_window.setSize(400, 200);
+                quit_window.setVisible(true);
+                this.dispose();
+                return;
+            }
+            coords = getMoveFromString(msg);
+                int col = coords.getX();
+                int row = coords.getY();
+                char clr;
+                
+            
+            if(g.turnCounter % 2 != 0)
+            {
+                clr = 'b'; //black always goes first, affirmative action ;)
+            }
+            else {clr = 'w';}
+            
+            g.UBoard.play(row,col,clr);
+                                g.recentX.add(col); //col value determines x location
+                                g.recentY.add(row);
+
+            updateBoard();
+            
+            myTurn = true;
+        }
+        catch(ClassNotFoundException classNot)
+        {
+            System.err.println("data received in unknown format");
+        } 
+        catch (IOException ex) 
+        {
+            ex.printStackTrace();
+        }   
+    }
+    
+    //theirs will have to be completely different: some way to parse a string into any possible move
+    Point getMoveFromString(String s)
+    {
+        String otherPlayerMove = "";
+        
+        int col = Integer.parseInt(s.substring(0,2));
+        int row = Integer.parseInt(s.substring(2,4));
+        
+        col = col-10;
+        row = row-10;
+        
+        return new Point(col,row);
     }
     
     public void updateBoard()
@@ -419,9 +780,8 @@ public class GomokuGUI extends javax.swing.JFrame
         
     }
     
-    public point getMove(JButton b)
+    public Point getMove(JButton b)
     {
-        point location;
         
         for(int x=0;x<16;++x)
         {
@@ -429,14 +789,13 @@ public class GomokuGUI extends javax.swing.JFrame
             {
                 if(buttonArray.get(y).get(x).equals(b))
                 {
-                    location = new point(x,y);
-                    return location;
+                    return new Point(x,y);
                 }
             }
         }
         
         //should never happen
-        return location = new point(-1,-1);
+        return new Point(-1,-1);
     }
     
     public void quitGame()
