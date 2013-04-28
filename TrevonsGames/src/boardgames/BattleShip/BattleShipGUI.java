@@ -1035,7 +1035,6 @@ public class BattleShipGUI extends javax.swing.JFrame {
 
         jDialog1.setAlwaysOnTop(true);
         jDialog1.setMinimumSize(new java.awt.Dimension(400, 400));
-        jDialog1.setPreferredSize(new java.awt.Dimension(400, 400));
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel3.setText(" Switching turns");
