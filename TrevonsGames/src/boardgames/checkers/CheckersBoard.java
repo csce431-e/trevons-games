@@ -238,17 +238,17 @@ public class CheckersBoard {
         Owner currentOwner = m.source.getOwner();
         if(currentOwner == Owner.EMPTY)
         {
-            currentGame.setStatus("There is no piece there!");
+            //currentGame.setStatus("There is no piece there!");
             return false;
         }
         else if(currentOwner != currentGame.turn)
         {
-            currentGame.setStatus("It is not your turn!");
+            currentGame.setStatus("You can't move the other player's pieces!");
             return false;
         }
         if(!m.isValidMove())
         {
-            currentGame.setStatus("Invalid Move");
+            //currentGame.setStatus("Invalid Move");
             return false;
         }
 
