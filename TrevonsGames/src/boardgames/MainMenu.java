@@ -605,6 +605,7 @@ public class MainMenu extends javax.swing.JPanel {
         if(online_radiob.isSelected())
         {
             jButton1.setEnabled(false);
+            jButton4.setEnabled(false);
         }
     }//GEN-LAST:event_online_radioClicked
 
@@ -615,6 +616,7 @@ public class MainMenu extends javax.swing.JPanel {
         if(locally_radiob.isSelected())
         {
             jButton1.setEnabled(true);
+            jButton4.setEnabled(true);
         }
     }//GEN-LAST:event_local_radioClicked
 
