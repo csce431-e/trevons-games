@@ -424,70 +424,71 @@ public class GomokuGUI extends javax.swing.JFrame
     private void action(ActionEvent e)
     {
         int row, col;
-                        char clr;
+        char clr;
                         
-                        JButton b = (JButton)e.getSource();
-                            coords = getMove(b);
-                                row = coords.getY();
-                                col = coords.getX();
-                                
-                                g.incTC();
+        JButton b = (JButton)e.getSource();
+            coords = getMove(b);
+            row = coords.getY();
+            col = coords.getX();
+            
+            updateBoard();
+            g.incTC();
                             
-                            if(g.turnCounter % 2 != 0)
-                            {
-                               clr = 'b'; //black always goes first, affirmative action ;)
-                            }
-                            else {clr = 'w';}
+            if(g.turnCounter % 2 != 0)
+            {
+                clr = 'b'; //black always goes first, affirmative action ;)
+            }
+            else {clr = 'w';}
                             
-                            do
-                            {
-                                g.wrongMove = g.checkMove(row,col,clr);
+            do
+            {
+                g.wrongMove = g.checkMove(row,col,clr);
                                 
-                                if(g.wrongMove)
-                                {
-                                    System.out.println("invalid move, click a different location");
-                                    return;
-                                }
-                            } while (g.wrongMove);
+            if(g.wrongMove)
+            {
+                System.out.println("invalid move, click a different location");
+                return;
+            }
+            }while (g.wrongMove);
                             
-                            g.UBoard.play(row,col,clr);
-                                g.recentX.add(col); //col value determines x location
-                                g.recentY.add(row);
+            g.UBoard.play(row,col,clr);
+                g.recentX.add(col); //col value determines x location
+                g.recentY.add(row);
                                 
-                            updateBoard();
-                            //buttonArray.get(row).get(col).paintImmediately();
-                                
-                            g.gameOver = g.checkWin(row,col,clr); 
+            updateBoard();
+                                               
+            g.gameOver = g.checkWin(row,col,clr); 
                             
-                            //start3 for online play******************************************************************************************************
-                            if(isOnline)
-                            {
-                               myTurn = false;
-                               sendMessage(playToString(col,row));
+            //start3 for online play******************************************************************************************************
+            if(isOnline)
+            {
+                myTurn = false;
+                sendMessage(playToString(col,row));
                                
-                               class Waiting_for_replay_thread implements Runnable
-                                {
-                                    @Override
-                                    public void run()
-                                    {
-                                        waitForMove();
-                                    }
-                                }
-                                Thread t = new Thread(new Waiting_for_replay_thread());
-                                t.start();
+                class Waiting_for_replay_thread implements Runnable
+                {
+                    @Override
+                    public void run()
+                    {
+                        waitForMove();
+                    }
+                }
+                
+                Thread t = new Thread(new Waiting_for_replay_thread());
+                    t.start();
 
-                            }
+             }
                             
-                            int c = (char) (g.turnCounter + 1);
-                            jTextPane4.setText(String.valueOf(c));
+             int c = (char) (g.turnCounter + 1);
+             jTextPane4.setText(String.valueOf(c));
                             
-                            if(clr == 'b') jTextPane2.setText("It's white's turn");
-                            if(clr == 'w') jTextPane2.setText("It's black's turn");
+             if(clr == 'b') jTextPane2.setText("It's white's turn");
+             if(clr == 'w') jTextPane2.setText("It's black's turn");
                             
-                            if(g.gameOver) 
-                            {
-                                quitGame();
-                            }
+             if(g.gameOver) 
+             {
+                quitGame();
+             }
     }
     
     
@@ -686,6 +687,8 @@ public class GomokuGUI extends javax.swing.JFrame
         //wait for your turn, continuously ask for msg from in till you get it
         try
         {
+            updateBoard();
+            
             System.out.println("Waiting for move");
             String msg = (String)in.readObject();
             System.out.println("Message received: "+msg);
@@ -712,7 +715,7 @@ public class GomokuGUI extends javax.swing.JFrame
                 int col = coords.getX();
                 int row = coords.getY();
                 char clr;
-                
+            g.turnCounter++;    
             
             if(g.turnCounter % 2 != 0)
             {
@@ -725,6 +728,18 @@ public class GomokuGUI extends javax.swing.JFrame
                                 g.recentY.add(row);
 
             updateBoard();
+            
+            int c = (char) (g.turnCounter + 1);
+             jTextPane4.setText(String.valueOf(c));
+                            
+             if(clr == 'b') jTextPane2.setText("It's white's turn");
+             if(clr == 'w') jTextPane2.setText("It's black's turn");
+                            
+             g.gameOver = g.checkWin(row,col,clr);
+             if(g.gameOver) 
+             {
+                quitGame();
+             }
             
             myTurn = true;
         }
