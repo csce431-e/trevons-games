@@ -304,6 +304,9 @@ public class BattleShipGUI extends javax.swing.JFrame {
                 game=false;
                 jLabel1.setText("You Lose");
                 jLabel2.setText("You Lose");
+                updateLoserBoard();
+                this.paintAll(this.getGraphics());
+                return;
             }
             if(placeShips){
                 System.out.println("Waiting for move");
@@ -410,6 +413,10 @@ public class BattleShipGUI extends javax.swing.JFrame {
                         disableP1();
                         jLabel1.setText("Opponent has finished placing ships");
                         jLabel2.setText("Your Move");
+                        jRadioButton1.setVisible(false);
+                        jRadioButton2.setVisible(false);
+                        jRadioButton3.setVisible(false);
+                        jRadioButton4.setVisible(false);
                     }
                 }
                 else{
@@ -771,6 +778,41 @@ public class BattleShipGUI extends javax.swing.JFrame {
                 //make the whole board blue so that people can't cheat between turns
                 p1button.get(y).get(x).setBackground(Color.blue);
                 p2button.get(y).get(x).setBackground(Color.blue);
+            }
+        }
+    }
+    
+    void updateLoserBoard(){
+        //p1.showBoard();
+        //p2.showBoard();
+        String[][] gameBoardp1 = p1.getBoard();
+        String[][] gameBoardp2 = p2.getBoard();
+        for(int y=0;y<p1.BOARD_H;y++){
+            for(int x=0; x<p1.BOARD_W;x++){
+                //player 2 will only see hits made to player 1's ships
+                p1button.get(y).get(x).setBackground(Color.blue);
+                if(gameBoardp2[x][y].equals("M")){
+                    p1button.get(y).get(x).setBackground(Color.CYAN);
+                }
+                else if(gameBoardp2[x][y].equals("X")){
+                    p1button.get(y).get(x).setBackground(Color.red);
+                }
+                else if(Character.isDigit(gameBoardp2[x][y].charAt(0))){
+                    p1button.get(y).get(x).setBackground(Color.DARK_GRAY);
+                }
+                
+                //player 2 will see all of player 2's ships
+                p2button.get(y).get(x).setBackground(Color.blue);
+                if(gameBoardp1[x][y].equals("M")){
+                    p2button.get(y).get(x).setBackground(Color.CYAN);
+                }
+                else if(gameBoardp1[x][y].equals("X")){
+                    p2button.get(y).get(x).setBackground(Color.red);
+                }
+                else if(Character.isDigit(gameBoardp1[x][y].charAt(0))){
+                    p2button.get(y).get(x).setBackground(Color.red);
+                }
+            
             }
         }
     }
@@ -3081,7 +3123,7 @@ public class BattleShipGUI extends javax.swing.JFrame {
                         jRadioButton2.setSelected(false);
                         jRadioButton3.setSelected(false);
                         jRadioButton4.setSelected(false);
-                        
+                        this.paintAll(this.getGraphics());
                         enableP2();
                         disableP1();
                         playerChange();
@@ -3188,8 +3230,14 @@ public class BattleShipGUI extends javax.swing.JFrame {
                         System.out.println("Player 1 wins!");
                         jLabel1.setText("Player 1 wins!");
                         jLabel2.setText("Player 1 wins!");
+                        if(isOnline){
+                            jLabel1.setText("YOU WIN");
+                            jLabel2.setText("YOU WIN");
+                        }
                         game=false;
-                        disableP1();
+                        if(!isOnline)disableP1();
+                        updateP1Board();
+                        this.paintAll(this.getGraphics());
                         sendMessage("WIN");
                     }
                     myTurn=false;
