@@ -238,7 +238,7 @@ public class CheckersBoard {
         Owner currentOwner = m.source.getOwner();
         if(currentOwner == Owner.EMPTY)
         {
-            currentGame.setStatus("There is no piece there!");
+            //currentGame.setStatus("There is no piece there!");
             return false;
         }
         else if(currentOwner != currentGame.turn)
@@ -248,7 +248,7 @@ public class CheckersBoard {
         }
         if(!m.isValidMove())
         {
-            currentGame.setStatus("Invalid Move");
+            //currentGame.setStatus("Invalid Move");
             return false;
         }
 
