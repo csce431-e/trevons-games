@@ -243,7 +243,7 @@ public class CheckersBoard {
         }
         else if(currentOwner != currentGame.turn)
         {
-            currentGame.setStatus("It is not your turn!");
+            currentGame.setStatus("You can't move the other player's pieces!");
             return false;
         }
         if(!m.isValidMove())
