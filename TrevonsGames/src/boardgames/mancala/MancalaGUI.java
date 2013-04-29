@@ -36,6 +36,7 @@ public class MancalaGUI extends javax.swing.JFrame {
     boolean isOnline;
     byte [] serverIP;
     public boolean myTurn;
+    public boolean notMyTurn;
     public int myPlayerNum;
     Socket requestSocket;
     ObjectOutputStream out;
@@ -63,7 +64,7 @@ public class MancalaGUI extends javax.swing.JFrame {
         
         turnOver = 0;
 
-        disableButtons();
+        //disableButtons();
         updateBoard();
     }
     
@@ -81,8 +82,9 @@ public class MancalaGUI extends javax.swing.JFrame {
         board = new MancalaBoard();
         
         turnOver = 0;
+        notMyTurn = false;
 
-        disableButtons();
+        //disableButtons();
         //updateBoard();
         
         //start1 for online play******************************************************************************************************
@@ -303,8 +305,9 @@ public class MancalaGUI extends javax.swing.JFrame {
                 return;
             }
             MancalaMove otherPlayerMove = getMoveFromString(msg);
-            board.play(otherPlayerMove);
-
+            int notBool = board.play(otherPlayerMove);
+            updateBoard();
+        
             /*firstChoice = buts.get((-otherPlayerMove.src.y)+3).get((otherPlayerMove.src.x)+3);
             middleButton = buts.get((-otherPlayerMove.middle.y)+3).get((otherPlayerMove.middle.x)+3);
             JButton clicked = buts.get((-otherPlayerMove.dest.y)+3).get((otherPlayerMove.dest.x)+3);
@@ -367,11 +370,14 @@ public class MancalaGUI extends javax.swing.JFrame {
         int next;
         int validMove=0;
         next = (p == 1) ? 2 : 1;
-        for(int i = 1; i< rows; i++) {
+        /*for(int i = 1; i< rows; i++) {
             buttons[playerTurn-1][i].setEnabled(false);
-        }
+        }*/
         playerTurn = next;
         System.out.println(AIGame +""+playerTurn);
+        if(isOnline) {
+            myTurn = false;
+        }
         if(AIGame && playerTurn ==2) {
              try {
                  jTextField1.setText("Computer's Turn");
@@ -399,6 +405,10 @@ public class MancalaGUI extends javax.swing.JFrame {
             }
      }
      
+     public void waitForAnotherMove() {
+         
+     }
+     
     public void checkForEnd() {
         if(board.checkForGameOver(playerTurn)) {
             gameOver = true;
@@ -423,11 +433,11 @@ public class MancalaGUI extends javax.swing.JFrame {
         if(board.checkForGameOver(playerTurn)) {
             endGame();
         }
-        else {
+        /*else {
             for(int i = 1; i< rows; i++) {
                 buttons[playerTurn-1][i].setEnabled(true);
             }
-        }
+        }*/
         for(int i = 0; i< cols; i++) {
             for(int j = 0; j< rows; j++) {
                 buttons[i][j].setText(""+board.getNumPiecesInPit(i, j));
@@ -676,118 +686,378 @@ public class MancalaGUI extends javax.swing.JFrame {
 
     private void jButton01ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton01ActionPerformed
         // TODO add your handling code here:
-        System.out.println(AIGame);
-        turnOver = board.play(playerTurn, playerTurn-1, 1);
-        if(turnOver == 1) {
-            changePlayer(playerTurn);
+        //System.out.println(AIGame);
+        if(isOnline){
+            if(myTurn) {
+                turnOver = board.play(myPlayerNum, 0, 1);
+                MancalaMove moveToSend = new MancalaMove(myPlayerNum, 0, 1);
+                sendMessage(moveToSend.toString());
+                if(turnOver == 1) {
+                    changePlayer(playerTurn);
+                    class Waiting_for_replay_thread implements Runnable {
+                        @Override
+                        public void run() {
+                            waitForMove();
+                        }
+                    }
+                    Thread t = new Thread(new Waiting_for_replay_thread());
+                    t.start();
+                }
+            }
+        }
+        else if (playerTurn-1 == 0) {
+            turnOver = board.play(playerTurn, playerTurn-1, 1);
+            if(turnOver == 1) {
+                changePlayer(playerTurn);
+            }
         }
         updateBoard();
     }//GEN-LAST:event_jButton01ActionPerformed
 
     private void jButton16ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton16ActionPerformed
         // TODO add your handling code here:
-        turnOver = board.play(playerTurn, playerTurn-1, 6);
-        if(turnOver == 1) {
-            changePlayer(playerTurn);
+        if(isOnline){
+            if(myTurn) {
+                turnOver = board.play(myPlayerNum, 1, 6);
+                MancalaMove moveToSend = new MancalaMove(myPlayerNum, 1, 6);
+                sendMessage(moveToSend.toString());
+                if(turnOver == 1) {
+                    changePlayer(playerTurn);
+                    class Waiting_for_replay_thread implements Runnable {
+                        @Override
+                        public void run() {
+                            waitForMove();
+                        }
+                    }
+                    Thread t = new Thread(new Waiting_for_replay_thread());
+                    t.start();
+                }
+            }
+        }
+        else if (playerTurn-1 == 1) {
+            turnOver = board.play(playerTurn, playerTurn-1, 6);
+            if(turnOver == 1) {
+                changePlayer(playerTurn);
+            }
         }
         updateBoard();
     }//GEN-LAST:event_jButton16ActionPerformed
 
     private void jButton15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton15ActionPerformed
         // TODO add your handling code here:
-        turnOver = board.play(playerTurn, playerTurn-1, 5);
-        if(turnOver == 1) {
-            changePlayer(playerTurn);
+        if(isOnline){
+            if(myTurn) {
+                turnOver = board.play(myPlayerNum, 1, 5);
+                MancalaMove moveToSend = new MancalaMove(myPlayerNum, 1, 5);
+                sendMessage(moveToSend.toString());
+                if(turnOver == 1) {
+                    changePlayer(playerTurn);
+                    class Waiting_for_replay_thread implements Runnable {
+                        @Override
+                        public void run() {
+                            waitForMove();
+                        }
+                    }
+                    Thread t = new Thread(new Waiting_for_replay_thread());
+                    t.start();
+                }
+            }
+        }
+        else if (playerTurn-1 == 1) {
+            turnOver = board.play(playerTurn, playerTurn-1, 5);
+            if(turnOver == 1) {
+                changePlayer(playerTurn);
+            }
         }
         updateBoard();
     }//GEN-LAST:event_jButton15ActionPerformed
 
     private void jButton02ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton02ActionPerformed
         // TODO add your handling code here:
-        turnOver = board.play(playerTurn, playerTurn-1, 2);
-        if(turnOver == 1) {
-            changePlayer(playerTurn);
+        if(isOnline){
+            if(myTurn) {
+                turnOver = board.play(myPlayerNum, 0, 2);
+                MancalaMove moveToSend = new MancalaMove(myPlayerNum, 0, 2);
+                sendMessage(moveToSend.toString());
+                if(turnOver == 1) {
+                    changePlayer(playerTurn);
+                    class Waiting_for_replay_thread implements Runnable {
+                        @Override
+                        public void run() {
+                            waitForMove();
+                        }
+                    }
+                    Thread t = new Thread(new Waiting_for_replay_thread());
+                    t.start();
+                }
+            }
+        }
+        else if (playerTurn-1 == 0) {
+            turnOver = board.play(playerTurn, playerTurn-1, 2);
+            if(turnOver == 1) {
+                changePlayer(playerTurn);
+            }
         }
         updateBoard();
     }//GEN-LAST:event_jButton02ActionPerformed
 
     private void jButton03ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton03ActionPerformed
         // TODO add your handling code here:
-        turnOver = board.play(playerTurn, playerTurn-1, 3);
-        if(turnOver == 1) {
-            changePlayer(playerTurn);
+        if(isOnline){
+            if(myTurn) {
+                turnOver = board.play(myPlayerNum, 0, 3);
+                MancalaMove moveToSend = new MancalaMove(myPlayerNum, 0, 3);
+                sendMessage(moveToSend.toString());
+                if(turnOver == 1) {
+                    changePlayer(playerTurn);
+                    class Waiting_for_replay_thread implements Runnable {
+                        @Override
+                        public void run() {
+                            waitForMove();
+                        }
+                    }
+                    Thread t = new Thread(new Waiting_for_replay_thread());
+                    t.start();
+                }
+            }
+        }
+        else if (playerTurn-1 == 0) {
+            turnOver = board.play(playerTurn, playerTurn-1, 3);
+            if(turnOver == 1) {
+                changePlayer(playerTurn);
+            }
         }
         updateBoard();
     }//GEN-LAST:event_jButton03ActionPerformed
 
     private void jButton14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton14ActionPerformed
         // TODO add your handling code here:
-        turnOver = board.play(playerTurn, playerTurn-1, 4);
-        if(turnOver == 1) {
-            changePlayer(playerTurn);
+        if(isOnline){
+            if(myTurn) {
+                turnOver = board.play(myPlayerNum, 1, 4);
+                MancalaMove moveToSend = new MancalaMove(myPlayerNum, 1, 4);
+                sendMessage(moveToSend.toString());
+                if(turnOver == 1) {
+                    changePlayer(playerTurn);
+                    class Waiting_for_replay_thread implements Runnable {
+                        @Override
+                        public void run() {
+                            waitForMove();
+                        }
+                    }
+                    Thread t = new Thread(new Waiting_for_replay_thread());
+                    t.start();
+                }
+            }
+        }
+        else if (playerTurn-1 == 1) {
+            turnOver = board.play(playerTurn, playerTurn-1, 4);
+            if(turnOver == 1) {
+                changePlayer(playerTurn);
+            }
         }
         updateBoard();
     }//GEN-LAST:event_jButton14ActionPerformed
 
     private void jButton13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton13ActionPerformed
         // TODO add your handling code here:
-        turnOver = board.play(playerTurn, playerTurn-1, 3);
-        if(turnOver == 1) {
-            changePlayer(playerTurn);
+        if(isOnline){
+            if(myTurn) {
+                turnOver = board.play(myPlayerNum, 1, 3);
+                MancalaMove moveToSend = new MancalaMove(myPlayerNum, 1, 3);
+                sendMessage(moveToSend.toString());
+                if(turnOver == 1) {
+                    changePlayer(playerTurn);
+                    class Waiting_for_replay_thread implements Runnable {
+                        @Override
+                        public void run() {
+                            waitForMove();
+                        }
+                    }
+                    Thread t = new Thread(new Waiting_for_replay_thread());
+                    t.start();
+                }
+            }
+        }
+        else if (playerTurn-1 == 1) {
+            turnOver = board.play(playerTurn, playerTurn-1, 3);
+            if(turnOver == 1) {
+                changePlayer(playerTurn);
+            }
         }
         updateBoard();
     }//GEN-LAST:event_jButton13ActionPerformed
 
     private void jButton04ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton04ActionPerformed
         // TODO add your handling code here:
-        turnOver = board.play(playerTurn, playerTurn-1, 4);
-        if(turnOver == 1) {
-            changePlayer(playerTurn);
+        if(isOnline){
+            if(myTurn) {
+                turnOver = board.play(myPlayerNum, 0, 4);
+                MancalaMove moveToSend = new MancalaMove(myPlayerNum, 0, 4);
+                sendMessage(moveToSend.toString());
+                if(turnOver == 1) {
+                    changePlayer(playerTurn);
+                    class Waiting_for_replay_thread implements Runnable {
+                        @Override
+                        public void run() {
+                            waitForMove();
+                        }
+                    }
+                    Thread t = new Thread(new Waiting_for_replay_thread());
+                    t.start();
+                }
+            }
+        }
+        else if (playerTurn-1 == 0) {
+            turnOver = board.play(playerTurn, playerTurn-1, 4);
+            if(turnOver == 1) {
+                changePlayer(playerTurn);
+            }
         }
         updateBoard();
     }//GEN-LAST:event_jButton04ActionPerformed
 
     private void jButton05ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton05ActionPerformed
         // TODO add your handling code here:
-        turnOver = board.play(playerTurn, playerTurn-1, 5);
-        if(turnOver == 1) {
-            changePlayer(playerTurn);
+        if(isOnline){
+            if(myTurn) {
+                turnOver = board.play(myPlayerNum, 0, 5);
+                MancalaMove moveToSend = new MancalaMove(myPlayerNum, 0, 5);
+                sendMessage(moveToSend.toString());
+                if(turnOver == 1) {
+                    changePlayer(playerTurn);
+                    class Waiting_for_replay_thread implements Runnable {
+                        @Override
+                        public void run() {
+                            waitForMove();
+                        }
+                    }
+                    Thread t = new Thread(new Waiting_for_replay_thread());
+                    t.start();
+                }
+            }
+        }
+        else if (playerTurn-1 == 0) {
+            turnOver = board.play(playerTurn, playerTurn-1, 5);
+            if(turnOver == 1) {
+                changePlayer(playerTurn);
+            }
         }
         updateBoard();
     }//GEN-LAST:event_jButton05ActionPerformed
 
     private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed
         // TODO add your handling code here:
-        turnOver = board.play(playerTurn, playerTurn-1, 2);
-        if(turnOver == 1) {
-            changePlayer(playerTurn);
+        if(isOnline){
+            if(myTurn) {
+                turnOver = board.play(myPlayerNum, 1, 2);
+                MancalaMove moveToSend = new MancalaMove(myPlayerNum, 1, 2);
+                sendMessage(moveToSend.toString());
+                if(turnOver == 1) {
+                    changePlayer(playerTurn);
+                    class Waiting_for_replay_thread implements Runnable {
+                        @Override
+                        public void run() {
+                            waitForMove();
+                        }
+                    }
+                    Thread t = new Thread(new Waiting_for_replay_thread());
+                    t.start();
+                }
+            }
+        }
+        else if (playerTurn-1 == 1) {
+            turnOver = board.play(playerTurn, playerTurn-1, 2);
+            if(turnOver == 1) {
+                changePlayer(playerTurn);
+            }
         }
         updateBoard();
     }//GEN-LAST:event_jButton12ActionPerformed
 
     private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
         // TODO add your handling code here:
-        turnOver = board.play(playerTurn, playerTurn-1, 1);
-        if(turnOver == 1) {
-            changePlayer(playerTurn);
+        if(isOnline){
+            if(myTurn) {
+                turnOver = board.play(myPlayerNum, 1, 1);
+                MancalaMove moveToSend = new MancalaMove(myPlayerNum, 1, 1);
+                sendMessage(moveToSend.toString());
+                if(turnOver == 1) {
+                    changePlayer(playerTurn);
+                    class Waiting_for_replay_thread implements Runnable {
+                        @Override
+                        public void run() {
+                            waitForMove();
+                        }
+                    }
+                    Thread t = new Thread(new Waiting_for_replay_thread());
+                    t.start();
+                }
+            }
+        }
+        else if (playerTurn-1 == 1) {
+            turnOver = board.play(playerTurn, playerTurn-1, 1);
+            if(turnOver == 1) {
+                changePlayer(playerTurn);
+            }
         }
         updateBoard();
     }//GEN-LAST:event_jButton11ActionPerformed
 
     private void jButton06ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton06ActionPerformed
         // TODO add your handling code here:
-        turnOver = board.play(playerTurn, playerTurn-1, 6);
-        if(turnOver == 1) {
-            changePlayer(playerTurn);
+        if(isOnline){
+            if(myTurn) {
+                turnOver = board.play(myPlayerNum, 0, 6);
+                MancalaMove moveToSend = new MancalaMove(myPlayerNum, 0, 6);
+                sendMessage(moveToSend.toString());
+                if(turnOver == 1) {
+                    changePlayer(playerTurn);
+                    class Waiting_for_replay_thread implements Runnable {
+                        @Override
+                        public void run() {
+                            waitForMove();
+                        }
+                    }
+                    Thread t = new Thread(new Waiting_for_replay_thread());
+                    t.start();
+                }
+            }
+        }
+        else if (playerTurn-1 == 0) {
+            turnOver = board.play(playerTurn, playerTurn-1, 6);
+            if(turnOver == 1) {
+                changePlayer(playerTurn);
+            }
         }
         updateBoard();
     }//GEN-LAST:event_jButton06ActionPerformed
 
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
         // TODO add your handling code here:
-        turnOver = board.play(playerTurn, playerTurn-1, 0);
-        if(turnOver == 1) {
-            changePlayer(playerTurn);
+        if(isOnline){
+            if(myTurn) {
+                turnOver = board.play(myPlayerNum, 1, 0);
+                MancalaMove moveToSend = new MancalaMove(myPlayerNum, 1, 0);
+                sendMessage(moveToSend.toString());
+                if(turnOver == 1) {
+                    changePlayer(playerTurn);
+                    class Waiting_for_replay_thread implements Runnable {
+                        @Override
+                        public void run() {
+                            waitForMove();
+                        }
+                    }
+                    Thread t = new Thread(new Waiting_for_replay_thread());
+                    t.start();
+                }
+            }
+        }
+        else if (playerTurn-1 == 1) {
+            turnOver = board.play(playerTurn, playerTurn-1, 0);
+            if(turnOver == 1) {
+                changePlayer(playerTurn);
+            }
         }
         updateBoard();
     }//GEN-LAST:event_jButton10ActionPerformed
