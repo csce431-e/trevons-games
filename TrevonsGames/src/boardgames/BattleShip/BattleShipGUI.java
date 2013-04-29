@@ -22,6 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.WindowConstants;
 
 /**
  *
@@ -276,7 +277,6 @@ public class BattleShipGUI extends javax.swing.JFrame {
     //only difference is how to actually make the move received and apply to graphics
     public void waitForMove()
     {
-        //wait for your turn, continuously ask for msg from in till you get it
         try
         {
             System.out.println("Waiting for move");
@@ -291,7 +291,6 @@ public class BattleShipGUI extends javax.swing.JFrame {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         quit_window.dispose();
-
                     }
                 });
                 quit_window.add(accept);
@@ -308,6 +307,9 @@ public class BattleShipGUI extends javax.swing.JFrame {
             }
             if(placeShips){
                 System.out.println("Waiting for move");
+                if(!p1PlacedShips) {
+                    jLabel1.setText("Opponent has placed ships.  Place Ships Now");
+                }
 
                     //msg = (String)in.readObject();
                     //IIS IIS IIS IIS IIS
@@ -396,15 +398,27 @@ public class BattleShipGUI extends javax.swing.JFrame {
                         
                     }
                 
-                p2PlacedShips=true;
-                currentShip=0;
-                myTurn=true;
+                    p2PlacedShips=true;
+                    currentShip=0;
+                    myTurn=true;
+                    if(!placeShips){
+                        jLabel1.setText("Waiting for Opponent's move");
+                    }
+                    if(p1PlacedShips && p2PlacedShips){
+                        placeShips = false;
+                        enableP2();
+                        disableP1();
+                        jLabel1.setText("Opponent has finished placing ships");
+                        jLabel2.setText("Your Move");
+                    }
                 }
                 else{
                 Ship.point move = getMoveFromString(msg);            
                 p1.attackSpot(move.x, move.y);
                 updateP1Board();
                 myTurn = true; 
+                jLabel1.setText("Opponent has attacked spot " + move.x.toString() + " " + move.y.toString());
+                jLabel2.setText("Your Move");
                 }
             }
             catch(ClassNotFoundException classNot)
@@ -414,7 +428,7 @@ public class BattleShipGUI extends javax.swing.JFrame {
             catch (IOException ex) 
             {
                 ex.printStackTrace();
-            }
+            }  
     }
     
     //theirs will have to be completely different: some way to parse a string into any possible move
@@ -435,6 +449,9 @@ public class BattleShipGUI extends javax.swing.JFrame {
         
         jLabel1.setText("Player 1 place ship 1");
         jLabel2.setText(" ");
+        if(!myTurn && isOnline){
+            jLabel1.setText("Waiting for Opponent's move");
+        }
         
         p1button.get(9).add(jButton1);
         p1button.get(9).add(jButton2);
@@ -2994,6 +3011,20 @@ public class BattleShipGUI extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    class Turn_Handler implements Runnable
+    {
+        private BattleShipGUI b;
+        Turn_Handler(BattleShipGUI g){
+            b=g;
+        }
+        
+        @Override
+        public void run()
+        {
+            b.waitForMove();
+        }
+    }
+    
     private void p2ActionHandler(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_p2ActionHandler
         // TODO add your handling code here:
         //HANDLE ACTIONS
@@ -3068,21 +3099,36 @@ public class BattleShipGUI extends javax.swing.JFrame {
                     currentShip++;
                     send += p.x.toString() + p.y.toString() + orientation.charAt(0) + " ";
                     System.out.println("player 1 placed ship " + currentShip + " at location " + p.x + ' ' + p.y);
+                    jLabel1.setText("Placed ship " + currentShip + " at location (" + p.x.toString() + ',' + p.y.toString() + ")");
                     this.paintAll(this.getGraphics());
                     if(currentShip==5){
+                        if(!p2PlacedShips){
+                            jLabel1.setText("Waiting for Opponent's move");
+                        }
+                        else{
+                            jLabel1.setText("Opponent has finished placing ships");
+                        }
+                        this.paintAll(this.getGraphics());
                         System.out.println(send);
                         sendMessage(send);
                         currentShip=0;
                         p1PlacedShips = true;
                         if(!p2PlacedShips){
-                            waitForMove();
+                            //waitForMove();
+                            Thread t = new Thread(new Turn_Handler(this));
+                            t.start();
                             myTurn=true;
+                            //jLabel1.setText("Opponent finished placing ships");
+                            //jLabel2.setText("Your Move");
                         }
                         else{ 
                             enableP2();
                             myTurn=false;
                             placeShips=false;
-                            waitForMove();
+                            jLabel2.setText("Opponent's Move");
+                            //waitForMove();
+                            Thread t = new Thread(new Turn_Handler(this));
+                            t.start();
                         }
                        
                         //myTurn=true;
@@ -3151,7 +3197,9 @@ public class BattleShipGUI extends javax.swing.JFrame {
                         updateP1Board();
                         this.paintAll(this.getGraphics());
                         sendMessage(p.x.toString() + p.y.toString());
-                        waitForMove();
+                        
+                        Thread t = new Thread(new Turn_Handler(this));
+                        t.start();
                         //disableP1();
                         //myTurn=false;
                     }
@@ -3163,7 +3211,7 @@ public class BattleShipGUI extends javax.swing.JFrame {
                     
                 }
                 else{
-                    jLabel2.setText("Spot " + p.x + ' ' + p.y + " has already been attacked.  Pick another.");
+                    if(myTurn && !isOnline)jLabel2.setText("Spot " + p.x + ' ' + p.y + " has already been attacked.  Pick another.");
                 }
                 
             }
