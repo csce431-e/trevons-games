@@ -253,7 +253,7 @@ public class CheckersGame {
     
     public void endGame()
     {
-        setStatus("Game Over.\nCongratulations,\n " + winner + " wins!");
+        setStatus("Game Over.\n" + winner + " wins!");
     }
     
     public boolean equals(CheckersGame g)
