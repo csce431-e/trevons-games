@@ -643,6 +643,7 @@ public class CheckersGUI extends javax.swing.JFrame {
         if(game.checkGameOver())
         {
             disableButtons = true;
+            statusTextArea.setText("Game Over!\n" + game.winner + " wins!");
             statusThread.finished = true;
         }
     }
