@@ -43,6 +43,7 @@ public class MancalaGUI extends javax.swing.JFrame {
     ObjectInputStream in;
     public boolean iquit;
     public final JFrame wait_window = new JFrame("Waiting for an opponent");
+    String msgToSend;
     //end0 for online play******************************************************************************************************
 
     /**
@@ -83,6 +84,7 @@ public class MancalaGUI extends javax.swing.JFrame {
         
         turnOver = 0;
         notMyTurn = false;
+        msgToSend = "";
 
         //disableButtons();
         //updateBoard();
@@ -304,12 +306,12 @@ public class MancalaGUI extends javax.swing.JFrame {
                 this.dispose();
                 return;
             }
-            MancalaMove otherPlayerMove = getMoveFromString(msg);
-            int notBool = board.play(otherPlayerMove);
-            updateBoard();
-            if(notBool != 1) {
-                waitForAnotherMove();
+            while(msg.length()>=3) {
+                MancalaMove otherPlayerMove = getMoveFromString(msg);
+                board.play(otherPlayerMove);
+                msg = msg.substring(3);
             }
+            updateBoard();
         
             /*firstChoice = buts.get((-otherPlayerMove.src.y)+3).get((otherPlayerMove.src.x)+3);
             middleButton = buts.get((-otherPlayerMove.middle.y)+3).get((otherPlayerMove.middle.x)+3);
@@ -746,11 +748,18 @@ public class MancalaGUI extends javax.swing.JFrame {
         //System.out.println(AIGame);
         if(isOnline){
             if(myTurn) {
-                turnOver = board.play(myPlayerNum, 0, 1);
-                MancalaMove moveToSend = new MancalaMove(myPlayerNum, 0, 1);
-                sendMessage(moveToSend.toString());
-                if(turnOver == 1) {
+                int validMove = board.play(myPlayerNum, 0, 1);
+                if( validMove == 0 ) {
+                    MancalaMove moveToSend = new MancalaMove(myPlayerNum, 0, 1);
+                    msgToSend += moveToSend.toString();
+                }
+                else if (validMove == 1){
+                    MancalaMove moveToSend = new MancalaMove(myPlayerNum, 0, 1);
+                    msgToSend += moveToSend.toString();
+                    sendMessage(msgToSend);
+                //if(turnOver == 1) {
                     changePlayer(playerTurn);
+                    msgToSend = "";
                     class Waiting_for_replay_thread implements Runnable {
                         @Override
                         public void run() {
@@ -760,6 +769,7 @@ public class MancalaGUI extends javax.swing.JFrame {
                     Thread t = new Thread(new Waiting_for_replay_thread());
                     t.start();
                 }
+                //}
             }
         }
         else if (playerTurn-1 == 0) {
@@ -775,10 +785,17 @@ public class MancalaGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
         if(isOnline){
             if(myTurn) {
-                turnOver = board.play(myPlayerNum, 1, 6);
-                MancalaMove moveToSend = new MancalaMove(myPlayerNum, 1, 6);
-                sendMessage(moveToSend.toString());
-                if(turnOver == 1) {
+                int validMove = board.play(myPlayerNum, 1, 6);
+                if( validMove == 0 ) {
+                    MancalaMove moveToSend = new MancalaMove(myPlayerNum, 1, 6);
+                    msgToSend += moveToSend.toString();
+                }
+                else if (validMove == 1){
+                    MancalaMove moveToSend = new MancalaMove(myPlayerNum, 1, 6);
+                    msgToSend += moveToSend.toString();
+                sendMessage(msgToSend);
+                //if(turnOver == 1) {
+                msgToSend = "";
                     changePlayer(playerTurn);
                     class Waiting_for_replay_thread implements Runnable {
                         @Override
@@ -788,6 +805,7 @@ public class MancalaGUI extends javax.swing.JFrame {
                     }
                     Thread t = new Thread(new Waiting_for_replay_thread());
                     t.start();
+                //}
                 }
             }
         }
@@ -804,10 +822,16 @@ public class MancalaGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
         if(isOnline){
             if(myTurn) {
-                turnOver = board.play(myPlayerNum, 1, 5);
-                MancalaMove moveToSend = new MancalaMove(myPlayerNum, 1, 5);
-                sendMessage(moveToSend.toString());
-                if(turnOver == 1) {
+                int validMove = board.play(myPlayerNum, 1, 5);
+                if( validMove == 0 ) {
+                    MancalaMove moveToSend = new MancalaMove(myPlayerNum, 1, 5);
+                    msgToSend += moveToSend.toString();
+                }
+                else if (validMove == 1){
+                    MancalaMove moveToSend = new MancalaMove(myPlayerNum, 1, 5);
+                    msgToSend += moveToSend.toString();
+                    sendMessage(msgToSend);
+                    msgToSend = "";
                     changePlayer(playerTurn);
                     class Waiting_for_replay_thread implements Runnable {
                         @Override
@@ -833,10 +857,16 @@ public class MancalaGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
         if(isOnline){
             if(myTurn) {
-                turnOver = board.play(myPlayerNum, 0, 2);
-                MancalaMove moveToSend = new MancalaMove(myPlayerNum, 0, 2);
-                sendMessage(moveToSend.toString());
-                if(turnOver == 1) {
+                int validMove = board.play(myPlayerNum, 0, 2);
+                if( validMove == 0 ) {
+                    MancalaMove moveToSend = new MancalaMove(myPlayerNum, 0, 2);
+                    msgToSend += moveToSend.toString();
+                }
+                else if (validMove == 1){
+                    MancalaMove moveToSend = new MancalaMove(myPlayerNum, 0, 2);
+                    msgToSend += moveToSend.toString();
+                sendMessage(msgToSend);
+                msgToSend = "";
                     changePlayer(playerTurn);
                     class Waiting_for_replay_thread implements Runnable {
                         @Override
@@ -862,10 +892,16 @@ public class MancalaGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
         if(isOnline){
             if(myTurn) {
-                turnOver = board.play(myPlayerNum, 0, 3);
-                MancalaMove moveToSend = new MancalaMove(myPlayerNum, 0, 3);
-                sendMessage(moveToSend.toString());
-                if(turnOver == 1) {
+                int validMove = board.play(myPlayerNum, 0, 3);
+                if( validMove == 0 ) {
+                    MancalaMove moveToSend = new MancalaMove(myPlayerNum, 0, 3);
+                    msgToSend += moveToSend.toString();
+                }
+                else if (validMove == 1){
+                    MancalaMove moveToSend = new MancalaMove(myPlayerNum, 0, 3);
+                    msgToSend += moveToSend.toString();
+                sendMessage(msgToSend);
+                msgToSend = "";
                     changePlayer(playerTurn);
                     class Waiting_for_replay_thread implements Runnable {
                         @Override
@@ -891,10 +927,16 @@ public class MancalaGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
         if(isOnline){
             if(myTurn) {
-                turnOver = board.play(myPlayerNum, 1, 4);
-                MancalaMove moveToSend = new MancalaMove(myPlayerNum, 1, 4);
-                sendMessage(moveToSend.toString());
-                if(turnOver == 1) {
+                int validMove = board.play(myPlayerNum, 1, 4);
+                if( validMove == 0 ) {
+                    MancalaMove moveToSend = new MancalaMove(myPlayerNum, 1, 4);
+                    msgToSend += moveToSend.toString();
+                }
+                else if (validMove == 1){
+                    MancalaMove moveToSend = new MancalaMove(myPlayerNum, 1, 4);
+                    msgToSend += moveToSend.toString();
+                sendMessage(msgToSend);
+                msgToSend = "";
                     changePlayer(playerTurn);
                     class Waiting_for_replay_thread implements Runnable {
                         @Override
@@ -920,10 +962,16 @@ public class MancalaGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
         if(isOnline){
             if(myTurn) {
-                turnOver = board.play(myPlayerNum, 1, 3);
-                MancalaMove moveToSend = new MancalaMove(myPlayerNum, 1, 3);
-                sendMessage(moveToSend.toString());
-                if(turnOver == 1) {
+                int validMove = board.play(myPlayerNum, 1, 3);
+                if( validMove == 0 ) {
+                    MancalaMove moveToSend = new MancalaMove(myPlayerNum, 1, 3);
+                    msgToSend += moveToSend.toString();
+                }
+                else if (validMove == 1){
+                    MancalaMove moveToSend = new MancalaMove(myPlayerNum, 1, 3);
+                    msgToSend += moveToSend.toString();
+                sendMessage(msgToSend);
+                msgToSend = "";
                     changePlayer(playerTurn);
                     class Waiting_for_replay_thread implements Runnable {
                         @Override
@@ -949,10 +997,15 @@ public class MancalaGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
         if(isOnline){
             if(myTurn) {
-                turnOver = board.play(myPlayerNum, 0, 4);
-                MancalaMove moveToSend = new MancalaMove(myPlayerNum, 0, 4);
-                sendMessage(moveToSend.toString());
-                if(turnOver == 1) {
+                int validMove = board.play(myPlayerNum, 0, 4);
+                if( validMove == 0 ) {
+                    MancalaMove moveToSend = new MancalaMove(myPlayerNum, 0, 4);
+                    msgToSend += moveToSend.toString();
+                }
+                else if (validMove == 1){
+                    MancalaMove moveToSend = new MancalaMove(myPlayerNum, 0, 4);
+                    msgToSend += moveToSend.toString();
+                    msgToSend = "";
                     changePlayer(playerTurn);
                     class Waiting_for_replay_thread implements Runnable {
                         @Override
@@ -978,10 +1031,16 @@ public class MancalaGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
         if(isOnline){
             if(myTurn) {
-                turnOver = board.play(myPlayerNum, 0, 5);
-                MancalaMove moveToSend = new MancalaMove(myPlayerNum, 0, 5);
-                sendMessage(moveToSend.toString());
-                if(turnOver == 1) {
+                int validMove = board.play(myPlayerNum, 0, 5);
+                if( validMove == 0 ) {
+                    MancalaMove moveToSend = new MancalaMove(myPlayerNum, 0, 5);
+                    msgToSend += moveToSend.toString();
+                }
+                else if (validMove == 1){
+                    MancalaMove moveToSend = new MancalaMove(myPlayerNum, 0, 5);
+                    msgToSend += moveToSend.toString();
+                sendMessage(msgToSend);
+                msgToSend = "";
                     changePlayer(playerTurn);
                     class Waiting_for_replay_thread implements Runnable {
                         @Override
@@ -1007,10 +1066,16 @@ public class MancalaGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
         if(isOnline){
             if(myTurn) {
-                turnOver = board.play(myPlayerNum, 1, 2);
-                MancalaMove moveToSend = new MancalaMove(myPlayerNum, 1, 2);
-                sendMessage(moveToSend.toString());
-                if(turnOver == 1) {
+                int validMove = board.play(myPlayerNum, 1, 2);
+                if( validMove == 0 ) {
+                    MancalaMove moveToSend = new MancalaMove(myPlayerNum, 1, 2);
+                    msgToSend += moveToSend.toString();
+                }
+                else if (validMove == 1){
+                    MancalaMove moveToSend = new MancalaMove(myPlayerNum, 1, 2);
+                    msgToSend += moveToSend.toString();
+                sendMessage(msgToSend);
+                msgToSend = "";
                     changePlayer(playerTurn);
                     class Waiting_for_replay_thread implements Runnable {
                         @Override
@@ -1036,10 +1101,16 @@ public class MancalaGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
         if(isOnline){
             if(myTurn) {
-                turnOver = board.play(myPlayerNum, 1, 1);
-                MancalaMove moveToSend = new MancalaMove(myPlayerNum, 1, 1);
-                sendMessage(moveToSend.toString());
-                if(turnOver == 1) {
+                int validMove = board.play(myPlayerNum, 1, 1);
+                if( validMove == 0 ) {
+                    MancalaMove moveToSend = new MancalaMove(myPlayerNum, 1, 1);
+                    msgToSend += moveToSend.toString();
+                }
+                else if (validMove == 1){
+                    MancalaMove moveToSend = new MancalaMove(myPlayerNum, 1, 1);
+                    msgToSend += moveToSend.toString();
+                sendMessage(msgToSend);
+                msgToSend = "";
                     changePlayer(playerTurn);
                     class Waiting_for_replay_thread implements Runnable {
                         @Override
@@ -1065,10 +1136,16 @@ public class MancalaGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
         if(isOnline){
             if(myTurn) {
-                turnOver = board.play(myPlayerNum, 0, 6);
-                MancalaMove moveToSend = new MancalaMove(myPlayerNum, 0, 6);
-                sendMessage(moveToSend.toString());
-                if(turnOver == 1) {
+                int validMove = board.play(myPlayerNum, 0, 6);
+                if( validMove == 0 ) {
+                    MancalaMove moveToSend = new MancalaMove(myPlayerNum, 0, 6);
+                    msgToSend += moveToSend.toString();
+                }
+                else if (validMove == 1){
+                    MancalaMove moveToSend = new MancalaMove(myPlayerNum, 0, 6);
+                    msgToSend += moveToSend.toString();
+                sendMessage(msgToSend);
+                msgToSend = "";
                     changePlayer(playerTurn);
                     class Waiting_for_replay_thread implements Runnable {
                         @Override
@@ -1094,10 +1171,16 @@ public class MancalaGUI extends javax.swing.JFrame {
         // TODO add your handling code here:
         if(isOnline){
             if(myTurn) {
-                turnOver = board.play(myPlayerNum, 1, 0);
-                MancalaMove moveToSend = new MancalaMove(myPlayerNum, 1, 0);
-                sendMessage(moveToSend.toString());
-                if(turnOver == 1) {
+                int validMove = board.play(myPlayerNum, 1, 0);
+                if( validMove == 0 ) {
+                    MancalaMove moveToSend = new MancalaMove(myPlayerNum, 1, 0);
+                    msgToSend += moveToSend.toString();
+                }
+                else if (validMove == 1){
+                    MancalaMove moveToSend = new MancalaMove(myPlayerNum, 1, 0);
+                    msgToSend += moveToSend.toString();
+                sendMessage(msgToSend);
+                msgToSend = "";
                     changePlayer(playerTurn);
                     class Waiting_for_replay_thread implements Runnable {
                         @Override
