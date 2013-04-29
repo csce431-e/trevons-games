@@ -123,7 +123,7 @@ public class CheckersGUI extends javax.swing.JFrame {
         
     }
      
-    public CheckersGUI()
+    public CheckersGUI(boolean isAIGame)
     {
         initComponents();
         game = new CheckersGame();
@@ -134,7 +134,7 @@ public class CheckersGUI extends javax.swing.JFrame {
         firstSelection = true;
         game.turn = Owner.PLAYER1;
         game.turnCompleted = false;
-        game.AI = false;
+        game.AI = isAIGame;
         disableButtons = false;
         //gameStarted = false;
         showMoves = false;
@@ -1427,13 +1427,13 @@ public class CheckersGUI extends javax.swing.JFrame {
         }
         //</editor-fold>
 
-        /* Create and display the form */
+        /* Create and display the form 
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run()
             {
                 new CheckersGUI().setVisible(true);
             }
-        });
+        });*/
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;

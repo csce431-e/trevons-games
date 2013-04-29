@@ -399,11 +399,12 @@ public class MainMenu extends javax.swing.JPanel {
                 @Override
                 public void run() 
                 {
+                    CheckersDialog c = new CheckersDialog();
                     //CheckersGUI game = new CheckersGUI(false, new byte[] {}); //2 params, whether or not it's online and the ip addr
-                    CheckersGUI game = new CheckersGUI();
+                    /*CheckersGUI game = new CheckersGUI();
                     game.setVisible(true);
                     game.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                    game.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+                    game.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);*/
                 }
             });
         }
